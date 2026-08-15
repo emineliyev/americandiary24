@@ -117,19 +117,11 @@
   width: 100%; height: 100%;
 }
 
-/* Advertisement placeholder */
+/* Ad slot — reserves the layout space for an AdSense unit. Left visually
+   empty on purpose; no placeholder box is shown to visitors. */
 .ad-slot {
-  border: 1px dashed var(--border-dashed);
-  background: var(--bg-muted);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
   margin: 0 auto;
-  text-align: center;
 }
-.ad-slot__size { font: 400 10px monospace; color: #b6bbc4; }
 
 /* Row divider list (latest / top-stories / most-read style rows) */
 .row-list > * + * { border-top: 1px solid var(--border); }

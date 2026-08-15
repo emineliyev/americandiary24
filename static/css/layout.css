@@ -100,11 +100,18 @@
   .hamburger-toggle { display: inline-flex; }
 }
 
-/* Mobile menu panel */
+/* Mobile menu panel — fixed so it always anchors under whichever header
+   bar (regular or sticky) is on screen, regardless of scroll position. */
 .mobile-menu {
   display: none;
+  position: fixed;
+  left: 0; right: 0;
+  top: 0; /* overwritten inline by nav.js when opened */
+  max-height: 100vh;
+  overflow-y: auto;
   background: var(--bg-mobile-menu);
   border-bottom: 1px solid var(--border);
+  z-index: 59;
 }
 .mobile-menu.is-open { display: block; }
 .mobile-menu .container { padding-top: 16px; padding-bottom: 16px; }
@@ -126,8 +133,8 @@
 .sticky-nav.is-visible { transform: translateY(0); }
 .sticky-nav .container { height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .sticky-nav__brand { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.sticky-nav__mark { width: 18px; height: 18px; background: var(--brand); }
-.sticky-nav__name { font: 700 21px var(--font-serif); }
+.sticky-nav__mark { width: 18px; height: 18px; background: var(--brand); flex-shrink: 0; }
+.sticky-nav__name { font: 700 clamp(14px, 4vw, 21px)/1 var(--font-serif); white-space: nowrap; }
 .sticky-nav__links { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
 .sticky-nav__links a { padding: 8px 10px; font-size: 12px; color: var(--text-secondary); }
 .sticky-nav__links a:hover { color: var(--brand); }
@@ -136,13 +143,25 @@
   width: 34px; height: 34px; border: 1px solid var(--border-strong);
   display: inline-flex; align-items: center; justify-content: center; background: none; cursor: pointer;
 }
+.sticky-nav__search { position: relative; }
+.sticky-nav__search-form {
+  display: none;
+  position: absolute; top: calc(100% + 8px); right: 0; width: 280px;
+  background: #fff; border: 1px solid var(--border);
+  box-shadow: 0 12px 28px rgba(1,15,100,0.10);
+  padding: 12px; z-index: 61;
+}
+.sticky-nav__search.is-open .sticky-nav__search-form { display: block; }
 @media (max-width: 1180px) {
   .sticky-nav__links .nav-narrow { display: none; }
 }
 @media (max-width: 860px) {
   .sticky-nav__links { display: none; }
 }
-body.sentinel-hidden { padding-top: 0; }
+@media (max-width: 560px) {
+  .sticky-nav__actions { gap: 8px; }
+  .sticky-nav__actions .btn-primary { display: none; }
+}
 
 /* ===== 05 Breaking News ===== */
 .breaking-bar { background: var(--bg-alt); min-height: 52px; border-bottom: 1px solid var(--border); }
@@ -219,6 +238,7 @@ body.sentinel-hidden { padding-top: 0; }
 .exclusive__head { display: flex; align-items: center; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.22); margin-bottom: 24px; }
 .exclusive__title { font: 800 13px var(--font-sans); letter-spacing: 0.14em; }
 .exclusive__view-all { margin-left: auto; color: rgba(255,255,255,.85); font: 700 12px var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; }
+.exclusive__view-all:hover { color: #ffffff; }
 .exclusive__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
 .exclusive__grid .kicker { color: rgba(255,255,255,.7); }
 .exclusive__grid .h3-card { color: #fff; }

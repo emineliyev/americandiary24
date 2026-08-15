@@ -65,12 +65,6 @@ h1, h2, h3, h4, h5 {
   font: 400 12px/1 var(--font-sans);
   color: var(--text-muted);
 }
-.ad-label {
-  font: 400 10px/1 monospace;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--text-placeholder);
-}
 
 time { font: inherit; }
 

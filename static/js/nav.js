@@ -1,23 +1,30 @@
 (function () {
   'use strict';
 
+  var stickyNav = document.querySelector('.sticky-nav');
+  var mobileMenu = document.querySelector('.mobile-menu');
+
   function closeAllMenus() {
     document.querySelectorAll('.nav-more.is-open').forEach(function (el) {
       el.classList.remove('is-open');
       var toggle = el.querySelector('.nav-more__toggle');
       if (toggle) toggle.setAttribute('aria-expanded', 'false');
     });
-    var mobileMenu = document.querySelector('.mobile-menu');
-    var hamburger = document.querySelector('.hamburger-toggle');
+    document.querySelectorAll('.sticky-nav__search.is-open').forEach(function (el) {
+      el.classList.remove('is-open');
+      var toggle = el.querySelector('.sticky-nav__search-icon');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    });
     if (mobileMenu && mobileMenu.classList.contains('is-open')) {
       mobileMenu.classList.remove('is-open');
-      if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
+      document.querySelectorAll('.hamburger-toggle').forEach(function (btn) {
+        btn.setAttribute('aria-expanded', 'false');
+      });
     }
   }
 
   // Sticky nav — appears once the hero sentinel scrolls out of view.
   var sentinel = document.querySelector('[data-sticky-sentinel]');
-  var stickyNav = document.querySelector('.sticky-nav');
   if (sentinel && stickyNav && 'IntersectionObserver' in window) {
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -27,7 +34,7 @@
     observer.observe(sentinel);
   }
 
-  // "More" dropdown
+  // "More" dropdown (main nav + sticky nav)
   document.querySelectorAll('.nav-more').forEach(function (dropdown) {
     var toggle = dropdown.querySelector('.nav-more__toggle');
     if (!toggle) return;
@@ -42,19 +49,53 @@
     });
   });
 
-  // Hamburger / mobile menu
-  var hamburgerToggles = document.querySelectorAll('.hamburger-toggle');
-  hamburgerToggles.forEach(function (toggle) {
-    toggle.addEventListener('click', function (e) {
+  // Sticky nav search icon
+  var stickySearch = document.querySelector('.sticky-nav__search');
+  if (stickySearch) {
+    var searchToggle = stickySearch.querySelector('.sticky-nav__search-icon');
+    searchToggle.addEventListener('click', function (e) {
       e.stopPropagation();
-      var targetId = toggle.getAttribute('aria-controls');
-      var target = targetId && document.getElementById(targetId);
-      if (!target) return;
-      var willOpen = !target.classList.contains('is-open');
+      var willOpen = !stickySearch.classList.contains('is-open');
       closeAllMenus();
       if (willOpen) {
-        target.classList.add('is-open');
-        toggle.setAttribute('aria-expanded', 'true');
+        stickySearch.classList.add('is-open');
+        searchToggle.setAttribute('aria-expanded', 'true');
+        var input = stickySearch.querySelector('input');
+        if (input) input.focus();
+      }
+    });
+    stickySearch.addEventListener('click', function (e) { e.stopPropagation(); });
+  }
+
+  // Hamburger / mobile menu — anchored under whichever header bar is
+  // currently on screen (regular header, or the fixed sticky nav).
+  function anchorMobileMenu() {
+    if (!mobileMenu) return;
+    var offset = 0;
+    if (stickyNav && stickyNav.classList.contains('is-visible')) {
+      offset = stickyNav.offsetHeight;
+    } else {
+      ['.utility-bar', '.masthead', '.main-nav'].forEach(function (sel) {
+        var el = document.querySelector(sel);
+        if (el) offset += el.offsetHeight;
+      });
+      offset -= window.scrollY;
+    }
+    mobileMenu.style.top = Math.max(offset, 0) + 'px';
+  }
+
+  document.querySelectorAll('.hamburger-toggle').forEach(function (toggle) {
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (!mobileMenu) return;
+      var willOpen = !mobileMenu.classList.contains('is-open');
+      closeAllMenus();
+      if (willOpen) {
+        anchorMobileMenu();
+        mobileMenu.classList.add('is-open');
+        document.querySelectorAll('.hamburger-toggle').forEach(function (btn) {
+          btn.setAttribute('aria-expanded', 'true');
+        });
       }
     });
   });

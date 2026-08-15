@@ -1,9 +1,8 @@
 {% load humanize news_extras %}
 {% if hero %}
+<div data-sticky-sentinel style="height:1px;"></div>
 <section class="hero">
   <div class="container">
-    <div data-sticky-sentinel style="position:absolute;width:1px;height:1px;"></div>
-
     <article>
       <a href="{{ hero.get_absolute_url }}" class="news-card">
         <div class="hero__media">

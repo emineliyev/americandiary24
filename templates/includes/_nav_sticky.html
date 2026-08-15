@@ -20,7 +20,12 @@
     </div>
 
     <div class="sticky-nav__actions">
-      <button type="button" class="sticky-nav__search-icon" aria-label="Search">⚲</button>
+      <div class="sticky-nav__search">
+        <button type="button" class="sticky-nav__search-icon" aria-label="Search" aria-expanded="false" aria-controls="sticky-search-form">⚲</button>
+        <form action="/search.php" method="get" role="search" class="sticky-nav__search-form" id="sticky-search-form">
+          <input class="input" type="search" name="soz" placeholder="Search news, topics, people" aria-label="Search news, topics, people">
+        </form>
+      </div>
       <a href="#" class="btn btn-primary btn-label">Subscribe</a>
       <button type="button" class="hamburger-toggle btn-label" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
     </div>
