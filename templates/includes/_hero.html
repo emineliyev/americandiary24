@@ -1,0 +1,52 @@
+{% load humanize news_extras %}
+{% if hero %}
+<section class="hero">
+  <div class="container">
+    <div data-sticky-sentinel style="position:absolute;width:1px;height:1px;"></div>
+
+    <article>
+      <a href="{{ hero.get_absolute_url }}" class="news-card">
+        <div class="hero__media">
+          {% if hero.image %}
+            <img src="{{ hero.image.url }}" alt="{{ hero.title }}">
+          {% else %}
+            <div class="media-placeholder"></div>
+          {% endif %}
+        </div>
+        <span class="kicker">{{ hero.category.name }}{% if hero.is_breaking %} · <span class="badge-live">Live Coverage</span>{% endif %}</span>
+        <h1 class="h1-hero">{{ hero.title }}</h1>
+      </a>
+      <p class="hero__dek dek-hero">{{ hero.dek }}</p>
+      <div class="hero__byline">
+        <strong>{{ hero.author.name }}</strong>
+        <span>{{ hero.published_at|naturaltime }}</span>
+        <span>{{ hero.body|reading_time }}</span>
+      </div>
+    </article>
+
+    <aside>
+      <span class="top-stories__label">Top Stories</span>
+      <div class="row-list">
+        {% for item in top_stories %}
+        <a href="{{ item.get_absolute_url }}" class="top-stories__item news-card">
+          <div>
+            <span class="kicker">{{ item.category.name }}</span>
+            <h3 class="h4-list">{{ item.title }}</h3>
+          </div>
+          <div class="top-stories__thumb">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.title }}">
+            {% else %}
+              <div class="media-placeholder"></div>
+            {% endif %}
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+      <div class="top-stories__ad">
+        {% include "includes/_ad.html" with width=300 height=100 %}
+      </div>
+    </aside>
+  </div>
+</section>
+{% endif %}

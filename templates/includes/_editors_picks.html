@@ -1,0 +1,49 @@
+{% load humanize %}
+{% if editors_picks %}
+<section class="editors-picks">
+  <div class="section-header section-header--brand">
+    <h2 class="section-header-label">Editor's Picks</h2>
+    <span class="editors-picks__selected">Selected by the newsroom</span>
+  </div>
+
+  <div class="editors-picks__grid">
+    {% with lead=editors_picks.0 %}
+    {% if lead %}
+    <a href="{{ lead.get_absolute_url }}" class="editors-picks__lead news-card">
+      <div class="news-card__media">
+        {% if lead.image %}
+          <img src="{{ lead.image.url }}" alt="{{ lead.title }}">
+        {% else %}
+          <div class="media-placeholder"></div>
+        {% endif %}
+      </div>
+      <span class="kicker">The Long Read</span>
+      <h2 class="h2-feature">{{ lead.title }}</h2>
+      <p class="body-sm">{{ lead.dek }}</p>
+      <div class="hero__byline">
+        <strong>{{ lead.author.name }}</strong>
+        <span>{{ lead.published_at|naturaltime }}</span>
+      </div>
+    </a>
+    {% endif %}
+    {% endwith %}
+
+    <div class="editors-picks__side">
+      {% for article in editors_picks|slice:"1:3" %}
+      <a href="{{ article.get_absolute_url }}" class="news-card">
+        <div class="news-card__media">
+          {% if article.image %}
+            <img src="{{ article.image.url }}" alt="{{ article.title }}">
+          {% else %}
+            <div class="media-placeholder"></div>
+          {% endif %}
+        </div>
+        <span class="kicker">{{ article.category.name }}</span>
+        <h3 class="h3-card">{{ article.title }}</h3>
+        <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}

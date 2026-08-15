@@ -1,0 +1,40 @@
+{% load humanize %}
+<section class="category-section">
+  <div class="section-header">
+    <h2 class="section-header-label">{{ section.label }}</h2>
+    <a href="{{ section.category.get_absolute_url }}" class="section-header__view-all">View All →</a>
+  </div>
+  <div class="category-lead__grid">
+    <a href="{{ section.lead.get_absolute_url }}" class="news-card">
+      <div class="news-card__media">
+        {% if section.lead.image %}
+          <img src="{{ section.lead.image.url }}" alt="{{ section.lead.title }}">
+        {% else %}
+          <div class="media-placeholder"></div>
+        {% endif %}
+      </div>
+      <span class="kicker">{{ section.lead.category.name }}</span>
+      <h2 class="h2-cat-lead">{{ section.lead.title }}</h2>
+      <p class="body-sm">{{ section.lead.dek }}</p>
+      <time class="meta" datetime="{{ section.lead.published_at|date:'c' }}">{{ section.lead.published_at|naturaltime }}</time>
+    </a>
+
+    <div class="category-lead__side">
+      {% for article in section.rest %}
+      <a href="{{ article.get_absolute_url }}" class="category-lead__side-row news-card">
+        <div>
+          <span class="kicker">{{ article.category.name }}</span>
+          <h3 class="h4-list">{{ article.title }}</h3>
+        </div>
+        <div class="top-stories__thumb">
+          {% if article.image %}
+            <img src="{{ article.image.url }}" alt="{{ article.title }}">
+          {% else %}
+            <div class="media-placeholder"></div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>

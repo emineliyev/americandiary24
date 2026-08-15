@@ -1,0 +1,66 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__col">
+        <div class="masthead__brand-row">
+          <span class="masthead__mark" style="width:18px;height:18px;" aria-hidden="true"></span>
+          <span style="font:700 26px var(--font-serif);">{{ SITE_NAME }}</span>
+        </div>
+        <p class="footer__brand-desc">Breaking news, politics, business and world coverage for readers across the United States and Europe.</p>
+      </div>
+
+      <div class="footer__col">
+        <h4>News</h4>
+        <a href="#">U.S.</a>
+        <a href="#">Politics</a>
+        <a href="#">World</a>
+        <a href="#">Business</a>
+        <a href="#">Technology</a>
+        <a href="#">Health</a>
+      </div>
+
+      <div class="footer__col">
+        <h4>More</h4>
+        <a href="#">Science</a>
+        <a href="#">Sports</a>
+        <a href="#">Entertainment</a>
+        <a href="#">Opinion</a>
+        <a href="#">Video</a>
+        <a href="#">Podcasts</a>
+      </div>
+
+      <div class="footer__col">
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a href="#">Newsroom Standards</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+        <a href="#">Corrections</a>
+      </div>
+
+      <div class="footer__col">
+        <h4>Subscribe</h4>
+        <a href="#">Digital Access</a>
+        <a href="#">Print Edition</a>
+        <a href="#">Newsletters</a>
+        <a href="#">Gift a Subscription</a>
+        <a href="#">Advertise With Us</a>
+      </div>
+    </div>
+
+    <div class="footer__ad">
+      {% include "includes/_ad.html" with width=970 height=90 %}
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; {% now "Y" %} {{ SITE_NAME }}. All rights reserved.</span>
+      <div class="footer__bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Accessibility</a>
+        <a href="#">Advertise</a>
+      </div>
+    </div>
+  </div>
+</footer>

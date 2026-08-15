@@ -1,0 +1,20 @@
+{% load humanize %}
+{% if most_read %}
+<section class="most-read">
+  <div class="section-header section-header--brand">
+    <h2 class="section-header-label">Most Read</h2>
+  </div>
+  <div class="row-list">
+    {% for article in most_read %}
+    <a href="{{ article.get_absolute_url }}" class="most-read__item news-card">
+      <span class="most-read__num">{{ forloop.counter|stringformat:"02d" }}</span>
+      <div>
+        <span class="kicker">{{ article.category.name }}</span>
+        <h3 class="h3-card">{{ article.title }}</h3>
+        <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

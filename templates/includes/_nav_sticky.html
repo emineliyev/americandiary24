@@ -1,0 +1,28 @@
+<div class="sticky-nav">
+  <div class="container">
+    <a href="{% url 'core:home' %}" class="sticky-nav__brand">
+      <span class="sticky-nav__mark" aria-hidden="true"></span>
+      <span class="sticky-nav__name">{{ SITE_NAME }}</span>
+    </a>
+
+    <div class="sticky-nav__links">
+      {% for category in nav_categories %}
+      <a href="{{ category.get_absolute_url }}"{% if forloop.counter >= 6 %} class="nav-narrow"{% endif %}>{{ category.name }}</a>
+      {% endfor %}
+      <div class="nav-more">
+        <button type="button" class="nav-more__toggle nav-link" aria-haspopup="true" aria-expanded="false">More ▾</button>
+        <div class="nav-more__dropdown">
+          {% for category in more_categories %}
+          <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky-nav__actions">
+      <button type="button" class="sticky-nav__search-icon" aria-label="Search">⚲</button>
+      <a href="#" class="btn btn-primary btn-label">Subscribe</a>
+      <button type="button" class="hamburger-toggle btn-label" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+    </div>
+  </div>
+</div>

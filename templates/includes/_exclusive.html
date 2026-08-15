@@ -1,0 +1,20 @@
+{% load humanize %}
+{% if exclusives %}
+<section class="exclusive">
+  <div class="exclusive__head">
+    <span class="badge-exclusive">Exclusive</span>
+    <span class="exclusive__title">American Diary Investigations</span>
+    <a href="#" class="exclusive__view-all">View All →</a>
+  </div>
+  <div class="exclusive__grid">
+    {% for article in exclusives %}
+    <a href="{{ article.get_absolute_url }}">
+      <span class="kicker">{{ article.category.name }}</span>
+      <h3 class="h3-card">{{ article.title }}</h3>
+      <p class="body-sm">{{ article.dek }}</p>
+      <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

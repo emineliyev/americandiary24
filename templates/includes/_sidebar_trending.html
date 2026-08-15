@@ -1,0 +1,22 @@
+{% load humanize %}
+{% if trending %}
+<section class="trending">
+  <div class="section-header section-header--brand">
+    <h2 class="section-header-label">Trending</h2>
+  </div>
+  <div class="trending__tags">
+    {% for category in nav_categories %}
+    <a href="{{ category.get_absolute_url }}" class="chip">{{ category.name }}</a>
+    {% endfor %}
+  </div>
+  <div class="row-list">
+    {% for article in trending %}
+    <a href="{{ article.get_absolute_url }}" class="trending__item news-card">
+      <span class="kicker">{{ article.category.name }}</span>
+      <span class="trending__reading">{{ article.view_count|intcomma }} reading now</span>
+      <h3 class="h3-card">{{ article.title }}</h3>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

@@ -1,0 +1,37 @@
+<nav class="main-nav" aria-label="Primary">
+  <div class="container">
+    <ul class="main-nav__list nav-link">
+      <li><a href="{% url 'core:home' %}" class="is-active">Home</a></li>
+      {% for category in nav_categories %}
+      <li><a href="{{ category.get_absolute_url }}"{% if forloop.counter >= 8 %} class="nav-narrow"{% endif %}>{{ category.name }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <div class="nav-more">
+      <button type="button" class="nav-more__toggle nav-link" aria-haspopup="true" aria-expanded="false">More ▾</button>
+      <div class="nav-more__dropdown">
+        {% for category in more_categories %}
+        <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <button type="button" class="hamburger-toggle btn-label" aria-expanded="false" aria-controls="mobile-menu">
+      Menu
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <div class="container">
+    <div class="mobile-menu__search">
+      <form action="/search.php" method="get" role="search">
+        <input class="input" type="search" name="soz" placeholder="Search news, topics, people" aria-label="Search news, topics, people">
+      </form>
+    </div>
+    <a href="{% url 'core:home' %}">Home</a>
+    {% for category in nav_categories %}
+    <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+    {% endfor %}
+  </div>
+</div>

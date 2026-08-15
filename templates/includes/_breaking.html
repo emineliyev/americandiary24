@@ -1,0 +1,10 @@
+{% load humanize %}
+{% if breaking %}
+<div class="breaking-bar">
+  <div class="container">
+    <span class="badge-breaking">Breaking News</span>
+    <a href="{{ breaking.get_absolute_url }}" class="breaking-bar__headline">{{ breaking.title }}</a>
+    <time class="breaking-bar__updated" datetime="{{ breaking.updated_at|date:'c' }}">Updated {{ breaking.updated_at|naturaltime }}</time>
+  </div>
+</div>
+{% endif %}

@@ -1,0 +1,22 @@
+<div class="masthead">
+  <div class="container">
+    <div class="masthead__search">
+      <form action="/search.php" method="get" role="search">
+        <input class="input" type="search" name="soz" placeholder="Search news, topics, people" aria-label="Search news, topics, people">
+      </form>
+    </div>
+
+    <a href="{% url 'core:home' %}" class="masthead__brand" aria-label="{{ SITE_NAME }} home">
+      <div class="masthead__brand-row">
+        <span class="masthead__mark" aria-hidden="true"></span>
+        <span class="logo-text">{{ SITE_NAME }}</span>
+      </div>
+      <span class="masthead__tagline">{{ SITE_TAGLINE }}</span>
+    </a>
+
+    <div class="masthead__actions">
+      <a href="#" class="btn btn-secondary btn-label">Sign In</a>
+      <a href="#" class="btn btn-primary btn-label">Subscribe</a>
+    </div>
+  </div>
+</div>

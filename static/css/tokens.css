@@ -1,0 +1,46 @@
+:root {
+  /* Brand */
+  --brand:            #010F64;
+  --brand-hover:      #0a1f9c;
+  --brand-tint:       #cfd4e2;
+  --brand-wash:       #eceef6;
+
+  /* Backgrounds */
+  --bg:               #ffffff;
+  --bg-alt:           #f6f6f4;
+  --bg-muted:         #fafaf8;
+  --bg-mobile-menu:   #fbfbf9;
+
+  /* Text */
+  --text:             #12141a;
+  --text-secondary:   #33383f;
+  --text-body:        #4a5058;
+  --text-muted:       #767c86;
+  --text-placeholder: #9aa0aa;
+
+  /* Lines & surfaces */
+  --border:           #e2e4e8;
+  --border-strong:    #d9dce2;
+  --border-dashed:    #cfd3da;
+  --divider-dark:     #12141a;
+
+  /* Media placeholder */
+  --img-a:            #eceef2;
+  --img-b:            #e3e6ec;
+  --video-bg:         #14161c;
+
+  /* Status */
+  --breaking:         #b31212;
+  --success:          #1a7f4b;
+  --warning:          #b06a00;
+  --error:            #b31212;
+
+  /* Type */
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-sans: 'Libre Franklin', Helvetica, Arial, sans-serif;
+
+  /* Layout */
+  --page-max: 1440px;
+  --content-max: 1280px;
+  --pad-x: clamp(16px, 3.5vw, 40px);
+}

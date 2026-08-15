@@ -1,0 +1,28 @@
+{% load humanize %}
+{% if latest %}
+<section class="latest-news">
+  <div class="section-header">
+    <h2 class="section-header-label">Latest News</h2>
+    <a href="#" class="section-header__view-all">View All →</a>
+  </div>
+  <div class="row-list">
+    {% for article in latest %}
+    <a href="{{ article.get_absolute_url }}" class="latest-row news-card">
+      <div class="latest-row__thumb">
+        {% if article.image %}
+          <img src="{{ article.image.url }}" alt="{{ article.title }}">
+        {% else %}
+          <div class="media-placeholder"></div>
+        {% endif %}
+      </div>
+      <div>
+        <span class="kicker">{{ article.category.name }}</span>
+        <h3 class="h3-latest">{{ article.title }}</h3>
+        <p class="body-sm">{{ article.dek }}</p>
+      </div>
+      <time class="meta latest-row__time" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

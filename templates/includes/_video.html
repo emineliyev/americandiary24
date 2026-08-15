@@ -1,0 +1,49 @@
+{% load humanize %}
+{% if videos %}
+<section class="video-section">
+  <div class="section-header">
+    <h2 class="section-header-label">Video <span class="youtube-label">YouTube</span></h2>
+    <a href="#" class="section-header__view-all">Our Channel →</a>
+  </div>
+
+  <div class="video-section__grid">
+    {% with lead=videos.0 %}
+    {% if lead %}
+    <div>
+      <div class="video-embed">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/{{ lead.youtube_id }}?rel=0&modestbranding=1"
+          title="{{ lead.title }}"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <span class="kicker">Watch · {{ lead.category.name }}</span>
+      <h3 class="h2-feature"><a href="{{ lead.get_absolute_url }}">{{ lead.title }}</a></h3>
+      <time class="meta" datetime="{{ lead.published_at|date:'c' }}">{{ lead.published_at|naturaltime }}</time>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="video-section__side">
+      {% for article in videos|slice:"1:4" %}
+      <div class="video-section__side-row">
+        <div class="video-section__side-embed video-embed">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/{{ article.youtube_id }}?rel=0&modestbranding=1"
+            title="{{ article.title }}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div>
+          <span class="kicker">{{ article.category.name }}</span>
+          <h4 class="h4-list"><a href="https://www.youtube.com/watch?v={{ article.youtube_id }}" target="_blank" rel="noopener">{{ article.title }}</a></h4>
+          <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
