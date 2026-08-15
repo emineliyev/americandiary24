@@ -64,7 +64,7 @@
         {% endif %}
 
         <div class="article-body">
-          {{ article.body|safe }}
+          {{ article.body|external_links_blank }}
         </div>
 
         {% if article.youtube_id %}
