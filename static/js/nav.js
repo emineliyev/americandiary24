@@ -3,6 +3,21 @@
 
   var stickyNav = document.querySelector('.sticky-nav');
   var mobileMenu = document.querySelector('.mobile-menu');
+  var lockedScrollY = 0;
+
+  // Prevents the page behind the open mobile menu from scrolling, so touch
+  // drags on the panel scroll the panel itself instead of the body.
+  function lockBodyScroll() {
+    lockedScrollY = window.scrollY;
+    document.body.style.top = -lockedScrollY + 'px';
+    document.body.classList.add('menu-open');
+  }
+
+  function unlockBodyScroll() {
+    document.body.classList.remove('menu-open');
+    document.body.style.top = '';
+    window.scrollTo(0, lockedScrollY);
+  }
 
   function closeAllMenus() {
     document.querySelectorAll('.nav-more.is-open').forEach(function (el) {
@@ -20,6 +35,7 @@
       document.querySelectorAll('.hamburger-toggle').forEach(function (btn) {
         btn.setAttribute('aria-expanded', 'false');
       });
+      unlockBodyScroll();
     }
   }
 
@@ -81,7 +97,9 @@
       });
       offset -= window.scrollY;
     }
-    mobileMenu.style.top = Math.max(offset, 0) + 'px';
+    offset = Math.max(offset, 0);
+    mobileMenu.style.top = offset + 'px';
+    mobileMenu.style.maxHeight = (window.innerHeight - offset) + 'px';
   }
 
   document.querySelectorAll('.hamburger-toggle').forEach(function (toggle) {
@@ -96,6 +114,7 @@
         document.querySelectorAll('.hamburger-toggle').forEach(function (btn) {
           btn.setAttribute('aria-expanded', 'true');
         });
+        lockBodyScroll();
       }
     });
   });

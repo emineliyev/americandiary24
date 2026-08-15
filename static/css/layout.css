@@ -107,13 +107,24 @@
   position: fixed;
   left: 0; right: 0;
   top: 0; /* overwritten inline by nav.js when opened */
-  max-height: 100vh;
+  max-height: 100vh; /* overwritten inline by nav.js when opened */
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   background: var(--bg-mobile-menu);
   border-bottom: 1px solid var(--border);
   z-index: 59;
 }
 .mobile-menu.is-open { display: block; }
+
+/* Body scroll lock while the mobile menu is open — keeps touch drags on
+   the panel from scrolling the page underneath it. */
+body.menu-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
 .mobile-menu .container { padding-top: 16px; padding-bottom: 16px; }
 .mobile-menu__search { margin-bottom: 8px; }
 .mobile-menu a {
