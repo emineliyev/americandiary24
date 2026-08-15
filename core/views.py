@@ -3,13 +3,15 @@ from django.utils import timezone
 
 from news.models import Article, Category, Quote
 
+# Real categories from the legacy site, ordered by article volume so the
+# homepage's featured sections always have enough content to fill out.
 HOMEPAGE_CATEGORY_ORDER = [
-    ('U.S.', 'U.S. News', 'lead'),
-    ('Politics', 'Politics', 'grid'),
-    ('Business', 'Business', 'lead'),
-    ('Technology', 'Technology', 'grid'),
+    ('Politics', 'Politics', 'lead'),
+    ('Breaking', 'Breaking', 'grid'),
+    ('News', 'News', 'lead'),
     ('World', 'World', 'grid'),
-    ('Sports', 'Sports', 'lead'),
+    ('Business', 'Business', 'grid'),
+    ('Incident', 'Incident', 'lead'),
 ]
 
 

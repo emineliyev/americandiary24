@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load humanize news_extras static %}
+
+{% block title %}{{ article.title }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ article.dek|default:article.title|truncatechars:160 }}{% endblock %}
+{% block canonical %}{{ SITE_DOMAIN }}{{ article.get_absolute_url }}{% endblock %}
+
+{% block extra_head %}
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ article.title }}">
+<meta property="og:description" content="{{ article.dek|default:article.title|truncatechars:160 }}">
+<meta property="og:url" content="{{ SITE_DOMAIN }}{{ article.get_absolute_url }}">
+{% if article.image %}<meta property="og:image" content="{{ SITE_DOMAIN }}{{ article.image.url }}">{% endif %}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ article.title }}">
+<meta name="twitter:description" content="{{ article.dek|default:article.title|truncatechars:160 }}">
+{% if not article.is_indexed %}<meta name="robots" content="noindex,follow">{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": {{ article.title|escapejs }},
+  "datePublished": "{{ article.published_at|date:'c' }}",
+  "dateModified": "{{ article.updated_at|date:'c' }}",
+  "author": { "@type": "Person", "name": {{ article.author.name|escapejs }} },
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ SITE_NAME|escapejs }},
+    "logo": { "@type": "ImageObject", "url": "{{ SITE_DOMAIN }}{% static 'img/logo.png' %}" }
+  }
+  {% if article.image %}, "image": ["{{ SITE_DOMAIN }}{{ article.image.url }}"]{% endif %}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<article class="article-page">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}">Home</a>
+      <span>/</span>
+      <a href="{{ article.category.get_absolute_url }}">{{ article.category.name }}</a>
+      <span>/</span>
+      <span aria-current="page">{{ article.title|truncatechars:60 }}</span>
+    </nav>
+
+    <div class="article-layout">
+      <div class="article-main">
+        <span class="kicker"><a href="{{ article.category.get_absolute_url }}">{{ article.category.name }}</a></span>
+        <h1 class="h1-hero article-title">{{ article.title }}</h1>
+        {% if article.dek %}<p class="dek-hero article-dek">{{ article.dek }}</p>{% endif %}
+
+        <div class="article-byline">
+          <strong>{{ article.author.name }}</strong>
+          <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'F j, Y, g:i A' }}</time>
+          <span>{{ article.body|reading_time }}</span>
+        </div>
+
+        {% if article.image %}
+        <div class="article-media">
+          <img src="{{ article.image.url }}" alt="{{ article.title }}">
+        </div>
+        {% endif %}
+
+        <div class="article-body">
+          {{ article.body|safe }}
+        </div>
+
+        {% if article.youtube_id %}
+        <div class="article-video">
+          <div class="video-embed">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/{{ article.youtube_id }}?rel=0&modestbranding=1"
+              title="{{ article.title }}"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="article-share">
+          <span class="meta">Share:</span>
+          <a href="https://www.facebook.com/sharer.php?u={{ SITE_DOMAIN }}{{ article.get_absolute_url|urlencode }}" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://x.com/intent/tweet?url={{ SITE_DOMAIN }}{{ article.get_absolute_url|urlencode }}&text={{ article.title|urlencode }}" target="_blank" rel="noopener">X</a>
+          <a href="https://api.whatsapp.com/send?text={{ article.title|urlencode }}%20{{ SITE_DOMAIN }}{{ article.get_absolute_url|urlencode }}" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+
+        {% if related_articles %}
+        <section class="related-articles">
+          <div class="section-header">
+            <h2 class="section-header-label">Related News</h2>
+          </div>
+          <div class="category-grid">
+            {% for item in related_articles %}
+            <a href="{{ item.get_absolute_url }}" class="news-card">
+              <div class="news-card__media">
+                {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.title }}">
+                {% else %}<div class="media-placeholder"></div>{% endif %}
+              </div>
+              <span class="kicker">{{ item.category.name }}</span>
+              <h4 class="h4-list">{{ item.title }}</h4>
+              <time class="meta" datetime="{{ item.published_at|date:'c' }}">{{ item.published_at|naturaltime }}</time>
+            </a>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+      </div>
+
+      <aside class="article-sidebar">
+        {% include "includes/_sidebar_most_read.html" %}
+        <div class="sidebar-ad sidebar-ad--half">
+          {% include "includes/_ad.html" with width=300 height=600 %}
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</article>
+{% endblock %}

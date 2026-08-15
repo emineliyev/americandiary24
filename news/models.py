@@ -23,7 +23,7 @@ class Category(models.Model):
 class Author(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
-    avatar = models.ImageField(upload_to='authors/', blank=True)
+    avatar = models.ImageField(upload_to='authors/', blank=True, max_length=255)
 
     def __str__(self):
         return self.name
@@ -40,7 +40,7 @@ class Article(models.Model):
     slug = models.SlugField(max_length=255, unique=True)
     dek = models.CharField('deck', max_length=300, blank=True)
     body = models.TextField(blank=True)
-    image = models.ImageField(upload_to='articles/', blank=True)
+    image = models.ImageField(upload_to='articles/', blank=True, max_length=255)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='articles')
     author = models.ForeignKey(Author, on_delete=models.PROTECT, related_name='articles')
 
@@ -85,7 +85,7 @@ class Quote(models.Model):
         max_length=200, blank=True,
         help_text='Where/when it was said, e.g. "Press conference in Baku" or "Truth Social post".',
     )
-    photo = models.ImageField(upload_to='quotes/', blank=True)
+    photo = models.ImageField(upload_to='quotes/', blank=True, max_length=255)
     related_article = models.ForeignKey(
         Article, on_delete=models.SET_NULL, null=True, blank=True, related_name='quotes',
     )
