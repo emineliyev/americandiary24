@@ -1,11 +1,9 @@
+{% load static %}
 <footer class="footer">
   <div class="container">
     <div class="footer__grid">
       <div class="footer__col">
-        <div class="masthead__brand-row">
-          <span class="masthead__mark" style="width:18px;height:18px;" aria-hidden="true"></span>
-          <span style="font:700 26px var(--font-serif);">{{ SITE_NAME }}</span>
-        </div>
+        <img src="{% static 'img/logo.png' %}" alt="{{ SITE_NAME }}" class="footer__logo-img">
         <p class="footer__brand-desc">Breaking news, politics, business and world coverage for readers across the United States and Europe.</p>
       </div>
 

@@ -1,3 +1,4 @@
+{% load static %}
 <div class="masthead">
   <div class="container">
     <div class="masthead__search">
@@ -7,10 +8,7 @@
     </div>
 
     <a href="{% url 'core:home' %}" class="masthead__brand" aria-label="{{ SITE_NAME }} home">
-      <div class="masthead__brand-row">
-        <span class="masthead__mark" aria-hidden="true"></span>
-        <span class="logo-text">{{ SITE_NAME }}</span>
-      </div>
+      <img src="{% static 'img/logo.png' %}" alt="{{ SITE_NAME }}" class="masthead__logo-img">
       <span class="masthead__tagline">{{ SITE_TAGLINE }}</span>
     </a>
 

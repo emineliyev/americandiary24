@@ -1,8 +1,8 @@
+{% load static %}
 <div class="sticky-nav">
   <div class="container">
     <a href="{% url 'core:home' %}" class="sticky-nav__brand">
-      <span class="sticky-nav__mark" aria-hidden="true"></span>
-      <span class="sticky-nav__name">{{ SITE_NAME }}</span>
+      <img src="{% static 'img/logo.png' %}" alt="{{ SITE_NAME }}" class="sticky-nav__logo-img">
     </a>
 
     <div class="sticky-nav__links">

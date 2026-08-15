@@ -37,8 +37,7 @@
 }
 .masthead__search { max-width: 300px; }
 .masthead__brand { display: flex; flex-direction: column; align-items: center; text-align: center; }
-.masthead__brand-row { display: flex; align-items: center; gap: 10px; }
-.masthead__mark { width: 26px; height: 26px; background: var(--brand); flex-shrink: 0; }
+.masthead__logo-img { height: clamp(28px, 5vw, 42px); width: auto; }
 .masthead__tagline {
   font: 400 10px var(--font-sans); letter-spacing: 0.28em; text-transform: uppercase;
   color: var(--text-muted); margin-top: 4px;
@@ -144,8 +143,7 @@ body.menu-open {
 .sticky-nav.is-visible { transform: translateY(0); }
 .sticky-nav .container { height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .sticky-nav__brand { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.sticky-nav__mark { width: 18px; height: 18px; background: var(--brand); flex-shrink: 0; }
-.sticky-nav__name { font: 700 clamp(14px, 4vw, 21px)/1 var(--font-serif); white-space: nowrap; }
+.sticky-nav__logo-img { height: 26px; width: auto; }
 .sticky-nav__links { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
 .sticky-nav__links a { padding: 8px 10px; font-size: 12px; color: var(--text-secondary); }
 .sticky-nav__links a:hover { color: var(--brand); }
@@ -186,7 +184,7 @@ body.menu-open {
 }
 
 /* ===== 06 Hero ===== */
-.hero { border-bottom: 3px solid var(--brand); padding-bottom: 36px; margin-bottom: 36px; }
+.hero { border-bottom: 3px solid var(--brand); padding-top: 32px; padding-bottom: 36px; margin-bottom: 36px; }
 .hero .container { display: grid; grid-template-columns: 1fr 380px; gap: clamp(28px, 3.5vw, 48px); }
 .hero__media { aspect-ratio: 16/9; margin-bottom: 18px; }
 .hero__byline { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--text-muted); font-size: 12px; }
@@ -323,6 +321,7 @@ body.menu-open {
 /* ===== Footer ===== */
 .footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding: clamp(32px,4vw,48px) 0 0; }
 .footer__grid { display: grid; grid-template-columns: 300px repeat(4, 1fr); gap: 28px; padding-bottom: 32px; }
+.footer__logo-img { height: 30px; width: auto; }
 .footer__brand-desc { font-size: 13px; color: var(--text-body); max-width: 34ch; margin-top: 10px; }
 .footer__col h4 { font: 800 12px var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
 .footer__col a { display: block; padding: 6px 0; font-size: 13px; color: var(--text-body); }
