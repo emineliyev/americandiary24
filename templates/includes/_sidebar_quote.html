@@ -8,10 +8,6 @@
     <div class="quote-card__corner" aria-hidden="true"></div>
     <span class="quote-card__mark quote-card__mark--open" aria-hidden="true">&ldquo;</span>
 
-    {% if featured_quote.photo %}
-    <img src="{{ featured_quote.photo.url }}" alt="{{ featured_quote.name }}" class="quote-card__photo">
-    {% endif %}
-
     {% if featured_quote.related_article %}
     <a href="{{ featured_quote.related_article.get_absolute_url }}" class="quote-card__text-link">
       <p class="quote-card__text">{{ featured_quote.quote_text }}</p>
@@ -20,15 +16,18 @@
     <p class="quote-card__text">{{ featured_quote.quote_text }}</p>
     {% endif %}
 
-    <div class="quote-card__byline">
-      <strong>{{ featured_quote.name }}</strong>
-      {% if featured_quote.title %}<span>{{ featured_quote.title }}</span>{% endif %}
-    </div>
-    {% if featured_quote.source %}
-    <p class="quote-card__source">{{ featured_quote.source }}</p>
-    {% endif %}
-
     <span class="quote-card__mark quote-card__mark--close" aria-hidden="true">&rdquo;</span>
+
+    <div class="quote-card__attribution">
+      {% if featured_quote.photo %}
+      <img src="{{ featured_quote.photo.url }}" alt="{{ featured_quote.name }}" class="quote-card__photo">
+      {% endif %}
+      <div class="quote-card__byline">
+        <strong>{{ featured_quote.name }}</strong>
+        {% if featured_quote.title %}<span>{{ featured_quote.title }}</span>{% endif %}
+        {% if featured_quote.source %}<p class="quote-card__source">{{ featured_quote.source }}</p>{% endif %}
+      </div>
+    </div>
   </div>
 
   {% if quote_archive_count > 0 %}
