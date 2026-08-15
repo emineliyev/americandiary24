@@ -4,6 +4,7 @@
   --brand-hover:      #0a1f9c;
   --brand-tint:       #cfd4e2;
   --brand-wash:       #eceef6;
+  --brand-accent:     #3f6fc4; /* Quote widget corner/mark accent only */
 
   /* Backgrounds */
   --bg:               #ffffff;

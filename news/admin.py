@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Article, Author, Category
+from .models import Article, Author, Category, Quote
 
 
 @admin.register(Category)
@@ -21,3 +21,10 @@ class ArticleAdmin(admin.ModelAdmin):
     list_filter = ('status', 'category', 'is_breaking', 'is_exclusive', 'is_editors_pick')
     search_fields = ('title', 'dek', 'body')
     prepopulated_fields = {'slug': ('title',)}
+
+
+@admin.register(Quote)
+class QuoteAdmin(admin.ModelAdmin):
+    list_display = ('name', 'title', 'quote_date', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('name', 'quote_text')

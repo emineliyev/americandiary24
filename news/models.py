@@ -70,3 +70,30 @@ class Article(models.Model):
         # URL scheme intentionally mirrors the legacy site (news.php?id=<id>)
         # so every previously indexed/shared link keeps working unchanged.
         return f'/news.php?id={self.pk}'
+
+
+class Quote(models.Model):
+    """A spotlighted, newsworthy quote — editorially curated, not tied to a
+    fixed publishing cadence. Optional fields (source, related_article) are
+    blank-friendly so quotes migrated from the legacy `sitat` table, which
+    never captured that context, remain valid without edits."""
+
+    name = models.CharField('speaker name', max_length=100)
+    title = models.CharField('speaker title', max_length=150, blank=True)
+    quote_text = models.TextField()
+    source = models.CharField(
+        max_length=200, blank=True,
+        help_text='Where/when it was said, e.g. "Press conference in Baku" or "Truth Social post".',
+    )
+    photo = models.ImageField(upload_to='quotes/', blank=True)
+    related_article = models.ForeignKey(
+        Article, on_delete=models.SET_NULL, null=True, blank=True, related_name='quotes',
+    )
+    quote_date = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-quote_date', '-id']
+
+    def __str__(self):
+        return f'{self.name}: {self.quote_text[:50]}'

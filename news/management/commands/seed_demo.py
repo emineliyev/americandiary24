@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.utils.text import slugify
 
-from news.models import Article, Author, Category
+from news.models import Article, Author, Category, Quote
 
 NAV_CATEGORIES = [
     'Politics', 'U.S.', 'World', 'Business', 'Technology',
@@ -76,6 +76,20 @@ ARTICLES = [
      'Opinion', 460, 233, dict()),
 ]
 
+# (name, title, quote_text, source, days_ago, related_article_title_or_None)
+QUOTES = [
+    ('Elena Martins', 'Secretary of Energy',
+     'We are very encouraged by the pace of the negotiations. This agreement reflects a genuine commitment '
+     'from both sides to modernize the grid without leaving communities behind.',
+     'Press briefing following the Brussels energy summit', 0,
+     'European Leaders Meet in Brussels to Discuss Energy Security'),
+    ('Governor Daniel Reyes', 'Governor',
+     'Our emergency teams have been preparing for this storm since Monday. We are asking every resident in '
+     'the evacuation zone to take this seriously and leave while there is still time.',
+     'Statement to reporters', 1,
+     'Coastal Cities Brace for Record Storm Surge This Weekend'),
+]
+
 
 class Command(BaseCommand):
     help = 'Populates the database with demo content so the homepage can be reviewed locally.'
@@ -109,6 +123,20 @@ class Command(BaseCommand):
                 ),
             )
 
+        for name, title, quote_text, source, days_ago, article_title in QUOTES:
+            related = Article.objects.filter(title=article_title).first() if article_title else None
+            Quote.objects.update_or_create(
+                name=name,
+                quote_text=quote_text,
+                defaults=dict(
+                    title=title,
+                    source=source,
+                    quote_date=(now - timedelta(days=days_ago)).date(),
+                    related_article=related,
+                    is_active=True,
+                ),
+            )
+
         self.stdout.write(self.style.SUCCESS(
-            f'Seeded {len(categories)} categories and {len(ARTICLES)} articles.'
+            f'Seeded {len(categories)} categories, {len(ARTICLES)} articles and {len(QUOTES)} quotes.'
         ))

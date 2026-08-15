@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.utils import timezone
 
-from news.models import Article, Category
+from news.models import Article, Category, Quote
 
 HOMEPAGE_CATEGORY_ORDER = [
     ('U.S.', 'U.S. News', 'lead'),
@@ -28,6 +28,10 @@ def home(request):
     videos = list(published.exclude(youtube_id='')[:4])
     most_read = list(published.order_by('-view_count')[:5])
     trending = list(published.order_by('-view_count')[:3])
+
+    active_quotes = Quote.objects.filter(is_active=True).select_related('related_article')
+    featured_quote = active_quotes.first()
+    quote_archive_count = active_quotes.count() - 1 if featured_quote else 0
 
     category_sections = []
     for name, label, layout in HOMEPAGE_CATEGORY_ORDER:
@@ -56,5 +60,7 @@ def home(request):
         'most_read': most_read,
         'trending': trending,
         'category_sections': category_sections,
+        'featured_quote': featured_quote,
+        'quote_archive_count': quote_archive_count,
     }
     return render(request, 'home.html', context)
