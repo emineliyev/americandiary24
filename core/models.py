@@ -26,6 +26,21 @@ class SiteSettings(models.Model):
     contact_whatsapp = models.CharField(max_length=30, blank=True)
     contact_address = models.CharField(max_length=255, blank=True)
 
+    ga_measurement_id = models.CharField(
+        'Google Analytics Measurement ID', max_length=20, blank=True,
+        help_text='e.g. G-XXXXXXXXXX. Leave blank to disable Analytics entirely.',
+    )
+    adsense_publisher_id = models.CharField(
+        'Google AdSense Publisher ID', max_length=20, blank=True,
+        help_text='e.g. pub-1234567890123456. Enables the site-wide AdSense '
+                   'auto-ads script and generates ads.txt automatically.',
+    )
+    ads_txt_content = models.TextField(
+        'ads.txt override', blank=True,
+        help_text='Leave blank to auto-generate from the Publisher ID above. '
+                   'Only fill this in if Google gives you different/additional lines.',
+    )
+
     class Meta:
         verbose_name_plural = 'site settings'
 

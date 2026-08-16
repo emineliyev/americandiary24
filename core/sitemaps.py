@@ -23,10 +23,17 @@ class PageSitemap(Sitemap):
         return Page.objects.all()
 
     def location(self, page):
-        # Legacy pages keep their old .php URL names; core:about/contact/terms
-        # map to those. Privacy Policy is the one page with no legacy URL.
-        url_names = {'about': 'core:about', 'contact': 'core:contact', 'terms-of-use': 'core:terms'}
-        return reverse(url_names.get(page.slug, 'core:privacy'))
+        # Explicit map, not a slug->name transform: some of these keep their
+        # legacy .php URL, others (privacy, cookies) are brand new paths.
+        url_names = {
+            'about': 'core:about',
+            'contact': 'core:contact',
+            'terms-of-use': 'core:terms',
+            'advertise': 'core:advertise',
+            'privacy-policy': 'core:privacy',
+            'cookie-policy': 'core:cookies',
+        }
+        return reverse(url_names[page.slug])
 
     def lastmod(self, page):
         return page.updated_at

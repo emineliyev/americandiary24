@@ -42,7 +42,7 @@
         <a href="#">Print Edition</a>
         <a href="#">Newsletters</a>
         <a href="#">Gift a Subscription</a>
-        <a href="#">Advertise With Us</a>
+        <a href="{% url 'core:advertise' %}">Advertise With Us</a>
       </div>
     </div>
 
@@ -55,9 +55,9 @@
       <div class="footer__bottom-links">
         <a href="{% url 'core:privacy' %}">Privacy Policy</a>
         <a href="{% url 'core:terms' %}">Terms of Use</a>
-        <a href="#">Cookie Policy</a>
+        <a href="{% url 'core:cookies' %}">Cookie Policy</a>
         <a href="#">Accessibility</a>
-        <a href="#">Advertise</a>
+        <a href="{% url 'core:advertise' %}">Advertise</a>
       </div>
     </div>
   </div>

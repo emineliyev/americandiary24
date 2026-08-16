@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
@@ -82,6 +83,19 @@ def page_detail(request, slug):
 def robots_txt(request):
     context = {'sitemap_url': f'{settings.SITE_DOMAIN}/sitemap.xml'}
     return render(request, 'robots.txt', context, content_type='text/plain')
+
+
+def ads_txt(request):
+    site = SiteSettings.load()
+    if site.ads_txt_content.strip():
+        content = site.ads_txt_content
+    elif site.adsense_publisher_id.strip():
+        # Standard AdSense line; f08c47fec0942fa0 is Google's own fixed
+        # certification authority ID, not something we generate.
+        content = f'google.com, {site.adsense_publisher_id}, DIRECT, f08c47fec0942fa0\n'
+    else:
+        content = ''
+    return HttpResponse(content, content_type='text/plain')
 
 
 def custom_404(request, exception=None):

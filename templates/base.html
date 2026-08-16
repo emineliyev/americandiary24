@@ -21,6 +21,21 @@
 <link rel="stylesheet" href="{% static 'css/base.css' %}">
 <link rel="stylesheet" href="{% static 'css/components.css' %}">
 <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+
+{% if GA_MEASUREMENT_ID %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_MEASUREMENT_ID }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ GA_MEASUREMENT_ID }}');
+</script>
+{% endif %}
+
+{% if ADSENSE_PUBLISHER_ID %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-{{ ADSENSE_PUBLISHER_ID }}" crossorigin="anonymous"></script>
+{% endif %}
+
 {% block extra_head %}{% endblock %}
 </head>
 <body>

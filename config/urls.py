@@ -19,6 +19,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
     path('robots.txt', core_views.robots_txt, name='robots'),
+    path('ads.txt', core_views.ads_txt, name='ads_txt'),
     path('', include('core.urls')),
     path('', include('news.urls')),
 ]
