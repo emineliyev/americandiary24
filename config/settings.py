@@ -14,6 +14,16 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 SITE_DOMAIN = env('SITE_DOMAIN', default='https://www.americandiary24.com')
 SHOW_ADS = env.bool('SHOW_ADS', default=True)
 
+REDIS_URL = env('REDIS_URL', default='redis://127.0.0.1:6379/1')
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient'},
+        'KEY_PREFIX': 'amdiary',
+    }
+}
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

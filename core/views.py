@@ -2,6 +2,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 
 from news.models import Article, Category, Quote
 
@@ -19,6 +20,7 @@ HOMEPAGE_CATEGORY_ORDER = [
 ]
 
 
+@cache_page(60 * 3)  # homepage is our single hottest URL; 3 min balances freshness vs. load
 def home(request):
     published = (
         Article.objects.filter(status=Article.Status.PUBLISHED, published_at__lte=timezone.now())

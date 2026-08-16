@@ -1,9 +1,11 @@
 from urllib.parse import urlencode
 
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Count, F, Q
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 
 from .models import Article, Category, Tag
 
@@ -24,11 +26,18 @@ def _paginate(request, queryset):
 
 
 def _most_read():
-    return list(
-        Article.objects.filter(status=Article.Status.PUBLISHED, published_at__lte=timezone.now())
-        .select_related('category')
-        .order_by('-view_count')[:5]
-    )
+    # Rendered on every article/category/tag/search page — cache it rather
+    # than re-querying per request. Short TTL since view_count is what
+    # ranks it and changes on every article view.
+    most_read = cache.get('most_read')
+    if most_read is None:
+        most_read = list(
+            Article.objects.filter(status=Article.Status.PUBLISHED, published_at__lte=timezone.now())
+            .select_related('category')
+            .order_by('-view_count')[:5]
+        )
+        cache.set('most_read', most_read, 120)
+    return most_read
 
 
 def article_detail(request):
@@ -89,6 +98,7 @@ def _related_articles(article, published, article_tags, limit=6):
     return results
 
 
+@cache_page(60 * 5)
 def category_detail(request):
     category_id = request.GET.get('cat')
     category = get_object_or_404(Category, pk=category_id, is_active=True)
@@ -109,6 +119,7 @@ def category_detail(request):
     return render(request, 'category.html', context)
 
 
+@cache_page(60 * 5)
 def tag_detail(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
 
@@ -128,6 +139,7 @@ def tag_detail(request, slug):
     return render(request, 'tag.html', context)
 
 
+@cache_page(60 * 2)
 def search(request):
     query = (request.GET.get('soz') or '').strip()
 

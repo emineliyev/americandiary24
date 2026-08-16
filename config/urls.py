@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
+from django.views.decorators.cache import cache_page
 
 from core import views as core_views
 from core.sitemaps import PageSitemap, StaticSitemap
@@ -18,7 +19,7 @@ sitemaps = {
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+    path('sitemap.xml', cache_page(60 * 60)(sitemap), {'sitemaps': sitemaps}, name='sitemap'),
     path('robots.txt', core_views.robots_txt, name='robots'),
     path('ads.txt', core_views.ads_txt, name='ads_txt'),
     path('', include('core.urls')),
