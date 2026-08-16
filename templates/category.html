@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ category.name }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Latest {{ category.name }} news from {{ SITE_NAME }}.{% endblock %}
+{% block canonical %}{{ SITE_DOMAIN }}{{ category.get_absolute_url }}{% endblock %}
+
+{% block extra_head %}
+{% if page_obj.number > 1 %}<meta name="robots" content="noindex,follow">{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="article-page">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}">Home</a>
+      <span>/</span>
+      <span aria-current="page">{{ category.name }}</span>
+    </nav>
+
+    <div class="section-header" style="border-bottom: 3px solid var(--brand); margin-bottom: 28px;">
+      <h1 class="h1-hero" style="font-size: clamp(26px, 3.5vw, 38px);">{{ category.name }}</h1>
+    </div>
+
+    <div class="article-layout">
+      <div class="article-main">
+        {% if page_obj.object_list %}
+        <div class="category-grid">
+          {% for article in page_obj %}
+          <a href="{{ article.get_absolute_url }}" class="news-card">
+            <div class="news-card__media">
+              {% if article.image %}<img src="{{ article.image.url }}" alt="{{ article.title }}">
+              {% else %}<div class="media-placeholder"></div>{% endif %}
+            </div>
+            <span class="kicker">{{ article.category.name }}</span>
+            <h3 class="h3-card">{{ article.title }}</h3>
+            <p class="body-sm">{{ article.dek }}</p>
+            <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+          </a>
+          {% endfor %}
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+        <nav class="pagination" aria-label="Pagination">
+          {% if page_obj.has_previous %}
+          <a href="?cat={{ category.id }}&p={{ page_obj.previous_page_number|add:'-1' }}" class="chip">&larr; Prev</a>
+          {% endif %}
+
+          {% for num in page_range %}
+            {% if num == page_obj.paginator.ELLIPSIS %}
+              <span class="pagination__ellipsis">&hellip;</span>
+            {% elif num == page_obj.number %}
+              <span class="chip pagination__current">{{ num }}</span>
+            {% else %}
+              <a href="?cat={{ category.id }}&p={{ num|add:'-1' }}" class="chip">{{ num }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+          <a href="?cat={{ category.id }}&p={{ page_obj.next_page_number|add:'-1' }}" class="chip">Next &rarr;</a>
+          {% endif %}
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <p class="body-sm">No stories found in this category yet.</p>
+        {% endif %}
+      </div>
+
+      <aside class="article-sidebar">
+        {% include "includes/_sidebar_most_read.html" %}
+        <div class="sidebar-ad sidebar-ad--half">
+          {% include "includes/_ad.html" with width=300 height=600 %}
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

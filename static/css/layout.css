@@ -434,3 +434,8 @@ body.menu-open {
 @media (max-width: 1100px) {
   .article-layout { grid-template-columns: 1fr; }
 }
+
+/* ===== Pagination ===== */
+.pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 40px; }
+.pagination__current { background: var(--brand); color: #fff; border-color: var(--brand); }
+.pagination__ellipsis { padding: 0 4px; color: var(--text-muted); }
