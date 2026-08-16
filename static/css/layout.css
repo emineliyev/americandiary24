@@ -462,3 +462,9 @@ body.menu-open {
 .search-page-form { display: flex; gap: 10px; margin-bottom: 26px; max-width: 480px; }
 .search-page-form .input { flex: 1; }
 .search-page-count { margin-bottom: 20px; }
+
+/* ===== Static page (About / Contact / Privacy / Terms) ===== */
+.contact-details { margin-bottom: 26px; padding: 20px; background: var(--bg-alt); }
+.contact-details p { margin: 0 0 8px; font: 400 15px var(--font-sans); }
+.contact-details p:last-child { margin-bottom: 0; }
+.contact-details a { color: var(--brand); }

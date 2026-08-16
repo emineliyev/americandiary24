@@ -7,4 +7,12 @@ app_name = 'core'
 urlpatterns = [
     path('', views.home, name='home'),
     path('index.php', views.home, name='home_legacy'),
+
+    # Legacy URLs preserved so old links/indexed pages keep working.
+    path('about.php', views.page_detail, {'slug': 'about'}, name='about'),
+    path('contact.php', views.page_detail, {'slug': 'contact'}, name='contact'),
+    path('useus.php', views.page_detail, {'slug': 'terms-of-use'}, name='terms'),
+
+    # New pages — no legacy equivalent existed on the old site.
+    path('privacy-policy/', views.page_detail, {'slug': 'privacy-policy'}, name='privacy'),
 ]

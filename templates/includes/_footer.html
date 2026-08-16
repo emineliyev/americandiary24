@@ -29,10 +29,10 @@
 
       <div class="footer__col">
         <h4>Company</h4>
-        <a href="#">About Us</a>
+        <a href="{% url 'core:about' %}">About Us</a>
         <a href="#">Newsroom Standards</a>
         <a href="#">Careers</a>
-        <a href="#">Contact</a>
+        <a href="{% url 'core:contact' %}">Contact</a>
         <a href="#">Corrections</a>
       </div>
 
@@ -53,8 +53,8 @@
     <div class="footer__bottom">
       <span>&copy; {% now "Y" %} {{ SITE_NAME }}. All rights reserved.</span>
       <div class="footer__bottom-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Use</a>
+        <a href="{% url 'core:privacy' %}">Privacy Policy</a>
+        <a href="{% url 'core:terms' %}">Terms of Use</a>
         <a href="#">Cookie Policy</a>
         <a href="#">Accessibility</a>
         <a href="#">Advertise</a>

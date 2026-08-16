@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
 from news.models import Article, Category, Quote
+
+from .models import Page, SiteSettings
 
 # Real categories from the legacy site, ordered by article volume so the
 # homepage's featured sections always have enough content to fill out.
@@ -66,3 +68,11 @@ def home(request):
         'quote_archive_count': quote_archive_count,
     }
     return render(request, 'home.html', context)
+
+
+def page_detail(request, slug):
+    page = get_object_or_404(Page, slug=slug)
+    context = {'page': page}
+    if slug == 'contact':
+        context['site_settings'] = SiteSettings.load()
+    return render(request, 'page.html', context)
