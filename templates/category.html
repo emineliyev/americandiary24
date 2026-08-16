@@ -31,7 +31,7 @@
           <a href="{{ article.get_absolute_url }}" class="news-card">
             <div class="news-card__media">
               {% if article.image %}<img src="{{ article.image.url }}" alt="{{ article.title }}">
-              {% else %}<div class="media-placeholder"></div>{% endif %}
+              {% else %}<div class="media-placeholder media-placeholder--none"></div>{% endif %}
             </div>
             <span class="kicker">{{ article.category.name }}</span>
             <h3 class="h3-card">{{ article.title }}</h3>

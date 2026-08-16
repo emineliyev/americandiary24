@@ -14,7 +14,7 @@
         {% if lead.image %}
           <img src="{{ lead.image.url }}" alt="{{ lead.title }}">
         {% else %}
-          <div class="media-placeholder"></div>
+          <div class="media-placeholder media-placeholder--none"></div>
         {% endif %}
       </div>
       <span class="kicker">The Long Read</span>
@@ -35,7 +35,7 @@
           {% if article.image %}
             <img src="{{ article.image.url }}" alt="{{ article.title }}">
           {% else %}
-            <div class="media-placeholder"></div>
+            <div class="media-placeholder media-placeholder--none"></div>
           {% endif %}
         </div>
         <span class="kicker">{{ article.category.name }}</span>

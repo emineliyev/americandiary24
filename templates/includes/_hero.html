@@ -9,7 +9,7 @@
           {% if hero.image %}
             <img src="{{ hero.image.url }}" alt="{{ hero.title }}">
           {% else %}
-            <div class="media-placeholder"></div>
+            <div class="media-placeholder media-placeholder--none"></div>
           {% endif %}
         </div>
         <span class="kicker">{{ hero.category.name }}{% if hero.is_breaking %} · <span class="badge-live">Live Coverage</span>{% endif %}</span>
@@ -36,7 +36,7 @@
             {% if item.image %}
               <img src="{{ item.image.url }}" alt="{{ item.title }}">
             {% else %}
-              <div class="media-placeholder"></div>
+              <div class="media-placeholder media-placeholder--none"></div>
             {% endif %}
           </div>
         </a>

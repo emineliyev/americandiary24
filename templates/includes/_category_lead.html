@@ -10,7 +10,7 @@
         {% if section.lead.image %}
           <img src="{{ section.lead.image.url }}" alt="{{ section.lead.title }}">
         {% else %}
-          <div class="media-placeholder"></div>
+          <div class="media-placeholder media-placeholder--none"></div>
         {% endif %}
       </div>
       <span class="kicker">{{ section.lead.category.name }}</span>
@@ -30,7 +30,7 @@
           {% if article.image %}
             <img src="{{ article.image.url }}" alt="{{ article.title }}">
           {% else %}
-            <div class="media-placeholder"></div>
+            <div class="media-placeholder media-placeholder--none"></div>
           {% endif %}
         </div>
       </a>
