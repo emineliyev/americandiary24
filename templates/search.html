@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block title %}{{ category.name }} | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}Latest {{ category.name }} news from {{ SITE_NAME }}.{% endblock %}
-{% block canonical %}{{ SITE_DOMAIN }}{{ category.get_absolute_url }}{% endblock %}
+{% block title %}{% if query %}Search: {{ query }} | {% endif %}{{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Search {{ SITE_NAME }} for news, topics and people.{% endblock %}
+{% block canonical %}{{ SITE_DOMAIN }}/search.php{% endblock %}
 
 {% block extra_head %}
-{% if page_obj.number > 1 %}<meta name="robots" content="noindex,follow">{% endif %}
+<meta name="robots" content="noindex,follow">
 {% endblock %}
 
 {% block content %}
@@ -16,16 +16,29 @@
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="{% url 'core:home' %}">Home</a>
       <span>/</span>
-      <span aria-current="page">{{ category.name }}</span>
+      <span aria-current="page">Search</span>
     </nav>
 
     <div class="section-header" style="border-bottom: 3px solid var(--brand); margin-bottom: 28px;">
-      <h1 class="h1-hero" style="font-size: clamp(26px, 3.5vw, 38px);">{{ category.name }}</h1>
+      {% if query %}
+      <h1 class="h1-hero" style="font-size: clamp(26px, 3.5vw, 38px);">Search results for &ldquo;{{ query }}&rdquo;</h1>
+      {% else %}
+      <h1 class="h1-hero" style="font-size: clamp(26px, 3.5vw, 38px);">Search</h1>
+      {% endif %}
     </div>
 
     <div class="article-layout">
       <div class="article-main">
-        {% if page_obj.object_list %}
+        <form action="/search.php" method="get" role="search" class="search-page-form">
+          <input class="input" type="search" name="soz" value="{{ query }}" placeholder="Search news, topics, people" aria-label="Search news, topics, people">
+          <button type="submit" class="btn btn-primary btn-label">Search</button>
+        </form>
+
+        {% if not query %}
+        <p class="body-sm">Enter a search term above to find news, topics and people.</p>
+
+        {% elif page_obj.object_list %}
+        <p class="meta search-page-count">{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} found</p>
         <div class="category-grid">
           {% for article in page_obj %}
           <a href="{{ article.get_absolute_url }}" class="news-card">
@@ -44,7 +57,7 @@
         {% include "includes/_pagination.html" with pagination_base=pagination_base %}
 
         {% else %}
-        <p class="body-sm">No stories found in this category yet.</p>
+        <p class="body-sm">No stories matched &ldquo;{{ query }}&rdquo;. Try a different search term.</p>
         {% endif %}
       </div>
 

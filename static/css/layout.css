@@ -439,3 +439,8 @@ body.menu-open {
 .pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 40px; }
 .pagination__current { background: var(--brand); color: #fff; border-color: var(--brand); }
 .pagination__ellipsis { padding: 0 4px; color: var(--text-muted); }
+
+/* ===== Search page ===== */
+.search-page-form { display: flex; gap: 10px; margin-bottom: 26px; max-width: 480px; }
+.search-page-form .input { flex: 1; }
+.search-page-count { margin-bottom: 20px; }

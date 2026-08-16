@@ -1,11 +1,33 @@
+from urllib.parse import urlencode
+
 from django.core.paginator import Paginator
-from django.db.models import F
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
 from .models import Article, Category
 
-CATEGORY_PAGE_SIZE = 20
+PAGE_SIZE = 20
+
+
+def _paginate(request, queryset):
+    """Legacy URLs use a 0-indexed page param (?p=0 is page one)."""
+    try:
+        legacy_page = max(int(request.GET.get('p', 0)), 0)
+    except ValueError:
+        legacy_page = 0
+
+    paginator = Paginator(queryset, PAGE_SIZE)
+    page_obj = paginator.get_page(legacy_page + 1)
+    page_range = paginator.get_elided_page_range(page_obj.number, on_each_side=2, on_ends=1)
+    return page_obj, page_range
+
+
+def _most_read():
+    return list(
+        Article.objects.filter(status=Article.Status.PUBLISHED, published_at__lte=timezone.now())
+        .order_by('-view_count')[:5]
+    )
 
 
 def article_detail(request):
@@ -44,25 +66,35 @@ def category_detail(request):
         category=category, status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
     ).select_related('category', 'author')
 
-    # Legacy URLs use a 0-indexed page param (cat.php?p=0 is page one).
-    try:
-        legacy_page = max(int(request.GET.get('p', 0)), 0)
-    except ValueError:
-        legacy_page = 0
-
-    paginator = Paginator(published, CATEGORY_PAGE_SIZE)
-    page_obj = paginator.get_page(legacy_page + 1)
-    page_range = paginator.get_elided_page_range(page_obj.number, on_each_side=2, on_ends=1)
-
-    most_read = list(
-        Article.objects.filter(status=Article.Status.PUBLISHED, published_at__lte=timezone.now())
-        .order_by('-view_count')[:5]
-    )
+    page_obj, page_range = _paginate(request, published)
 
     context = {
         'category': category,
         'page_obj': page_obj,
         'page_range': page_range,
-        'most_read': most_read,
+        'pagination_base': f'?cat={category.id}',
+        'most_read': _most_read(),
     }
     return render(request, 'category.html', context)
+
+
+def search(request):
+    query = (request.GET.get('soz') or '').strip()
+
+    results = Article.objects.none()
+    if query:
+        results = Article.objects.filter(
+            Q(title__icontains=query) | Q(dek__icontains=query) | Q(body__icontains=query),
+            status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
+        ).select_related('category', 'author')
+
+    page_obj, page_range = _paginate(request, results)
+
+    context = {
+        'query': query,
+        'page_obj': page_obj,
+        'page_range': page_range,
+        'pagination_base': f'?{urlencode({"soz": query})}',
+        'most_read': _most_read(),
+    }
+    return render(request, 'search.html', context)

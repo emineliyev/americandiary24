@@ -1,0 +1,21 @@
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="pagination" aria-label="Pagination">
+  {% if page_obj.has_previous %}
+  <a href="{{ pagination_base }}&p={{ page_obj.previous_page_number|add:'-1' }}" class="chip">&larr; Prev</a>
+  {% endif %}
+
+  {% for num in page_range %}
+    {% if num == page_obj.paginator.ELLIPSIS %}
+      <span class="pagination__ellipsis">&hellip;</span>
+    {% elif num == page_obj.number %}
+      <span class="chip pagination__current">{{ num }}</span>
+    {% else %}
+      <a href="{{ pagination_base }}&p={{ num|add:'-1' }}" class="chip">{{ num }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+  <a href="{{ pagination_base }}&p={{ page_obj.next_page_number|add:'-1' }}" class="chip">Next &rarr;</a>
+  {% endif %}
+</nav>
+{% endif %}
