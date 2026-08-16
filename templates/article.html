@@ -91,9 +91,9 @@
         </div>
         {% endif %}
 
-        {% if article.tags.all %}
+        {% if article_tags %}
         <div class="article-tags">
-          {% for tag in article.tags.all %}
+          {% for tag in article_tags %}
           <a href="{{ tag.get_absolute_url }}" class="chip">{{ tag.name }}</a>
           {% endfor %}
         </div>

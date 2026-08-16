@@ -26,6 +26,7 @@ def _paginate(request, queryset):
 def _most_read():
     return list(
         Article.objects.filter(status=Article.Status.PUBLISHED, published_at__lte=timezone.now())
+        .select_related('category')
         .order_by('-view_count')[:5]
     )
 
@@ -45,21 +46,23 @@ def article_detail(request):
         status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
     ).select_related('category', 'author')
 
-    related_articles = _related_articles(article, published)
-    most_read = list(published.order_by('-view_count')[:5])
+    article_tags = list(article.tags.all())
+    related_articles = _related_articles(article, published, article_tags)
+    most_read = _most_read()
 
     context = {
         'article': article,
+        'article_tags': article_tags,
         'related_articles': related_articles,
         'most_read': most_read,
     }
     return render(request, 'article.html', context)
 
 
-def _related_articles(article, published, limit=6):
+def _related_articles(article, published, article_tags, limit=6):
     """Prefer stories sharing tags (ranked by how many), then top up with
     same-category stories if there aren't enough tag matches."""
-    article_tag_ids = list(article.tags.values_list('id', flat=True))
+    article_tag_ids = [t.id for t in article_tags]
     results = []
     seen_ids = {article.pk}
 

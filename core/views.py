@@ -25,23 +25,35 @@ def home(request):
         .select_related('category', 'author')
     )
 
-    hero = published.first()
-    top_stories = list(published[1:5])
-    latest = list(published[5:12])
+    # hero/top_stories/latest are all just windows over the same default
+    # (-published_at) ordering — one fetch instead of three separate queries.
+    top_12 = list(published[:12])
+    hero = top_12[0] if top_12 else None
+    top_stories = top_12[1:5]
+    latest = top_12[5:12]
+
     editors_picks = list(published.filter(is_editors_pick=True)[:3])
     exclusives = list(published.filter(is_exclusive=True)[:3])
     breaking = published.filter(is_breaking=True).first()
     videos = list(published.exclude(youtube_id='')[:4])
+
+    # trending is just the top 3 of the same view_count ordering as most_read.
     most_read = list(published.order_by('-view_count')[:5])
-    trending = list(published.order_by('-view_count')[:3])
+    trending = most_read[:3]
 
     active_quotes = list(Quote.objects.filter(is_active=True).select_related('related_article')[:4])
     featured_quote = active_quotes[0] if active_quotes else None
     previous_quotes = active_quotes[1:4]
 
+    # One query for every category this page needs, instead of one per
+    # section — HOMEPAGE_CATEGORY_ORDER previously did .filter(name=X).first()
+    # in a loop (6 queries for 6 sections).
+    wanted_names = [name for name, _, _ in HOMEPAGE_CATEGORY_ORDER]
+    categories_by_name = {c.name: c for c in Category.objects.filter(name__in=wanted_names)}
+
     category_sections = []
     for name, label, layout in HOMEPAGE_CATEGORY_ORDER:
-        category = Category.objects.filter(name=name).first()
+        category = categories_by_name.get(name)
         if not category:
             continue
         articles = list(published.filter(category=category)[:4])
