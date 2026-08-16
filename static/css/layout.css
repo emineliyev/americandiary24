@@ -391,7 +391,7 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   background: #fff; color: var(--brand); padding: 0 20px;
   font: 800 12px var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
 }
-.newsletter-band__fine { font-size: 12px; color: rgba(255,255,255,.6); margin-top: 10px; }
+.newsletter-band__fine { font-size: 12px; color: rgba(255,255,255,.6); margin-top: 18px; }
 @media (max-width: 860px) {
   .newsletter-band .container { grid-template-columns: 1fr; }
 }
