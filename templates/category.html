@@ -7,6 +7,16 @@
 
 {% block extra_head %}
 {% if page_obj.number > 1 %}<meta name="robots" content="noindex,follow">{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ SITE_DOMAIN }}/"},
+    {"@type": "ListItem", "position": 2, "name": "{{ category.name|escapejs }}", "item": "{{ SITE_DOMAIN }}{{ category.get_absolute_url }}"}
+  ]
+}
+</script>
 {% endblock %}
 
 {% block content %}

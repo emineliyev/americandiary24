@@ -22,6 +22,29 @@
 <link rel="stylesheet" href="{% static 'css/components.css' %}">
 <link rel="stylesheet" href="{% static 'css/layout.css' %}">
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ SITE_NAME|escapejs }}",
+  "url": "{{ SITE_DOMAIN }}/",
+  "logo": "{{ SITE_DOMAIN }}{% static 'img/logo.png' %}"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "{{ SITE_NAME|escapejs }}",
+  "url": "{{ SITE_DOMAIN }}/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ SITE_DOMAIN }}/search.php?soz={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
 {% if GA_MEASUREMENT_ID %}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_MEASUREMENT_ID }}"></script>
 <script>
