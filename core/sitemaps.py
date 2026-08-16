@@ -20,7 +20,7 @@ class PageSitemap(Sitemap):
     priority = 0.3
 
     def items(self):
-        return Page.objects.all()
+        return Page.objects.order_by('id')
 
     def location(self, page):
         # Explicit map, not a slug->name transform: some of these keep their

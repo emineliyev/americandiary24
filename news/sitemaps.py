@@ -51,7 +51,11 @@ class TagSitemap(Sitemap):
         # would be spammy. Only submit tags with real archive depth; the
         # single-article tag pages still exist and are crawlable, just not
         # proactively pushed.
-        return Tag.objects.annotate(article_count=Count('articles')).filter(article_count__gte=2)
+        return (
+            Tag.objects.annotate(article_count=Count('articles'))
+            .filter(article_count__gte=2)
+            .order_by('id')
+        )
 
     def location(self, tag):
         return tag.get_absolute_url()
