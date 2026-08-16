@@ -35,9 +35,9 @@ def home(request):
     most_read = list(published.order_by('-view_count')[:5])
     trending = list(published.order_by('-view_count')[:3])
 
-    active_quotes = Quote.objects.filter(is_active=True).select_related('related_article')
-    featured_quote = active_quotes.first()
-    quote_archive_count = active_quotes.count() - 1 if featured_quote else 0
+    active_quotes = list(Quote.objects.filter(is_active=True).select_related('related_article')[:4])
+    featured_quote = active_quotes[0] if active_quotes else None
+    previous_quotes = active_quotes[1:4]
 
     category_sections = []
     for name, label, layout in HOMEPAGE_CATEGORY_ORDER:
@@ -67,7 +67,7 @@ def home(request):
         'trending': trending,
         'category_sections': category_sections,
         'featured_quote': featured_quote,
-        'quote_archive_count': quote_archive_count,
+        'previous_quotes': previous_quotes,
     }
     return render(request, 'home.html', context)
 

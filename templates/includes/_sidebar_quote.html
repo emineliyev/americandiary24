@@ -30,8 +30,16 @@
     </div>
   </div>
 
-  {% if quote_archive_count > 0 %}
-  <a href="#" class="quote-widget__archive-link">View previous quotes →</a>
+  {% if previous_quotes %}
+  <div class="quote-prev-list">
+    {% for q in previous_quotes %}
+    {% if q.related_article %}<a href="{{ q.related_article.get_absolute_url }}" class="quote-prev">
+    {% else %}<div class="quote-prev">{% endif %}
+      <p class="quote-prev__text">&ldquo;{{ q.quote_text|truncatechars:90 }}&rdquo;</p>
+      <span class="quote-prev__name">{{ q.name }}</span>
+    {% if q.related_article %}</a>{% else %}</div>{% endif %}
+    {% endfor %}
+  </div>
   {% endif %}
 </section>
 {% endif %}

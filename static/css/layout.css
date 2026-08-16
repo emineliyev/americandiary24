@@ -331,15 +331,25 @@ body.menu-open {
 .quote-card__byline strong { display: block; font: 700 14px var(--font-sans); }
 .quote-card__byline span { font: italic 400 13px var(--font-serif); color: var(--text-muted); }
 .quote-card__source { font: 400 11px var(--font-sans); color: var(--text-muted); margin: 4px 0 0; }
-.quote-widget__archive-link {
+
+.quote-prev-list { margin-top: 16px; }
+.quote-prev {
   display: block;
-  margin-top: 12px;
-  font: 700 12px var(--font-sans);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--brand);
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
 }
-.quote-widget__archive-link:hover { color: var(--brand-hover); }
+.quote-prev__text {
+  font: italic 400 13px/1.4 var(--font-serif);
+  color: var(--text-secondary);
+  margin: 0 0 4px;
+}
+a.quote-prev:hover .quote-prev__text { color: var(--brand); }
+.quote-prev__name {
+  font: 700 11px var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
 
 .briefing { border: 1px solid var(--border-strong); padding: 22px; }
 .briefing h3 { margin: 6px 0 16px; }
