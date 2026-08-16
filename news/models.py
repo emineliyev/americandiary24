@@ -20,6 +20,20 @@ class Category(models.Model):
         return f'/cat.php?cat={self.pk}'
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return f'/tag/{self.slug}/'
+
+
 class Author(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
@@ -43,6 +57,7 @@ class Article(models.Model):
     image = models.ImageField(upload_to='articles/', blank=True, max_length=255)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='articles')
     author = models.ForeignKey(Author, on_delete=models.PROTECT, related_name='articles')
+    tags = models.ManyToManyField(Tag, blank=True, related_name='articles')
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
     published_at = models.DateTimeField(null=True, blank=True)

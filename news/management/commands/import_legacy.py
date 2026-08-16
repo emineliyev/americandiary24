@@ -11,7 +11,7 @@ from django.utils.html import strip_tags
 from django.utils.text import slugify
 
 from news.legacy_sql import iter_insert_rows
-from news.models import Article, Author, Category, Quote
+from news.models import Article, Author, Category, Quote, Tag
 
 
 def clean_plain_text(value):
@@ -19,6 +19,27 @@ def clean_plain_text(value):
     directly into the text — an old-CMS habit for manual emphasis. Strip it
     for fields that are meant to be plain text."""
     return html.unescape(strip_tags(value or '')).strip()
+
+
+def parse_legacy_tags(raw):
+    """The legacy `tags` field is free text, one tag per line — and some rows
+    repeat the same list again, comma-separated, later in the same string.
+    Split on both, strip, and de-dupe case-insensitively (keeping first-seen
+    casing) rather than trust either delimiter alone."""
+    if not raw or not raw.strip():
+        return []
+    seen = set()
+    tags = []
+    for part in re.split(r'[\r\n,]+', raw):
+        part = part.strip(' \t-')
+        if not part:
+            continue
+        key = part.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        tags.append(part)
+    return tags
 
 SQL_PATH = Path(settings.BASE_DIR).parent / 'ilkx7420_amdairy.sql'
 PHOTOS_DIR = Path(settings.BASE_DIR).parent / 'amdeli-file' / 'photos'
@@ -53,11 +74,12 @@ class Command(BaseCommand):
             self.stderr.write(self.style.ERROR(f'Photos folder not found at {PHOTOS_DIR}'))
             return
 
-        self.stdout.write('Wiping demo content (quotes, articles, categories, authors)...')
+        self.stdout.write('Wiping demo content (quotes, articles, categories, authors, tags)...')
         Quote.objects.all().delete()
         Article.objects.all().delete()
         Category.objects.all().delete()
         Author.objects.all().delete()
+        Tag.objects.all().delete()
 
         sql_text = SQL_PATH.read_text(encoding='utf-8')
 
@@ -88,12 +110,14 @@ class Command(BaseCommand):
         categories = {c.id: c for c in Category.objects.all()}
         media_dir = Path(settings.MEDIA_ROOT) / 'articles'
         media_dir.mkdir(parents=True, exist_ok=True)
+        tag_cache = {}  # lowercased name -> Tag, avoids a query per repeat tag
 
         created = 0
         skipped_no_category = 0
         skipped_no_title = 0
         images_copied = 0
         images_missing = 0
+        tag_links = 0
 
         for i, row in enumerate(iter_insert_rows(sql_text, 'news')):
             if limit and i >= limit:
@@ -139,6 +163,19 @@ class Command(BaseCommand):
             article.save()
             created += 1
 
+            for tag_name in parse_legacy_tags(data['tags']):
+                tag_name = tag_name[:255]
+                key = tag_name.lower()
+                tag = tag_cache.get(key)
+                if tag is None:
+                    tag, _ = Tag.objects.get_or_create(
+                        slug=slugify(tag_name)[:255] or slugify(key)[:255],
+                        defaults={'name': tag_name},
+                    )
+                    tag_cache[key] = tag
+                article.tags.add(tag)
+                tag_links += 1
+
             image_name = (data['image'] or '').strip()
             if image_name:
                 if self.copy_image(image_name, media_dir):
@@ -154,7 +191,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             f'Imported {created} articles ({skipped_no_title} skipped: no title, '
             f'{skipped_no_category} skipped: unknown category). '
-            f'Images copied: {images_copied}, missing on disk: {images_missing}.'
+            f'Images copied: {images_copied}, missing on disk: {images_missing}. '
+            f'Tags: {len(tag_cache)} unique, {tag_links} article links.'
         ))
 
     def import_quotes(self, sql_text):

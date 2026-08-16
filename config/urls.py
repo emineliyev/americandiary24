@@ -6,13 +6,14 @@ from django.urls import include, path
 
 from core import views as core_views
 from core.sitemaps import PageSitemap, StaticSitemap
-from news.sitemaps import ArticleSitemap, CategorySitemap
+from news.sitemaps import ArticleSitemap, CategorySitemap, TagSitemap
 
 sitemaps = {
     'static': StaticSitemap,
     'pages': PageSitemap,
     'categories': CategorySitemap,
     'articles': ArticleSitemap,
+    'tags': TagSitemap,
 }
 
 urlpatterns = [

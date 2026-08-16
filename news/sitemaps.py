@@ -1,7 +1,8 @@
 from django.contrib.sitemaps import Sitemap
+from django.db.models import Count
 from django.utils import timezone
 
-from .models import Article, Category
+from .models import Article, Category, Tag
 
 
 class ArticleSitemap(Sitemap):
@@ -38,3 +39,19 @@ class CategorySitemap(Sitemap):
         # Only the first page of a category is indexed (see the category
         # view, which marks p>0 noindex), so that's the only URL listed here.
         return category.get_absolute_url()
+
+
+class TagSitemap(Sitemap):
+    changefreq = 'weekly'
+    priority = 0.2
+
+    def items(self):
+        # Most legacy tags only ever tagged a single article (7103 of 8158) —
+        # listing every one of those thin single-story pages in the sitemap
+        # would be spammy. Only submit tags with real archive depth; the
+        # single-article tag pages still exist and are crawlable, just not
+        # proactively pushed.
+        return Tag.objects.annotate(article_count=Count('articles')).filter(article_count__gte=2)
+
+    def location(self, tag):
+        return tag.get_absolute_url()
