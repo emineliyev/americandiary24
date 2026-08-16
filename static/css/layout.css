@@ -150,8 +150,10 @@ body.menu-open {
 .sticky-nav__actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .sticky-nav__search-icon {
   width: 34px; height: 34px; border: 1px solid var(--border-strong);
-  display: inline-flex; align-items: center; justify-content: center; background: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; cursor: pointer; color: var(--text-secondary);
 }
+.sticky-nav__search-icon:hover { color: var(--brand); border-color: var(--brand); }
 .sticky-nav__search { position: relative; }
 .sticky-nav__search-form {
   display: none;
@@ -355,6 +357,16 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
 .briefing h3 { margin: 6px 0 16px; }
 .briefing form { display: flex; flex-direction: column; gap: 10px; }
 .briefing .btn-primary { width: 100%; }
+
+/* ===== Custom form validation message (replaces the native browser tooltip) ===== */
+.form-error {
+  display: none;
+  font: 600 12px var(--font-sans);
+  color: var(--error);
+}
+.form-error.is-visible { display: block; }
+.newsletter-form input.has-error { outline: 2px solid var(--error); outline-offset: -1px; }
+.form-error--band { color: #ff9c9c; margin: 8px 0 0; }
 
 .follow__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
 .follow__cell { background: #fff; padding: 16px; display: flex; align-items: center; gap: 10px; }

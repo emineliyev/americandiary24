@@ -123,4 +123,38 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeAllMenus();
   });
+
+  // Newsletter forms — replace the native "fill out this field" browser
+  // tooltip with an inline message that matches the site's own styling.
+  document.querySelectorAll('form.newsletter-form').forEach(function (form) {
+    var input = form.querySelector('input[type="email"]');
+    var error = form.querySelector('.form-error') ||
+      (form.nextElementSibling && form.nextElementSibling.classList.contains('form-error') ? form.nextElementSibling : null);
+    if (!input || !error) return;
+
+    function showError(message) {
+      input.classList.add('has-error');
+      error.textContent = message;
+      error.classList.add('is-visible');
+    }
+    function clearError() {
+      input.classList.remove('has-error');
+      error.classList.remove('is-visible');
+    }
+
+    form.addEventListener('submit', function (e) {
+      if (input.validity.valueMissing) {
+        e.preventDefault();
+        showError('Please enter your email address.');
+        input.focus();
+      } else if (!input.validity.valid) {
+        e.preventDefault();
+        showError('Please enter a valid email address.');
+        input.focus();
+      } else {
+        clearError();
+      }
+    });
+    input.addEventListener('input', clearError);
+  });
 })();
