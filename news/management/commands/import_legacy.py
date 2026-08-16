@@ -62,7 +62,7 @@ class Command(BaseCommand):
         sql_text = SQL_PATH.read_text(encoding='utf-8')
 
         self.import_categories(sql_text)
-        default_author = Author.objects.create(name='Redaksiya', slug='redaksiya')
+        default_author = Author.objects.create(name='Editorial', slug='editorial')
         self.import_articles(sql_text, default_author, options.get('limit'))
         self.import_quotes(sql_text)
         self.reset_sequences()

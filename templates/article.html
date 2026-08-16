@@ -22,7 +22,7 @@
   "headline": {{ article.title|escapejs }},
   "datePublished": "{{ article.published_at|date:'c' }}",
   "dateModified": "{{ article.updated_at|date:'c' }}",
-  "author": { "@type": "Person", "name": {{ article.author.name|escapejs }} },
+  "author": { "@type": "Person", "name": {{ article.display_author_name|escapejs }} },
   "publisher": {
     "@type": "Organization",
     "name": {{ SITE_NAME|escapejs }},
@@ -52,7 +52,7 @@
         {% if article.dek %}<p class="dek-hero article-dek">{{ article.dek }}</p>{% endif %}
 
         <div class="article-byline">
-          <strong>{{ article.author.name }}</strong>
+          <strong>{{ article.display_author_name }}</strong>
           <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'F j, Y, g:i A' }}</time>
           <span>{{ article.body|reading_time }}</span>
         </div>

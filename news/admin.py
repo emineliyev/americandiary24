@@ -17,8 +17,8 @@ class AuthorAdmin(admin.ModelAdmin):
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'author', 'status', 'published_at', 'view_count')
-    list_filter = ('status', 'category', 'is_breaking', 'is_exclusive', 'is_editors_pick')
+    list_display = ('title', 'category', 'author', 'show_author_name', 'status', 'published_at', 'view_count')
+    list_filter = ('status', 'category', 'is_breaking', 'is_exclusive', 'is_editors_pick', 'show_author_name')
     search_fields = ('title', 'dek', 'body')
     prepopulated_fields = {'slug': ('title',)}
 

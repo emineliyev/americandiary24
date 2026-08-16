@@ -56,6 +56,10 @@ class Article(models.Model):
         default=True,
         help_text='Uncheck for syndicated/wire content to exclude it from sitemap.xml and add noindex.',
     )
+    show_author_name = models.BooleanField(
+        default=True,
+        help_text='Uncheck to display "Editorial" instead of the author\'s name on this article.',
+    )
 
     youtube_id = models.CharField(max_length=11, blank=True)
     view_count = models.PositiveIntegerField(default=0)
@@ -70,6 +74,12 @@ class Article(models.Model):
         # URL scheme intentionally mirrors the legacy site (news.php?id=<id>)
         # so every previously indexed/shared link keeps working unchanged.
         return f'/news.php?id={self.pk}'
+
+    @property
+    def display_author_name(self):
+        if self.show_author_name and self.author.name.strip():
+            return self.author.name
+        return 'Editorial'
 
 
 class Quote(models.Model):
