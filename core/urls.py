@@ -15,5 +15,4 @@ urlpatterns = [
 
     # New pages — no legacy equivalent existed on the old site.
     path('privacy-policy/', views.page_detail, {'slug': 'privacy-policy'}, name='privacy'),
-
 ]

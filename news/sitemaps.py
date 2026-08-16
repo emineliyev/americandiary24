@@ -1,0 +1,40 @@
+from django.contrib.sitemaps import Sitemap
+from django.utils import timezone
+
+from .models import Article, Category
+
+
+class ArticleSitemap(Sitemap):
+    changefreq = 'never'
+    priority = 0.6
+
+    def items(self):
+        # is_indexed is the admin-controlled "don't index this one" flag —
+        # syndicated/wire content editors flip off stays out of the sitemap.
+        return (
+            Article.objects.filter(
+                status=Article.Status.PUBLISHED,
+                published_at__lte=timezone.now(),
+                is_indexed=True,
+            )
+            .order_by('-published_at')
+        )
+
+    def location(self, article):
+        return article.get_absolute_url()
+
+    def lastmod(self, article):
+        return article.updated_at
+
+
+class CategorySitemap(Sitemap):
+    changefreq = 'daily'
+    priority = 0.5
+
+    def items(self):
+        return Category.objects.filter(is_active=True)
+
+    def location(self, category):
+        # Only the first page of a category is indexed (see the category
+        # view, which marks p>0 noindex), so that's the only URL listed here.
+        return category.get_absolute_url()

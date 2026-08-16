@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
@@ -76,6 +77,11 @@ def page_detail(request, slug):
     if slug == 'contact':
         context['site_settings'] = SiteSettings.load()
     return render(request, 'page.html', context)
+
+
+def robots_txt(request):
+    context = {'sitemap_url': f'{settings.SITE_DOMAIN}/sitemap.xml'}
+    return render(request, 'robots.txt', context, content_type='text/plain')
 
 
 def custom_404(request, exception=None):
