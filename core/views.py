@@ -76,3 +76,15 @@ def page_detail(request, slug):
     if slug == 'contact':
         context['site_settings'] = SiteSettings.load()
     return render(request, 'page.html', context)
+
+
+def custom_404(request, exception=None):
+    latest = []
+    try:
+        latest = list(
+            Article.objects.filter(status=Article.Status.PUBLISHED, published_at__lte=timezone.now())
+            .select_related('category')[:5]
+        )
+    except Exception:
+        pass
+    return render(request, '404.html', {'latest': latest}, status=404)

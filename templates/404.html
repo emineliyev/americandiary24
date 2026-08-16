@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Page Not Found | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}The page you're looking for couldn't be found.{% endblock %}
+
+{% block extra_head %}
+<meta name="robots" content="noindex,follow">
+{% endblock %}
+
+{% block content %}
+<div class="article-page">
+  <div class="container" style="max-width: 640px; text-align: center; padding-top: 20px; padding-bottom: 40px;">
+
+    <span class="kicker">Error 404</span>
+    <h1 class="h1-hero" style="margin: 10px 0 16px;">We can't find that page</h1>
+    <p class="dek-hero" style="margin: 0 auto 28px; max-width: 46ch;">
+      The story or page you're looking for may have been moved, renamed, or no longer exists.
+    </p>
+
+    <form action="/search.php" method="get" role="search" class="search-page-form" style="margin: 0 auto 36px;">
+      <input class="input" type="search" name="soz" placeholder="Search news, topics, people" aria-label="Search news, topics, people">
+      <button type="submit" class="btn btn-primary btn-label">Search</button>
+    </form>
+
+    <a href="{% url 'core:home' %}" class="btn btn-secondary btn-label">Back to Homepage</a>
+
+    {% if latest %}
+    <div style="text-align: left; margin-top: 56px;">
+      <div class="section-header">
+        <h2 class="section-header-label">Latest News</h2>
+      </div>
+      <div class="row-list">
+        {% for article in latest %}
+        <a href="{{ article.get_absolute_url }}" class="latest-row news-card" style="grid-template-columns: 1fr auto;">
+          <div>
+            <span class="kicker">{{ article.category.name }}</span>
+            <h3 class="h3-latest">{{ article.title }}</h3>
+          </div>
+          <time class="meta latest-row__time" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
