@@ -49,13 +49,13 @@
 }
 .badge-exclusive {
   display: inline-block;
-  border: 1px solid rgba(255,255,255,.5);
-  color: #fff;
-  background: transparent;
-  font: 800 10px/1 var(--font-sans);
+  border: 1px solid #fff;
+  color: var(--brand);
+  background: #fff;
+  font: 800 11px/1 var(--font-sans);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  padding: 5px 9px;
+  padding: 6px 10px;
 }
 .badge-live {
   color: var(--breaking);

@@ -12,9 +12,9 @@
 <div class="content-split">
   <div class="container">
     <div class="main-col">
+      {% include "includes/_exclusive.html" %}
       {% include "includes/_latest_news.html" %}
       {% include "includes/_editors_picks.html" %}
-      {% include "includes/_exclusive.html" %}
 
       {% for section in category_sections %}
         {% if section.layout == 'lead' %}
