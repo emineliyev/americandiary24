@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load humanize news_extras static %}
 
-{% block title %}{{ article.title }} | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}{{ article.dek|default:article.title|truncatechars:160 }}{% endblock %}
+{% block title %}{{ article.meta_title|default:article.title }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ article.meta_description|default:article.dek|default:article.title|truncatechars:160 }}{% endblock %}
 {% block canonical %}{{ SITE_DOMAIN }}{{ article.get_absolute_url }}{% endblock %}
 
 {% block extra_head %}
