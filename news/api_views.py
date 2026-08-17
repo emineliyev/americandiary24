@@ -2,6 +2,7 @@ import io
 
 from django.core.cache import cache
 from django.core.files.base import ContentFile
+from django.utils import timezone
 from PIL import Image
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import api_view, parser_classes, permission_classes
@@ -111,3 +112,28 @@ def article_image_upload(request, pk):
 
     article.image.save(filename, ContentFile(buffer.getvalue()), save=True)
     return Response({'image': article.image.url})
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def dashboard_stats(request):
+    """Per TZ bənd 35. Scoped the same way the Article list is: editors see
+    the whole site, a Müəllif sees only their own numbers."""
+    user = request.user
+    qs = Article.objects.select_related('category', 'author')
+    if not (user.is_superuser or user.groups.filter(name__in=IsOwnArticleOrEditorRole.EDITOR_GROUPS).exists()):
+        author = getattr(user, 'author_profile', None)
+        qs = qs.filter(author=author) if author else qs.none()
+
+    today = timezone.now().date()
+    data = {
+        'total': qs.count(),
+        'published_today': qs.filter(status=Article.Status.PUBLISHED, published_at__date=today).count(),
+        'drafts': qs.filter(status=Article.Status.DRAFT).count(),
+        'scheduled': qs.filter(status=Article.Status.SCHEDULED).count(),
+        'most_read': ArticleListSerializer(
+            qs.filter(status=Article.Status.PUBLISHED).order_by('-view_count')[:5], many=True,
+        ).data,
+        'latest': ArticleListSerializer(qs.order_by('-updated_at')[:5], many=True).data,
+    }
+    return Response(data)
