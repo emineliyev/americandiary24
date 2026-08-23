@@ -7,7 +7,7 @@ from django.views.decorators.cache import cache_page
 
 from core import views as core_views
 from core.sitemaps import PageSitemap, StaticSitemap
-from news.sitemaps import ArticleSitemap, CategorySitemap, TagSitemap
+from news.sitemaps import ArticleSitemap, AuthorSitemap, CategorySitemap, TagSitemap
 
 sitemaps = {
     'static': StaticSitemap,
@@ -15,6 +15,7 @@ sitemaps = {
     'categories': CategorySitemap,
     'articles': ArticleSitemap,
     'tags': TagSitemap,
+    'team': AuthorSitemap,
 }
 
 urlpatterns = [

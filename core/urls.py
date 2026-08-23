@@ -9,7 +9,7 @@ urlpatterns = [
     path('index.php', views.home, name='home_legacy'),
 
     # Legacy URLs preserved so old links/indexed pages keep working.
-    path('about.php', views.page_detail, {'slug': 'about'}, name='about'),
+    path('about.php', views.about, name='about'),
     path('contact.php', views.page_detail, {'slug': 'contact'}, name='contact'),
     path('useus.php', views.page_detail, {'slug': 'terms-of-use'}, name='terms'),
     path('reklam.php', views.page_detail, {'slug': 'advertise'}, name='advertise'),

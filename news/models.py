@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -46,8 +47,44 @@ class Author(models.Model):
                    'the "Müəllif" role, which can only edit its own articles.',
     )
 
+    # Public profile fields — filled in from the admin panel's Users screen,
+    # not a separate "Team" section (see news/api_views.py IsAdministratorOnly).
+    title = models.CharField('position', max_length=150, blank=True)
+    bio = models.TextField(blank=True)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=30, blank=True)
+    facebook_url = models.URLField('Facebook', blank=True)
+    twitter_url = models.URLField('X (Twitter)', blank=True)
+    instagram_url = models.URLField('Instagram', blank=True)
+    linkedin_url = models.URLField('LinkedIn', blank=True)
+    youtube_url = models.URLField('YouTube', blank=True)
+    telegram_url = models.URLField('Telegram', blank=True)
+    other_social_url = models.URLField('Other', blank=True)
+
+    show_on_about = models.BooleanField(
+        default=False,
+        help_text='Show this person as a card on the public About page, with their own profile page.',
+    )
+    order = models.PositiveIntegerField(default=0, help_text='Display order on the About page.')
+
+    class Meta:
+        ordering = ['order', 'name']
+
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return f'/team/{self.slug}/'
+
+
+class ArticleManager(models.Manager):
+    """Excludes soft-deleted (trashed) articles by default so every existing
+    call site — public views, sitemaps, dashboard_stats — automatically
+    stops seeing them without needing to add `.exclude(...)` everywhere.
+    The admin panel's trash tab uses `Article.all_objects` explicitly."""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(deleted_at__isnull=True)
 
 
 class Article(models.Model):
@@ -64,8 +101,17 @@ class Article(models.Model):
     meta_title = models.CharField(max_length=150, blank=True, help_text='Falls back to the title if left blank.')
     meta_description = models.CharField(max_length=300, blank=True, help_text='Falls back to the deck if left blank.')
     image = models.ImageField(upload_to='articles/', blank=True, max_length=255)
+    image_credit = models.CharField(
+        max_length=255, blank=True,
+        help_text='Optional — e.g. "Photo: Reuters" or "AI-generated image". Shown under the main image.',
+    )
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='articles')
     author = models.ForeignKey(Author, on_delete=models.PROTECT, related_name='articles')
+    # Additional bylines for jointly-reported pieces. `author` stays the
+    # single owner permissions are checked against (a Müəllif can only edit
+    # articles where they're the primary author) — co_authors is purely
+    # about who gets credited in the byline.
+    co_authors = models.ManyToManyField(Author, blank=True, related_name='co_authored_articles')
     tags = models.ManyToManyField(Tag, blank=True, related_name='articles')
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
@@ -75,6 +121,10 @@ class Article(models.Model):
     is_breaking = models.BooleanField(default=False)
     is_exclusive = models.BooleanField(default=False)
     is_editors_pick = models.BooleanField(default=False)
+    is_reference = models.BooleanField(
+        'reference article', default=False,
+        help_text='Featured in the "Referenced by" widget beside the homepage header (newest 6, shown with a circular thumbnail).',
+    )
     is_indexed = models.BooleanField(
         'search-indexable',
         default=True,
@@ -82,17 +132,37 @@ class Article(models.Model):
     )
     show_author_name = models.BooleanField(
         default=True,
-        help_text='Uncheck to display "Editorial" instead of the author\'s name on this article.',
+        help_text='Uncheck to display "News Desk" instead of the author\'s name on this article.',
     )
 
     youtube_id = models.CharField(max_length=11, blank=True)
     view_count = models.PositiveIntegerField(default=0)
+
+    # Soft delete — moving to the admin panel's Silinənlər (trash) tab sets
+    # this instead of actually deleting the row, so it can be restored.
+    # Only ArticleViewSet.permanent_delete does a real .delete().
+    deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)
+
+    objects = ArticleManager()
+    all_objects = models.Manager()
 
     class Meta:
         ordering = ['-published_at']
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        # Every public-facing query filters on `published_at__lte=now()`
+        # (see news/views.py) — setting status to Published in the admin
+        # panel without also picking a Publish Date/Time left published_at
+        # null, so the save would succeed but the article would silently
+        # never actually appear anywhere on the site. Defaulting it here
+        # guarantees the two can't drift apart, regardless of which entry
+        # point (admin panel, Django admin, a script) saves the row.
+        if self.status == self.Status.PUBLISHED and self.published_at is None:
+            self.published_at = timezone.now()
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         # URL scheme intentionally mirrors the legacy site (news.php?id=<id>)
@@ -101,9 +171,29 @@ class Article(models.Model):
 
     @property
     def display_author_name(self):
-        if self.show_author_name and self.author.name.strip():
-            return self.author.name
-        return 'Editorial'
+        """Plain-text byline (e.g. for JSON-LD) — every credited name
+        joined, or the "News Desk" fallback."""
+        if not self.show_author_name:
+            return 'News Desk'
+        names = [p.name for p in self._byline_people if p.name.strip()]
+        return ', '.join(names) or 'News Desk'
+
+    @property
+    def _byline_people(self):
+        return [self.author, *self.co_authors.all()]
+
+    @property
+    def byline_people(self):
+        """(name, url) pairs for the byline template, in credit order —
+        primary author first, then co-authors. `url` is None when that
+        person doesn't have a public profile (template falls back to the
+        About page)."""
+        if not self.show_author_name:
+            return []
+        return [
+            (p.name, p.get_absolute_url() if p.show_on_about else None)
+            for p in self._byline_people if p.name.strip()
+        ]
 
 
 class Quote(models.Model):

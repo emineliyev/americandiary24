@@ -2,7 +2,7 @@ from django.contrib.sitemaps import Sitemap
 from django.db.models import Count
 from django.utils import timezone
 
-from .models import Article, Category, Tag
+from .models import Article, Author, Category, Tag
 
 
 class ArticleSitemap(Sitemap):
@@ -59,3 +59,14 @@ class TagSitemap(Sitemap):
 
     def location(self, tag):
         return tag.get_absolute_url()
+
+
+class AuthorSitemap(Sitemap):
+    changefreq = 'weekly'
+    priority = 0.3
+
+    def items(self):
+        return Author.objects.filter(show_on_about=True).order_by('id')
+
+    def location(self, author):
+        return author.get_absolute_url()

@@ -4,7 +4,7 @@ from django.dispatch import receiver
 
 from news.models import Category
 
-from .models import SiteSettings
+from .models import Page, SiteSettings
 
 
 @receiver([post_save, post_delete], sender=Category)
@@ -15,3 +15,8 @@ def clear_category_cache(**kwargs):
 @receiver([post_save, post_delete], sender=SiteSettings)
 def clear_site_settings_cache(**kwargs):
     cache.delete('site_settings_singleton')
+
+
+@receiver([post_save, post_delete], sender=Page)
+def clear_active_page_slugs_cache(**kwargs):
+    cache.delete('active_page_slugs')

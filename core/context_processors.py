@@ -3,7 +3,7 @@ from django.core.cache import cache
 
 from news.models import Category
 
-from .models import SiteSettings
+from .models import Page, SiteSettings
 
 # Long TTL as a safety net only — the real freshness guarantee comes from
 # the post_save/post_delete signals in core/signals.py clearing these keys
@@ -27,16 +27,34 @@ def _get_site_settings():
     return site
 
 
+def _get_active_page_slugs():
+    slugs = cache.get('active_page_slugs')
+    if slugs is None:
+        slugs = set(Page.objects.filter(is_active=True).values_list('slug', flat=True))
+        cache.set('active_page_slugs', slugs, CACHE_TTL)
+    return slugs
+
+
 def site_settings(request):
     active_categories = _get_active_categories()
     site = _get_site_settings()
+    site_name = 'The American Diary 24'
     return {
-        'SITE_NAME': 'The American Diary 24',
+        'SITE_NAME': site_name,
         'SITE_TAGLINE': 'AMERICAN NEWS & ANALYSIS',
         'SITE_DOMAIN': settings.SITE_DOMAIN,
         'SHOW_ADS': settings.SHOW_ADS,
         'nav_categories': active_categories[:9],
         'more_categories': active_categories[9:17],
+        'active_page_slugs': _get_active_page_slugs(),
         'GA_MEASUREMENT_ID': site.ga_measurement_id,
         'ADSENSE_PUBLISHER_ID': site.adsense_publisher_id,
+        # Sitewide fallback <meta description>/social-share text for pages
+        # that don't set their own (see base.html) — editable from the
+        # admin panel's SEO settings, falls back to a generic sentence.
+        'DEFAULT_META_DESCRIPTION': site.default_meta_description or f'Breaking news, politics, business and world coverage from {site_name}.',
+        # Made available site-wide (not just page_detail's contact.php
+        # context) so widgets like _sidebar_follow.html can read the
+        # social URLs on any page, e.g. the homepage rail.
+        'site_settings': site,
     }

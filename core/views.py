@@ -1,30 +1,26 @@
 from django.conf import settings
+from django.db.models import Q, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 
-from news.models import Article, Category, Quote
+from news.models import Article, Author, Category, Quote
 
 from .models import Page, SiteSettings
 
-# Real categories from the legacy site, ordered by article volume so the
-# homepage's featured sections always have enough content to fill out.
-HOMEPAGE_CATEGORY_ORDER = [
-    ('Politics', 'Politics', 'lead'),
-    ('Breaking', 'Breaking', 'grid'),
-    ('News', 'News', 'lead'),
-    ('World', 'World', 'grid'),
-    ('Business', 'Business', 'grid'),
-    ('Incident', 'Incident', 'lead'),
-]
+# Capped rather than showing every active category — as the site adds more
+# categories over time, an uncapped list would make the homepage (and its
+# per-category queries) grow unbounded. 6 was chosen to match the previous
+# hand-picked list's size.
+HOMEPAGE_CATEGORY_COUNT = 6
 
 
 @cache_page(60 * 3)  # homepage is our single hottest URL; 3 min balances freshness vs. load
 def home(request):
     published = (
         Article.objects.filter(status=Article.Status.PUBLISHED, published_at__lte=timezone.now())
-        .select_related('category', 'author')
+        .select_related('category', 'author').prefetch_related('co_authors')
     )
 
     # hero/top_stories/latest are all just windows over the same default
@@ -38,6 +34,7 @@ def home(request):
     exclusives = list(published.filter(is_exclusive=True)[:3])
     breaking = published.filter(is_breaking=True).first()
     videos = list(published.exclude(youtube_id='')[:4])
+    reference_articles = list(published.filter(is_reference=True)[:6])
 
     # trending is just the top 3 of the same view_count ordering as most_read.
     most_read = list(published.order_by('-view_count')[:5])
@@ -47,27 +44,37 @@ def home(request):
     featured_quote = active_quotes[0] if active_quotes else None
     previous_quotes = active_quotes[1:4]
 
-    # One query for every category this page needs, instead of one per
-    # section — HOMEPAGE_CATEGORY_ORDER previously did .filter(name=X).first()
-    # in a loop (6 queries for 6 sections).
-    wanted_names = [name for name, _, _ in HOMEPAGE_CATEGORY_ORDER]
-    categories_by_name = {c.name: c for c in Category.objects.filter(name__in=wanted_names)}
+    # Featured categories are whichever HOMEPAGE_CATEGORY_COUNT are
+    # currently the most-read (summed view_count across their own published
+    # articles) — not a hand-picked list, so this tracks real readership
+    # and needs no code change as categories are added/renamed.
+    top_categories = list(
+        Category.objects.filter(is_active=True)
+        .annotate(total_views=Sum(
+            'articles__view_count',
+            filter=Q(articles__status=Article.Status.PUBLISHED, articles__published_at__lte=timezone.now()),
+        ))
+        .filter(total_views__gt=0)
+        .order_by('-total_views')[:HOMEPAGE_CATEGORY_COUNT]
+    )
 
     category_sections = []
-    for name, label, layout in HOMEPAGE_CATEGORY_ORDER:
-        category = categories_by_name.get(name)
-        if not category:
-            continue
+    for category in top_categories:
         articles = list(published.filter(category=category)[:4])
         if not articles:
             continue
         category_sections.append({
             'category': category,
-            'label': label,
-            'layout': layout,
+            'label': category.name,
             'lead': articles[0],
             'rest': articles[1:],
         })
+
+    # Paired up two-at-a-time for the homepage's side-by-side layout —
+    # sequential adjacent pairs (Politics+Breaking, News+World, ...), not
+    # grouped by lead/grid style. An odd section out just renders alone in
+    # the final row.
+    category_section_rows = [category_sections[i:i + 2] for i in range(0, len(category_sections), 2)]
 
     context = {
         'hero': hero,
@@ -77,9 +84,10 @@ def home(request):
         'exclusives': exclusives,
         'breaking': breaking,
         'videos': videos,
+        'reference_articles': reference_articles,
         'most_read': most_read,
         'trending': trending,
-        'category_sections': category_sections,
+        'category_section_rows': category_section_rows,
         'featured_quote': featured_quote,
         'previous_quotes': previous_quotes,
     }
@@ -87,11 +95,22 @@ def home(request):
 
 
 def page_detail(request, slug):
-    page = get_object_or_404(Page, slug=slug)
+    page = get_object_or_404(Page, slug=slug, is_active=True)
     context = {'page': page}
     if slug == 'contact':
         context['site_settings'] = SiteSettings.load()
     return render(request, 'page.html', context)
+
+
+def about(request):
+    # Reuses the existing editable Page (slug='about') for the free-text
+    # intro so nothing the admin already wrote is lost, plus the team grid.
+    # Deactivating this Page only hides the intro text, not the whole route
+    # — the team grid is core to /about.php regardless.
+    page = Page.objects.filter(slug='about', is_active=True).first()
+    team = Author.objects.filter(show_on_about=True).order_by('order', 'name')
+    context = {'page': page, 'team': team}
+    return render(request, 'about.html', context)
 
 
 def robots_txt(request):
