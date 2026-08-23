@@ -1,0 +1,1 @@
+<strong>{% if article.byline_people %}{% for name, url in article.byline_people %}<a href="{% if url %}{{ url }}{% else %}{% url 'core:about' %}{% endif %}">{{ name }}</a>{% if not forloop.last %}{% if forloop.revcounter0 == 1 %} and {% else %}, {% endif %}{% endif %}{% endfor %}{% else %}<a href="{% url 'core:about' %}">News Desk</a>{% endif %}</strong>

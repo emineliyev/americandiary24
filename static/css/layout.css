@@ -147,6 +147,7 @@ body.menu-open {
 .sticky-nav__links { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
 .sticky-nav__links a { padding: 8px 10px; font-size: 12px; color: var(--text-secondary); }
 .sticky-nav__links a:hover { color: var(--brand); }
+.sticky-nav__links a.is-active { color: var(--brand); font-weight: 700; }
 .sticky-nav__actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .sticky-nav__search-icon {
   width: 34px; height: 34px; border: 1px solid var(--border-strong);
@@ -187,50 +188,119 @@ body.menu-open {
 
 /* ===== 06 Hero ===== */
 .hero { border-bottom: 3px solid var(--brand); padding-top: 32px; padding-bottom: 36px; margin-bottom: 36px; }
-.hero .container { display: grid; grid-template-columns: 1fr 380px; gap: clamp(28px, 3.5vw, 48px); }
-.hero__media { aspect-ratio: 16/9; margin-bottom: 18px; }
+/* 340px (not 280px) — this column now also carries the former sidebar-col
+   widgets (quote, 300px-wide ad, trending, newsletter, follow), which need
+   the same width they had in .content-split. */
+.hero__grid { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: clamp(24px, 3vw, 40px); align-items: start; }
+.hero__main > * + * { margin-top: 44px; }
+.hero__rail > * + * { margin-top: 44px; }
+.hero__top { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.4fr); gap: clamp(28px, 3.5vw, 48px); align-items: center; margin-bottom: 40px; }
+.hero__top-text { display: flex; flex-direction: column; }
+/* Scoped to this hero only — .h1-hero itself is shared with article/
+   category/tag/search page headers, which should keep their own size. */
+.hero__top-text .h1-hero { font-size: 24px; }
+/* align-items: center (not stretch) keeps this sized purely by its own
+   aspect-ratio — it never stretches to match the text column's height, so
+   a long headline can't distort the photo into a taller/near-square crop. */
+/* height:0 + padding-top (not aspect-ratio) — see .news-card__media's
+   comment in components.css for why: aspect-ratio-sized boxes don't
+   reliably clip to border-radius on every edge in Chromium. */
+.hero__media { position: relative; width: 100%; height: 0; padding-top: 56.25%; display: block; overflow: hidden; border-radius: 5px; }
+.hero__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .hero__byline { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--text-muted); font-size: 12px; }
 .hero__byline strong { color: var(--text-secondary); font-weight: 700; }
-.hero__dek { margin: 14px 0; }
+.hero__dek { margin: 14px 0 0; }
 .hero__live { display: inline-flex; align-items: center; gap: 6px; }
 .hero__live::before { content: ''; width: 6px; height: 6px; background: var(--breaking); border-radius: 50%; display: inline-block; }
 
 .top-stories__label {
   font: 800 11px var(--font-sans); letter-spacing: 0.14em; color: var(--brand);
-  padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 4px; display: block;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; display: block;
 }
-.top-stories__item { display: grid; grid-template-columns: 1fr 82px; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--border); }
-.top-stories__thumb { aspect-ratio: 1/1; }
-.top-stories__ad { margin-top: 20px; }
+.top-stories__thumb { position: relative; height: 0; padding-top: 100%; overflow: hidden; border-radius: 5px; }
+.top-stories__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
 @media (max-width: 1100px) {
-  .hero .container { grid-template-columns: 1fr; }
+  /* minmax(0, 1fr) — not bare 1fr — is required here: a bare 1fr track's
+     implicit minimum is auto (max-content), so it grows to fit its widest
+     child (e.g. the 970px leaderboard ad) instead of shrinking to the
+     viewport. This is what caused the horizontal overflow/blowout below
+     1100px before this fix. */
+  .hero__grid { grid-template-columns: minmax(0, 1fr); }
+  .reference-news { margin-top: 32px; }
+}
+@media (max-width: 900px) {
+  .hero__top { grid-template-columns: minmax(0, 1fr); }
+  .hero__media { order: -1; margin-bottom: 18px; }
 }
 @media (max-width: 560px) {
   .top-stories__item { grid-template-columns: 1fr; }
-  .top-stories__item .top-stories__thumb { order: -1; height: 190px; aspect-ratio: auto; width: 100%; }
+  .top-stories__item .top-stories__thumb { order: -1; height: 190px; padding-top: 0; width: 100%; }
 }
 
-/* ===== Leaderboard ad ===== */
-.leaderboard-ad { padding: 28px 0; display: flex; justify-content: center; }
-
-/* ===== Main content / sidebar split ===== */
-.content-split { padding: 8px 0 56px; }
-.content-split .container { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: clamp(32px, 4vw, 56px); align-items: start; }
-.main-col > * + * { margin-top: 44px; }
-.sidebar-col > * + * { margin-top: 44px; }
-@media (max-width: 1100px) {
-  .content-split .container { grid-template-columns: 1fr; }
-  .sidebar-col { order: 2; }
+/* ===== Reference news — "Referenced by" rail to the right of the hero
+   block (image + More Headlines), only rendered on the homepage. .hero__rail
+   stacks three instances of this same partial — Referenced by, More
+   Stories, Most Read — each independently optional (empty list = no
+   render). Row layout (text left, rectangular thumb right) mirrors
+   .exclusive__side-row's existing convention. Stacks full-width below the
+   hero below 1100px — see .hero__grid breakpoint. ===== */
+.reference-news + .reference-news { margin-top: 32px; }
+.reference-news__list { display: flex; flex-direction: column; }
+.reference-news__item { border-top: 1px solid var(--border); padding-top: 14px; }
+.reference-news__item + .reference-news__item { margin-top: 14px; }
+.reference-news__link { display: grid; grid-template-columns: 1fr 78px; gap: 12px; align-items: start; }
+/* height:0 + padding-top (not aspect-ratio) — see .news-card__media's
+   comment above for why. img/placeholder are absolutely positioned to
+   fill this now that it wraps them instead of being the image itself. */
+.reference-news__thumb {
+  position: relative; display: block;
+  width: 78px; height: 0; padding-top: 58.5px; /* 78px × 4:3 */
+  background: var(--img-a); border-radius: 5px; overflow: hidden;
 }
+.reference-news__thumb img,
+.reference-news__thumb--none {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.reference-news__thumb--none { background: linear-gradient(135deg, var(--img-a), var(--img-b)); }
+.reference-news__text { display: flex; flex-direction: column; min-width: 0; }
+.reference-news__title {
+  font: 600 15px/1.3 var(--font-serif); color: var(--text);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.reference-news__link:hover .reference-news__title { color: var(--brand); }
+.reference-news__excerpt {
+  font: 400 12px/1.4 var(--font-sans); color: var(--text-muted); margin-top: 4px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.reference-news__time { display: block; margin-top: 6px; }
 
 /* Latest News */
 .latest-row { display: grid; grid-template-columns: 148px 1fr auto; gap: 16px; padding: 20px 0; align-items: start; }
-.latest-row__thumb { aspect-ratio: 16/10; }
+.latest-row__thumb { position: relative; height: 0; padding-top: 62.5%; overflow: hidden; border-radius: 5px; }
+.latest-row__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .latest-row__time { white-space: nowrap; }
 @media (max-width: 560px) {
   .latest-row { grid-template-columns: 1fr; }
   .latest-row__time { display: none; }
+}
+
+/* Category listing page — one full-width row per story (image left,
+   larger than .latest-row's compact thumb; text + meta + Read More on the
+   right), replacing the old 4-up card grid there. */
+.category-row-list > * + * { border-top: 1px solid var(--border); }
+.category-row { display: grid; grid-template-columns: 300px minmax(0,1fr); gap: 28px; padding: 28px 0; align-items: start; }
+.category-row__media { position: relative; height: 0; padding-top: 75%; overflow: hidden; border-radius: 5px; }
+.category-row__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.category-row__title { margin: 6px 0 8px; }
+.category-row__dek { margin: 0 0 14px; }
+.category-row__meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.category-row__meta-text { color: var(--text-muted); font: 400 12px var(--font-sans); }
+.category-row__meta-text strong a { color: var(--text-secondary); }
+.category-row__read-more { font: 700 12px var(--font-sans); letter-spacing: 0.04em; color: var(--brand); white-space: nowrap; }
+.category-row__read-more:hover { color: var(--brand-hover); }
+@media (max-width: 700px) {
+  .category-row { grid-template-columns: 1fr; gap: 16px; padding: 20px 0; }
 }
 
 /* Editor's Picks */
@@ -245,7 +315,7 @@ body.menu-open {
 }
 
 /* Exclusive */
-.exclusive { background: var(--brand); color: #fff; padding: 32px 34px 36px; }
+.exclusive { background: var(--brand); color: #fff; padding: 32px 34px 36px; border-radius: 5px; }
 .exclusive__head { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.22); margin-bottom: 26px; }
 .exclusive__title { font: 800 14px var(--font-sans); letter-spacing: 0.14em; }
 .exclusive__view-all { margin-left: auto; color: rgba(255,255,255,.85); font: 700 12px var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; }
@@ -259,14 +329,20 @@ body.menu-open {
 .exclusive .media-placeholder--none::after { background: rgba(255,255,255,.3); }
 
 .exclusive__layout { display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; }
-.exclusive__lead-media { aspect-ratio: 16/9; margin-bottom: 16px; overflow: hidden; }
+.exclusive__lead-media { position: relative; height: 0; padding-top: 56.25%; margin-bottom: 16px; overflow: hidden; border-radius: 5px; }
+.exclusive__lead-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .exclusive__lead .h2-feature { margin-bottom: 8px; }
 .exclusive__lead:hover .h2-feature { text-decoration: underline; text-underline-offset: 4px; }
 
 .exclusive__side > * + * { border-top: 1px solid rgba(255,255,255,.18); margin-top: 18px; padding-top: 18px; }
 .exclusive__side-row { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: start; }
-.exclusive__side-media { aspect-ratio: 4/3; overflow: hidden; }
-.exclusive__side-row:hover .h3-card { text-decoration: underline; text-underline-offset: 3px; }
+.exclusive__side-media { position: relative; height: 0; padding-top: 75%; overflow: hidden; border-radius: 5px; }
+.exclusive__side-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* color:#fff here overrides components.css's global
+   .news-card:hover .h3-card { color: var(--brand) } — without it, hovering
+   turned the title the same navy as this section's own background,
+   making it disappear. */
+.exclusive__side-row:hover .h3-card { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 
 @media (max-width: 1100px) { .exclusive__layout { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .exclusive__side-row { grid-template-columns: 76px 1fr; } }
@@ -280,6 +356,16 @@ body.menu-open {
 .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 @media (max-width: 860px) { .category-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .category-grid { grid-template-columns: 1fr; } }
+
+/* Two category sections side by side (e.g. Politics + Breaking) instead
+   of stacked full-width. Each section is only ~half the usual width here,
+   so its own internal grid is simplified — .category-lead__grid's normal
+   1.2fr/1fr split and .category-grid's 4-up grid would both be too
+   cramped at half width regardless of viewport (a container-width
+   problem plain media queries can't see). */
+.category-section-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 40px); }
+.category-section-row .category-lead__grid { grid-template-columns: 1fr; }
+@media (max-width: 700px) { .category-section-row { grid-template-columns: 1fr; } }
 
 /* Video */
 .video-section__grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 28px; }
@@ -383,11 +469,14 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
 
 .follow__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
 .follow__cell { background: #fff; padding: 16px; display: flex; align-items: center; gap: 10px; }
-.follow__cell strong { color: var(--brand); font-weight: 800; }
+.follow__cell:hover .follow__icon { background: var(--brand); color: #fff; }
+.follow__icon {
+  flex: none; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--brand-wash); color: var(--brand);
+  transition: background 150ms ease, color 150ms ease;
+}
 @media (max-width: 860px) { .follow__grid { grid-template-columns: repeat(4, 1fr); } }
-
-.sidebar-ad--half { min-height: 600px; }
-@media (max-width: 1100px) { .sidebar-ad--half { min-height: 260px; } }
 
 /* ===== Newsletter band ===== */
 .newsletter-band { background: var(--brand); color: #fff; padding: clamp(36px,4vw,56px) 0; }
@@ -411,13 +500,12 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
 
 /* ===== Footer ===== */
 .footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding: clamp(32px,4vw,48px) 0 0; }
-.footer__grid { display: grid; grid-template-columns: 300px repeat(4, 1fr); gap: 28px; padding-bottom: 32px; }
+.footer__grid { display: grid; grid-template-columns: 300px repeat(3, 1fr); gap: 28px; padding-bottom: 32px; }
 .footer__logo-img { height: 30px; width: auto; }
 .footer__brand-desc { font-size: 13px; color: var(--text-body); max-width: 34ch; margin-top: 10px; }
 .footer__col h4 { font: 800 12px var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
 .footer__col a { display: block; padding: 6px 0; font-size: 13px; color: var(--text-body); }
 .footer__col a:hover { color: var(--brand); }
-.footer__ad { display: flex; justify-content: center; padding: 24px 0; border-top: 1px solid var(--border); }
 .footer__bottom {
   border-top: 1px solid var(--border);
   padding: 20px 0;
@@ -448,13 +536,100 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   color: var(--text-muted); font-size: 12px;
 }
 .article-byline strong { color: var(--text-secondary); font-weight: 700; }
-.article-media { aspect-ratio: 16/9; margin-bottom: 26px; }
-.article-media img { width: 100%; height: 100%; object-fit: cover; }
+/* height:0 + padding-top (not aspect-ratio) on the img itself — see
+   .news-card__media's comment in components.css: Chromium doesn't
+   reliably clip an aspect-ratio-sized box to its own border-radius on
+   every edge, even for a plain <img> (not just overflow:hidden wrappers). */
+.article-media { position: relative; height: 0; padding-top: 56.25%; margin-bottom: 26px; overflow: hidden; border-radius: 5px; }
+.article-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit; }
+
+/* Deliberately styled as a caption strip fused to the image's bottom edge
+   (no gap, tinted background) rather than a floating line of text — so
+   it visually reads as "this belongs to the photo above it" and isn't
+   mistaken for a second byline. */
+.image-credit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 11.5px var(--font-sans);
+  color: var(--text-muted);
+  margin: 0;
+  padding: 7px 10px;
+  background: var(--bg-alt);
+  border-top: 2px solid var(--border);
+}
+.image-credit svg { flex-shrink: 0; opacity: 0.7; }
+.image-credit strong { color: var(--text-secondary); font-weight: 700; }
 
 .article-body { font: 400 17px/1.75 var(--font-serif); color: var(--text); }
 .article-body p { margin: 0 0 20px; }
-.article-body img { width: 100%; height: auto; margin: 8px 0; }
+.article-body img { width: 100%; height: auto; margin: 8px 0; border-radius: 5px; }
 .article-body a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+.article-body h3 { font: 700 23px/1.3 var(--font-serif); color: var(--text); margin: 38px 0 16px; }
+/* base.css strips all list-style/padding globally (nav menus rely on
+   that) — restored here so a genuine content list (legal pages, any
+   article body) still reads as a list instead of unmarked paragraphs. */
+.article-body ul, .article-body ol { margin: 0 0 20px; padding-left: 24px; list-style: revert; }
+.article-body li { margin-bottom: 8px; }
+
+/* "LABEL:" + link callout (RELATED:, READ ALSO:, RECOMMENDED ANALYSIS:,
+   etc.) — rebuilt at render time from the bare label+link pattern by
+   static/js/body-callout.js (see that file for why). */
+.body-callout {
+  display: block;
+  background: var(--bg-alt);
+  border-left: 3px solid var(--brand);
+  border-radius: 5px;
+  padding: 14px 20px;
+  margin: 28px 0;
+}
+.body-callout__label {
+  display: block;
+  font: 800 11px var(--font-sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand);
+  margin-bottom: 6px;
+}
+.body-callout a {
+  display: block;
+  font: 700 16px/1.4 var(--font-serif);
+  color: var(--text);
+  text-decoration: none;
+}
+.body-callout a::before { content: '→ '; color: var(--brand); }
+.body-callout a:hover { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+/* CKEditor 5's real saved output classes (figure.image + image-style-*
+   for positioning, figure.media for MediaEmbed) — replaces the bespoke
+   figure.article-image/.body-video classes from the earlier TipTap pass,
+   which no real content ever used. */
+.article-body::after { content: ''; display: table; clear: both; }
+.article-body figure.image { margin: 24px 0; max-width: 100%; }
+.article-body figure.image img { display: block; width: 100%; height: auto; margin: 0; border-radius: 5px; }
+.article-body figure.image img.image_inline { display: inline; width: auto; }
+.article-body figure.image figcaption {
+  font: italic 400 12px var(--font-sans);
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 6px;
+  padding: 0 8px;
+}
+.article-body figure.image.image-style-align-left {
+  float: left; width: 50%; margin: 6px 24px 16px 0;
+}
+.article-body figure.image.image-style-align-right,
+.article-body figure.image.image-style-side {
+  float: right; width: 50%; margin: 6px 0 16px 24px;
+}
+@media (max-width: 640px) {
+  .article-body figure.image.image-style-align-left,
+  .article-body figure.image.image-style-align-right,
+  .article-body figure.image.image-style-side {
+    float: none; width: 100%; margin: 24px 0;
+  }
+}
+.article-body figure.media { margin: 24px 0; position: relative; width: 100%; aspect-ratio: 16/9; background: var(--video-bg); overflow: hidden; }
+.article-body figure.media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 .article-video { margin: 30px 0; }
 
@@ -505,3 +680,58 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
 .contact-details p { margin: 0 0 8px; font: 400 15px var(--font-sans); }
 .contact-details p:last-child { margin-bottom: 0; }
 .contact-details a { color: var(--brand); }
+.contact-details__social { display: flex; gap: 10px; margin-top: 14px; }
+
+/* ===== Contact form ===== */
+.contact-form-card { margin-top: 34px; padding: 24px; border: 1px solid var(--border-strong); }
+.contact-form-card .h3-card { margin: 0 0 18px; }
+.contact-form { display: flex; flex-direction: column; gap: 16px; }
+.contact-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.contact-form__field { display: flex; flex-direction: column; gap: 6px; }
+.contact-form__field label { font: 700 12px var(--font-sans); letter-spacing: 0.02em; color: var(--text-secondary); }
+.contact-form__optional { font-weight: 400; color: var(--text-muted); }
+.contact-form__textarea { height: auto; padding: 10px 12px; resize: vertical; font-family: var(--font-sans); }
+.contact-form input.has-error, .contact-form textarea.has-error { outline: 2px solid var(--error); outline-offset: -1px; }
+.contact-form__banner { display: none; font: 600 13px var(--font-sans); padding: 10px 12px; margin: 0; }
+.contact-form__banner.is-visible.is-success { display: block; background: rgba(26,127,75,.1); color: var(--success); }
+.contact-form__banner.is-visible.is-error { display: block; background: rgba(179,18,18,.08); color: var(--error); }
+.contact-form .btn-primary { align-self: flex-start; }
+@media (max-width: 620px) {
+  .contact-form__row { grid-template-columns: 1fr; }
+}
+
+/* ===== Team / About page ===== */
+.team-section-label {
+  font: 800 11px var(--font-sans); letter-spacing: 0.14em; color: var(--brand);
+  padding-bottom: 10px; border-bottom: 1px solid var(--border); margin: 40px 0 20px; display: block;
+}
+.team-card { text-align: center; padding: 24px 16px; border: 1px solid var(--border); }
+.team-card > a { display: block; }
+.team-card__avatar {
+  width: 96px; height: 96px; border-radius: 50%; object-fit: cover;
+  margin: 0 auto 14px; background: var(--bg-alt);
+}
+.team-card__name { font: 700 17px var(--font-serif); color: var(--text); margin-bottom: 2px; }
+.team-card__title { font: 600 11px var(--font-sans); color: var(--brand); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+.team-card__bio { font: 400 13px/1.5 var(--font-sans); color: var(--text-secondary); margin-bottom: 14px; }
+
+.social-links { display: flex; justify-content: center; gap: 8px; }
+.social-links a {
+  width: 26px; height: 26px; border: 1px solid var(--border-strong);
+  display: flex; align-items: center; justify-content: center;
+  font: 700 10px var(--font-sans); color: var(--text-secondary);
+}
+.social-links a:hover { color: var(--brand); border-color: var(--brand); }
+
+/* ===== Team detail (profile) page ===== */
+.team-profile { display: flex; gap: 28px; align-items: flex-start; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
+.team-profile__avatar { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--bg-alt); }
+.team-profile__title { font: 600 13px var(--font-sans); color: var(--brand); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; }
+.team-profile__bio { font: 400 15px/1.7 var(--font-serif); color: var(--text); margin-bottom: 16px; }
+.team-profile__contact { font: 400 13px var(--font-sans); color: var(--text-secondary); margin-bottom: 14px; }
+.team-profile__contact a { color: var(--brand); }
+.team-profile__social { justify-content: flex-start; }
+@media (max-width: 560px) {
+  .team-profile { flex-direction: column; align-items: center; text-align: center; }
+  .team-profile__social { justify-content: center; }
+}

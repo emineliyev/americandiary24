@@ -36,18 +36,28 @@
     <div class="article-layout">
       <div class="article-main">
         {% if page_obj.object_list %}
-        <div class="category-grid">
+        <div class="category-row-list">
           {% for article in page_obj %}
-          <a href="{{ article.get_absolute_url }}" class="news-card">
-            <div class="news-card__media">
+          <article class="category-row news-card">
+            <a href="{{ article.get_absolute_url }}" class="category-row__media">
               {% if article.image %}<img src="{{ article.image.url }}" alt="{{ article.title }}">
               {% else %}<div class="media-placeholder media-placeholder--none"></div>{% endif %}
+            </a>
+            <div>
+              <a href="{{ article.get_absolute_url }}">
+                <span class="kicker">{{ article.category.name }}</span>
+                <h3 class="h3-card category-row__title">{{ article.title }}</h3>
+                <p class="body-sm category-row__dek">{{ article.dek }}</p>
+              </a>
+              <div class="category-row__meta">
+                <span class="category-row__meta-text">
+                  <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:"d M Y, H:i" }}</time>
+                  · {% include "includes/_byline.html" with article=article %}
+                </span>
+                <a href="{{ article.get_absolute_url }}" class="category-row__read-more">Read More →</a>
+              </div>
             </div>
-            <span class="kicker">{{ article.category.name }}</span>
-            <h3 class="h3-card">{{ article.title }}</h3>
-            <p class="body-sm">{{ article.dek }}</p>
-            <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
-          </a>
+          </article>
           {% endfor %}
         </div>
 
@@ -60,9 +70,7 @@
 
       <aside class="article-sidebar">
         {% include "includes/_sidebar_most_read.html" %}
-        <div class="sidebar-ad sidebar-ad--half">
-          {% include "includes/_ad.html" with width=300 height=600 %}
-        </div>
+        {% include "includes/_sidebar_trending.html" %}
       </aside>
     </div>
 

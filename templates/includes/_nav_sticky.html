@@ -6,14 +6,14 @@
     </a>
 
     <div class="sticky-nav__links">
-      {% for category in nav_categories %}
-      <a href="{{ category.get_absolute_url }}"{% if forloop.counter >= 6 %} class="nav-narrow"{% endif %}>{{ category.name }}</a>
+      {% for nav_cat in nav_categories %}
+      <a href="{{ nav_cat.get_absolute_url }}" class="{% if category.pk == nav_cat.pk %}is-active{% endif %}{% if forloop.counter >= 6 %} nav-narrow{% endif %}">{{ nav_cat.name }}</a>
       {% endfor %}
       <div class="nav-more">
         <button type="button" class="nav-more__toggle nav-link" aria-haspopup="true" aria-expanded="false">More ▾</button>
         <div class="nav-more__dropdown">
-          {% for category in more_categories %}
-          <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+          {% for nav_cat in more_categories %}
+          <a href="{{ nav_cat.get_absolute_url }}"{% if category.pk == nav_cat.pk %} class="is-active"{% endif %}>{{ nav_cat.name }}</a>
           {% endfor %}
         </div>
       </div>
@@ -28,7 +28,6 @@
           <input class="input" type="search" name="soz" placeholder="Search news, topics, people" aria-label="Search news, topics, people">
         </form>
       </div>
-      <a href="#" class="btn btn-primary btn-label">Subscribe</a>
       <button type="button" class="hamburger-toggle btn-label" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
     </div>
   </div>

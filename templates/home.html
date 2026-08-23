@@ -4,39 +4,4 @@
 {% block content %}
 {% include "includes/_breaking.html" %}
 {% include "includes/_hero.html" %}
-
-<div class="leaderboard-ad">
-  {% include "includes/_ad.html" with width=970 height=90 %}
-</div>
-
-<div class="content-split">
-  <div class="container">
-    <div class="main-col">
-      {% include "includes/_exclusive.html" %}
-      {% include "includes/_latest_news.html" %}
-      {% include "includes/_editors_picks.html" %}
-
-      {% for section in category_sections %}
-        {% if section.layout == 'lead' %}
-          {% include "includes/_category_lead.html" with section=section %}
-        {% else %}
-          {% include "includes/_category_grid.html" with section=section %}
-        {% endif %}
-      {% endfor %}
-
-      {% include "includes/_video.html" %}
-    </div>
-
-    <div class="sidebar-col">
-      {% include "includes/_sidebar_most_read.html" %}
-      {% include "includes/_sidebar_quote.html" %}
-      <div class="sidebar-ad sidebar-ad--half">
-        {% include "includes/_ad.html" with width=300 height=600 %}
-      </div>
-      {% include "includes/_sidebar_trending.html" %}
-      {% include "includes/_sidebar_newsletter.html" %}
-      {% include "includes/_sidebar_follow.html" %}
-    </div>
-  </div>
-</div>
 {% endblock %}

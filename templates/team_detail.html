@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ member.name }}{% if member.title %}, {{ member.title }}{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ member.bio|default:member.name|truncatechars:160 }}{% endblock %}
+{% block canonical %}{{ SITE_DOMAIN }}{{ member.get_absolute_url }}{% endblock %}
+
+{% block extra_head %}
+{% if page_obj.number > 1 %}<meta name="robots" content="noindex,follow">{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "{{ member.name|escapejs }}",
+  "jobTitle": "{{ member.title|escapejs }}",
+  "url": "{{ SITE_DOMAIN }}{{ member.get_absolute_url }}"
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="article-page">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}">Home</a>
+      <span>/</span>
+      <a href="{% url 'core:about' %}">About Us</a>
+      <span>/</span>
+      <span aria-current="page">{{ member.name }}</span>
+    </nav>
+
+    <div class="team-profile">
+      {% if member.avatar %}
+        <img src="{{ member.avatar.url }}" alt="{{ member.name }}" class="team-profile__avatar">
+      {% else %}
+        <div class="team-profile__avatar"></div>
+      {% endif %}
+      <div>
+        <h1 class="h1-hero" style="font-size: clamp(24px, 3vw, 34px); margin-bottom: 4px;">{{ member.name }}</h1>
+        {% if member.title %}<div class="team-profile__title">{{ member.title }}</div>{% endif %}
+        {% if member.bio %}<p class="team-profile__bio">{{ member.bio }}</p>{% endif %}
+        {% if member.email or member.phone %}
+        <div class="team-profile__contact">
+          {% if member.email %}<a href="mailto:{{ member.email }}">{{ member.email }}</a>{% endif %}
+          {% if member.email and member.phone %} &middot; {% endif %}
+          {% if member.phone %}{{ member.phone }}{% endif %}
+        </div>
+        {% endif %}
+        {% include "includes/_social_links.html" with extra_class="team-profile__social" %}
+      </div>
+    </div>
+
+    <div class="article-layout">
+      <div class="article-main">
+        <span class="top-stories__label">Articles by {{ member.name }}</span>
+        {% if page_obj.object_list %}
+        <div class="category-grid">
+          {% for article in page_obj %}
+          <a href="{{ article.get_absolute_url }}" class="news-card">
+            <div class="news-card__media">
+              {% if article.image %}<img src="{{ article.image.url }}" alt="{{ article.title }}">
+              {% else %}<div class="media-placeholder media-placeholder--none"></div>{% endif %}
+            </div>
+            <span class="kicker">{{ article.category.name }}</span>
+            <h3 class="h3-card">{{ article.title }}</h3>
+            <p class="body-sm">{{ article.dek }}</p>
+            <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+          </a>
+          {% endfor %}
+        </div>
+
+        {% include "includes/_pagination.html" with pagination_base=pagination_base %}
+
+        {% else %}
+        <p class="body-sm">No stories from {{ member.name }} yet.</p>
+        {% endif %}
+      </div>
+
+      <aside class="article-sidebar">
+        {% include "includes/_sidebar_most_read.html" %}
+      </aside>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

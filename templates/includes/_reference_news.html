@@ -1,0 +1,28 @@
+{% load humanize %}
+{% if articles %}
+<div class="reference-news">
+  <span class="top-stories__label">{{ label }}</span>
+  <ul class="reference-news__list">
+    {% for article in articles %}
+    <li class="reference-news__item">
+      <a href="{{ article.get_absolute_url }}" class="reference-news__link">
+        <span class="reference-news__text">
+          <span class="reference-news__title">{{ article.title }}</span>
+          {% if article.dek %}
+            <span class="reference-news__excerpt">{{ article.dek|truncatewords:10 }}</span>
+          {% endif %}
+          <time class="meta reference-news__time" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+        </span>
+        <span class="reference-news__thumb">
+          {% if article.image %}
+            <img src="{{ article.image.url }}" alt="">
+          {% else %}
+            <span class="reference-news__thumb--none"></span>
+          {% endif %}
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

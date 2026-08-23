@@ -1,17 +1,17 @@
 <nav class="main-nav" aria-label="Primary">
   <div class="container">
     <ul class="main-nav__list nav-link">
-      <li><a href="{% url 'core:home' %}" class="is-active">Home</a></li>
-      {% for category in nav_categories %}
-      <li><a href="{{ category.get_absolute_url }}"{% if forloop.counter >= 8 %} class="nav-narrow"{% endif %}>{{ category.name }}</a></li>
+      <li><a href="{% url 'core:home' %}"{% if request.path == '/' %} class="is-active"{% endif %}>Home</a></li>
+      {% for nav_cat in nav_categories %}
+      <li><a href="{{ nav_cat.get_absolute_url }}" class="{% if category.pk == nav_cat.pk %}is-active{% endif %}{% if forloop.counter >= 8 %} nav-narrow{% endif %}">{{ nav_cat.name }}</a></li>
       {% endfor %}
     </ul>
 
     <div class="nav-more">
       <button type="button" class="nav-more__toggle nav-link" aria-haspopup="true" aria-expanded="false">More ▾</button>
       <div class="nav-more__dropdown">
-        {% for category in more_categories %}
-        <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+        {% for nav_cat in more_categories %}
+        <a href="{{ nav_cat.get_absolute_url }}"{% if category.pk == nav_cat.pk %} class="is-active"{% endif %}>{{ nav_cat.name }}</a>
         {% endfor %}
       </div>
     </div>
@@ -29,9 +29,9 @@
         <input class="input" type="search" name="soz" placeholder="Search news, topics, people" aria-label="Search news, topics, people">
       </form>
     </div>
-    <a href="{% url 'core:home' %}">Home</a>
-    {% for category in nav_categories %}
-    <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+    <a href="{% url 'core:home' %}"{% if request.path == '/' %} class="is-active"{% endif %}>Home</a>
+    {% for nav_cat in nav_categories %}
+    <a href="{{ nav_cat.get_absolute_url }}"{% if category.pk == nav_cat.pk %} class="is-active"{% endif %}>{{ nav_cat.name }}</a>
     {% endfor %}
   </div>
 </div>

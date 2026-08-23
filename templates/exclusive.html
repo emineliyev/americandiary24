@@ -1,23 +1,9 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block title %}{{ tag.name }} | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}Latest news tagged &ldquo;{{ tag.name }}&rdquo; from {{ SITE_NAME }}.{% endblock %}
-{% block canonical %}{{ SITE_DOMAIN }}{{ tag.get_absolute_url }}{% endblock %}
-
-{% block extra_head %}
-{% if page_obj.number > 1 %}<meta name="robots" content="noindex,follow">{% endif %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ SITE_DOMAIN }}/"},
-    {"@type": "ListItem", "position": 2, "name": "{{ tag.name|escapejs }}", "item": "{{ SITE_DOMAIN }}{{ tag.get_absolute_url }}"}
-  ]
-}
-</script>
-{% endblock %}
+{% block title %}Exclusive: American Diary Investigations | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Exclusive investigations and original reporting from {{ SITE_NAME }}.{% endblock %}
+{% block canonical %}{{ SITE_DOMAIN }}{% url 'news:exclusive' %}{% endblock %}
 
 {% block content %}
 <div class="article-page">
@@ -26,12 +12,11 @@
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="{% url 'core:home' %}">Home</a>
       <span>/</span>
-      <span aria-current="page">{{ tag.name }}</span>
+      <span aria-current="page">Exclusive</span>
     </nav>
 
     <div class="section-header" style="border-bottom: 3px solid var(--brand); margin-bottom: 28px;">
-      <span class="kicker">Tag</span>
-      <h1 class="h1-hero" style="font-size: clamp(26px, 3.5vw, 38px); margin-top: 6px;">{{ tag.name }}</h1>
+      <h1 class="h1-hero" style="font-size: clamp(26px, 3.5vw, 38px);">Exclusive: American Diary Investigations</h1>
     </div>
 
     <div class="article-layout">
@@ -65,7 +50,7 @@
         {% include "includes/_pagination.html" with pagination_base=pagination_base %}
 
         {% else %}
-        <p class="body-sm">No stories tagged &ldquo;{{ tag.name }}&rdquo; yet.</p>
+        <p class="body-sm">No exclusive stories yet.</p>
         {% endif %}
       </div>
 

@@ -1,51 +1,71 @@
 {% load humanize news_extras %}
 {% if hero %}
-<div data-sticky-sentinel style="height:1px;"></div>
 <section class="hero">
-  <div class="container">
-    <article>
-      <a href="{{ hero.get_absolute_url }}" class="news-card">
-        <div class="hero__media">
+  <div class="container hero__grid">
+    <div class="hero__main">
+      <article class="hero__top">
+        <div class="news-card hero__top-text">
+          <a href="{{ hero.get_absolute_url }}">
+            <span class="kicker">{{ hero.category.name }}{% if hero.is_breaking %} · <span class="badge-live">Live Coverage</span>{% endif %}</span>
+            <h1 class="h1-hero">{{ hero.title }}</h1>
+            <p class="hero__dek dek-hero">{{ hero.dek }}</p>
+          </a>
+          <div class="hero__byline">
+            {% include "includes/_byline.html" with article=hero %}
+            <span>{{ hero.published_at|naturaltime }}</span>
+            <span>{{ hero.body|reading_time }}</span>
+          </div>
+        </div>
+        <a href="{{ hero.get_absolute_url }}" class="hero__media">
           {% if hero.image %}
             <img src="{{ hero.image.url }}" alt="{{ hero.title }}">
           {% else %}
             <div class="media-placeholder media-placeholder--none"></div>
           {% endif %}
-        </div>
-        <span class="kicker">{{ hero.category.name }}{% if hero.is_breaking %} · <span class="badge-live">Live Coverage</span>{% endif %}</span>
-        <h1 class="h1-hero">{{ hero.title }}</h1>
-      </a>
-      <p class="hero__dek dek-hero">{{ hero.dek }}</p>
-      <div class="hero__byline">
-        <strong>{{ hero.display_author_name }}</strong>
-        <span>{{ hero.published_at|naturaltime }}</span>
-        <span>{{ hero.body|reading_time }}</span>
-      </div>
-    </article>
+        </a>
+      </article>
 
-    <aside>
-      <span class="top-stories__label">Top Stories</span>
-      <div class="row-list">
-        {% for item in top_stories %}
-        <a href="{{ item.get_absolute_url }}" class="top-stories__item news-card">
-          <div>
+      <div class="hero__latest">
+        <span class="top-stories__label">More Headlines</span>
+        <div class="category-grid">
+          {% for item in top_stories %}
+          <a href="{{ item.get_absolute_url }}" class="news-card">
+            <div class="news-card__media">
+              {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.title }}">
+              {% else %}
+                <div class="media-placeholder media-placeholder--none"></div>
+              {% endif %}
+            </div>
             <span class="kicker">{{ item.category.name }}</span>
             <h3 class="h4-list">{{ item.title }}</h3>
-          </div>
-          <div class="top-stories__thumb">
-            {% if item.image %}
-              <img src="{{ item.image.url }}" alt="{{ item.title }}">
-            {% else %}
-              <div class="media-placeholder media-placeholder--none"></div>
-            {% endif %}
-          </div>
-        </a>
-        {% endfor %}
+            <time class="meta" datetime="{{ item.published_at|date:'c' }}">{{ item.published_at|naturaltime }}</time>
+          </a>
+          {% endfor %}
+        </div>
       </div>
-      <div class="top-stories__ad">
-        {% include "includes/_ad.html" with width=300 height=100 %}
-      </div>
-    </aside>
+
+      {% include "includes/_exclusive.html" %}
+      {% include "includes/_latest_news.html" %}
+      {% include "includes/_editors_picks.html" %}
+
+      {% for row in category_section_rows %}
+        <div class="category-section-row">
+          {% for section in row %}
+            {% include "includes/_category_lead.html" with section=section %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="hero__rail">
+      {% include "includes/_reference_news.html" with label="Referenced by" articles=reference_articles %}
+      {% include "includes/_reference_news.html" with label="More Stories" articles=latest %}
+      {% include "includes/_reference_news.html" with label="Most Read" articles=most_read %}
+      {% include "includes/_sidebar_quote.html" %}
+      {% include "includes/_sidebar_trending.html" %}
+      {% include "includes/_sidebar_follow.html" %}
+    </div>
   </div>
 </section>
 {% endif %}

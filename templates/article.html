@@ -5,15 +5,20 @@
 {% block meta_description %}{{ article.meta_description|default:article.dek|default:article.title|truncatechars:160 }}{% endblock %}
 {% block canonical %}{{ SITE_DOMAIN }}{{ article.get_absolute_url }}{% endblock %}
 
-{% block extra_head %}
+{% block social_meta %}
+<meta property="og:site_name" content="{{ SITE_NAME }}">
 <meta property="og:type" content="article">
 <meta property="og:title" content="{{ article.title }}">
 <meta property="og:description" content="{{ article.dek|default:article.title|truncatechars:160 }}">
 <meta property="og:url" content="{{ SITE_DOMAIN }}{{ article.get_absolute_url }}">
-{% if article.image %}<meta property="og:image" content="{{ SITE_DOMAIN }}{{ article.image.url }}">{% endif %}
+{% if article.image %}<meta property="og:image" content="{{ SITE_DOMAIN }}{{ article.image.url }}">{% elif site_settings.default_share_image %}<meta property="og:image" content="{{ SITE_DOMAIN }}{{ site_settings.default_share_image.url }}">{% endif %}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ article.title }}">
 <meta name="twitter:description" content="{{ article.dek|default:article.title|truncatechars:160 }}">
+{% if article.image %}<meta name="twitter:image" content="{{ SITE_DOMAIN }}{{ article.image.url }}">{% elif site_settings.default_share_image %}<meta name="twitter:image" content="{{ SITE_DOMAIN }}{{ site_settings.default_share_image.url }}">{% endif %}
+{% endblock %}
+
+{% block extra_head %}
 {% if not article.is_indexed %}<meta name="robots" content="noindex,follow">{% endif %}
 <script type="application/ld+json">
 {
@@ -63,7 +68,7 @@
         {% if article.dek %}<p class="dek-hero article-dek">{{ article.dek }}</p>{% endif %}
 
         <div class="article-byline">
-          <strong>{{ article.display_author_name }}</strong>
+          {% include "includes/_byline.html" %}
           <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'F j, Y, g:i A' }}</time>
           <span>{{ article.body|reading_time }}</span>
         </div>
@@ -71,6 +76,12 @@
         {% if article.image %}
         <div class="article-media">
           <img src="{{ article.image.url }}" alt="{{ article.title }}">
+          {% if article.image_credit %}
+          <p class="image-credit">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13.5" r="3.3"/></svg>
+            <strong>Photo:</strong> {{ article.image_credit }}
+          </p>
+          {% endif %}
         </div>
         {% endif %}
 
@@ -139,12 +150,13 @@
 
       <aside class="article-sidebar">
         {% include "includes/_sidebar_most_read.html" %}
-        <div class="sidebar-ad sidebar-ad--half">
-          {% include "includes/_ad.html" with width=300 height=600 %}
-        </div>
       </aside>
     </div>
 
   </div>
 </article>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/body-callout.js' %}" defer></script>
 {% endblock %}

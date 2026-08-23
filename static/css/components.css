@@ -96,15 +96,25 @@
 
 /* News card */
 .news-card { display: block; }
+/* height:0 + padding-top (not the aspect-ratio property) is deliberate —
+   Chromium fails to clip an aspect-ratio-sized box's bottom/right edges to
+   its own border-radius when combined with overflow:hidden, leaving those
+   corners square. The padding-percent technique sizes the box a different
+   way and isn't affected. */
 .news-card__media {
-  aspect-ratio: 16 / 10;
+  position: relative;
+  height: 0;
+  padding-top: 62.5%; /* 16:10 */
   overflow: hidden;
+  border-radius: 5px;
   background: var(--img-a);
   background-image: repeating-linear-gradient(135deg, var(--img-b) 0 12px, var(--img-a) 12px 24px);
   margin-bottom: 12px;
 }
 .news-card__media img {
+  position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;
+  border-radius: inherit;
   transition: transform 200ms ease;
 }
 .news-card:hover .news-card__media img { transform: scale(1.02); }
@@ -113,6 +123,7 @@
 
 /* Used only while a real image is expected but hasn't loaded yet. */
 .media-placeholder {
+  position: absolute; inset: 0;
   background-color: var(--img-a);
   background-image: repeating-linear-gradient(135deg, var(--img-b) 0 12px, var(--img-a) 12px 24px);
   width: 100%; height: 100%;
@@ -131,12 +142,6 @@
   width: 28px;
   height: 28px;
   background: var(--brand-tint);
-}
-
-/* Ad slot — reserves the layout space for an AdSense unit. Left visually
-   empty on purpose; no placeholder box is shown to visitors. */
-.ad-slot {
-  margin: 0 auto;
 }
 
 /* Row divider list (latest / top-stories / most-read style rows) */

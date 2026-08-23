@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.meta_title|default:page.title|default:"About Us" }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ page.meta_description|default:page.title|default:"About us" }}{% endblock %}
+
+{% block extra_head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ SITE_DOMAIN }}/"},
+    {"@type": "ListItem", "position": 2, "name": "About Us", "item": "{{ SITE_DOMAIN }}{{ request.path }}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="article-page">
+  <div class="container" style="max-width: 960px;">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}">Home</a>
+      <span>/</span>
+      <span aria-current="page">{{ page.title|default:"About Us" }}</span>
+    </nav>
+
+    <div class="section-header" style="border-bottom: 3px solid var(--brand); margin-bottom: 28px;">
+      <h1 class="h1-hero" style="font-size: clamp(26px, 3.5vw, 38px);">{{ page.title|default:"About Us" }}</h1>
+    </div>
+
+    {% if page.body %}
+    <div class="article-body">{{ page.body|safe }}</div>
+    {% endif %}
+
+    {% if team %}
+    <span class="team-section-label">Our Team</span>
+    <div class="category-grid">
+      {% for member in team %}
+      <div class="team-card">
+        <a href="{{ member.get_absolute_url }}">
+          {% if member.avatar %}
+            <img src="{{ member.avatar.url }}" alt="{{ member.name }}" class="team-card__avatar">
+          {% else %}
+            <div class="team-card__avatar"></div>
+          {% endif %}
+          <div class="team-card__name">{{ member.name }}</div>
+          {% if member.title %}<div class="team-card__title">{{ member.title }}</div>{% endif %}
+          {% if member.bio %}<p class="team-card__bio">{{ member.bio|truncatewords:20 }}</p>{% endif %}
+        </a>
+        {% include "includes/_social_links.html" %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

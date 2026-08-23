@@ -8,56 +8,38 @@
       </div>
 
       <div class="footer__col">
-        <h4>News</h4>
-        <a href="#">U.S.</a>
-        <a href="#">Politics</a>
-        <a href="#">World</a>
-        <a href="#">Business</a>
-        <a href="#">Technology</a>
-        <a href="#">Health</a>
+        <h4>Categories</h4>
+        {% for category in nav_categories|slice:":6" %}
+        <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+        {% endfor %}
       </div>
 
       <div class="footer__col">
-        <h4>More</h4>
-        <a href="#">Science</a>
-        <a href="#">Sports</a>
-        <a href="#">Entertainment</a>
-        <a href="#">Opinion</a>
-        <a href="#">Video</a>
-        <a href="#">Podcasts</a>
+        <h4>More Categories</h4>
+        {% for category in nav_categories|slice:"6:" %}
+        <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+        {% endfor %}
+        {% for category in more_categories|slice:":3" %}
+        <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+        {% endfor %}
       </div>
 
       <div class="footer__col">
         <h4>Company</h4>
         <a href="{% url 'core:about' %}">About Us</a>
-        <a href="#">Newsroom Standards</a>
-        <a href="#">Careers</a>
-        <a href="{% url 'core:contact' %}">Contact</a>
-        <a href="#">Corrections</a>
+        {% if 'contact' in active_page_slugs %}<a href="{% url 'core:contact' %}">Contact</a>{% endif %}
+        {% if 'advertise' in active_page_slugs %}<a href="{% url 'core:advertise' %}">Advertise</a>{% endif %}
       </div>
 
-      <div class="footer__col">
-        <h4>Subscribe</h4>
-        <a href="#">Digital Access</a>
-        <a href="#">Print Edition</a>
-        <a href="#">Newsletters</a>
-        <a href="#">Gift a Subscription</a>
-        <a href="{% url 'core:advertise' %}">Advertise With Us</a>
-      </div>
-    </div>
-
-    <div class="footer__ad">
-      {% include "includes/_ad.html" with width=970 height=90 %}
     </div>
 
     <div class="footer__bottom">
       <span>&copy; {% now "Y" %} {{ SITE_NAME }}. All rights reserved.</span>
       <div class="footer__bottom-links">
-        <a href="{% url 'core:privacy' %}">Privacy Policy</a>
-        <a href="{% url 'core:terms' %}">Terms of Use</a>
-        <a href="{% url 'core:cookies' %}">Cookie Policy</a>
-        <a href="#">Accessibility</a>
-        <a href="{% url 'core:advertise' %}">Advertise</a>
+        {% if 'privacy-policy' in active_page_slugs %}<a href="{% url 'core:privacy' %}">Privacy Policy</a>{% endif %}
+        {% if 'terms-of-use' in active_page_slugs %}<a href="{% url 'core:terms' %}">Terms of Use</a>{% endif %}
+        {% if 'cookie-policy' in active_page_slugs %}<a href="{% url 'core:cookies' %}">Cookie Policy</a>{% endif %}
+        {% if 'advertise' in active_page_slugs %}<a href="{% url 'core:advertise' %}">Advertise</a>{% endif %}
       </div>
     </div>
   </div>

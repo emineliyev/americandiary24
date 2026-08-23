@@ -9,22 +9,24 @@
   <div class="editors-picks__grid">
     {% with lead=editors_picks.0 %}
     {% if lead %}
-    <a href="{{ lead.get_absolute_url }}" class="editors-picks__lead news-card">
-      <div class="news-card__media">
-        {% if lead.image %}
-          <img src="{{ lead.image.url }}" alt="{{ lead.title }}">
-        {% else %}
-          <div class="media-placeholder media-placeholder--none"></div>
-        {% endif %}
-      </div>
-      <span class="kicker">The Long Read</span>
-      <h2 class="h2-feature">{{ lead.title }}</h2>
-      <p class="body-sm">{{ lead.dek }}</p>
+    <div class="editors-picks__lead news-card">
+      <a href="{{ lead.get_absolute_url }}">
+        <div class="news-card__media">
+          {% if lead.image %}
+            <img src="{{ lead.image.url }}" alt="{{ lead.title }}">
+          {% else %}
+            <div class="media-placeholder media-placeholder--none"></div>
+          {% endif %}
+        </div>
+        <span class="kicker">The Long Read</span>
+        <h2 class="h2-feature">{{ lead.title }}</h2>
+        <p class="body-sm">{{ lead.dek }}</p>
+      </a>
       <div class="hero__byline">
-        <strong>{{ lead.display_author_name }}</strong>
+        {% include "includes/_byline.html" with article=lead %}
         <span>{{ lead.published_at|naturaltime }}</span>
       </div>
-    </a>
+    </div>
     {% endif %}
     {% endwith %}
 
