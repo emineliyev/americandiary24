@@ -8,5 +8,6 @@ db.sqlite3
 /staticfiles/
 .DS_Store
 *.log
+/logs/
 .vscode/
 .idea/

@@ -15,6 +15,11 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 SITE_DOMAIN = env('SITE_DOMAIN', default='https://www.americandiary24.com')
 SHOW_ADS = env.bool('SHOW_ADS', default=True)
 
+# Lets Django's CSRF checks trust POSTs whose Origin matches the real site —
+# needed once the site is reached over HTTPS (see also
+# SECURE_PROXY_SSL_HEADER below, for the same HTTPS-behind-Nginx setup).
+CSRF_TRUSTED_ORIGINS = [SITE_DOMAIN]
+
 REDIS_URL = env('REDIS_URL', default='redis://127.0.0.1:6379/1')
 CACHES = {
     'default': {
@@ -131,6 +136,11 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
     ],
+    # Only the public contact-form endpoint sets throttle_classes, so this
+    # rate applies there and nowhere else.
+    'DEFAULT_THROTTLE_RATES': {
+        'contact': '5/hour',
+    },
 }
 
 SIMPLE_JWT = {
@@ -155,3 +165,59 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
+    # Nginx terminates TLS and proxies to Gunicorn over plain HTTP — without
+    # this, Django can't tell the original request was HTTPS, so
+    # SECURE_SSL_REDIRECT above would redirect every request forever. Only
+    # trustworthy because Nginx (not the public internet) sets this header;
+    # the Nginx config must include `proxy_set_header X-Forwarded-Proto $scheme;`.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Structured error logging (spec #43): 4xx/5xx and unhandled exceptions go
+# to both the console (captured by systemd/journald under Gunicorn) and a
+# rotating file, instead of only whatever Django prints by default. DEBUG's
+# own "technical 500 page" is never shown to visitors once DEBUG=False —
+# that's Django's default behavior, unaffected by this config.
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {'format': '{asctime} {levelname} {name} {message}', 'style': '{'},
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'error_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_DIR / 'django.log',
+            'maxBytes': 5 * 1024 * 1024,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'error_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        # 4xx (404, ...) log at WARNING, 5xx/unhandled exceptions at ERROR —
+        # both come through this logger.
+        'django.request': {
+            'handlers': ['console', 'error_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['console', 'error_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
