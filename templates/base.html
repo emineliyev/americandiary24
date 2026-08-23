@@ -71,6 +71,34 @@
 
 {% if ADSENSE_PUBLISHER_ID %}
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-{{ ADSENSE_PUBLISHER_ID }}" crossorigin="anonymous"></script>
+
+{% comment %}
+Google's own consent management platform (AdSense > Privacy & messaging).
+Shows the EEA/UK/Switzerland consent banner Google requires before serving
+personalized ads there — the message itself (text, "Consent"/"Manage
+options" buttons) is configured in the AdSense dashboard, not here; this
+snippet just loads whatever's configured for this Publisher ID. No banner
+appears for visitors outside that region.
+{% endcomment %}
+<script async src="https://fundingchoicesmessages.google.com/i/{{ ADSENSE_PUBLISHER_ID }}?ers=1"></script>
+<script>
+  (function() {
+    function signalGooglefcPresent() {
+      if (!window.frames['googlefcPresent']) {
+        if (document.body) {
+          var iframe = document.createElement('iframe');
+          iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;';
+          iframe.style.display = 'none';
+          iframe.name = 'googlefcPresent';
+          document.body.appendChild(iframe);
+        } else {
+          setTimeout(signalGooglefcPresent, 0);
+        }
+      }
+    }
+    signalGooglefcPresent();
+  })();
+</script>
 {% endif %}
 
 {% block extra_head %}{% endblock %}
