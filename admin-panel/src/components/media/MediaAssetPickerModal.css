@@ -1,0 +1,89 @@
+.picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 61, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.picker-dialog {
+  background: #fff;
+  width: 720px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.picker-header h2 { font-size: 15px; margin: 0; }
+.picker-close { border: 0; background: none; font-size: 20px; cursor: pointer; color: var(--text-muted); line-height: 1; }
+.picker-close:hover { color: var(--text); }
+
+.picker-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.picker-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+.picker-footer { padding: 0 20px 16px; }
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.picker-card {
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+.picker-card:hover { border-color: var(--brand); }
+.picker-card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.picker-card-name {
+  font-size: 11px;
+  padding: 6px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Shared with MediaListPage's toolbar — kept local rather than a shared
+   stylesheet since it's a handful of simple utility rules. */
+.media-search {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  width: 240px;
+  max-width: 100%;
+}
+.media-format-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.media-format-pill {
+  border: 1px solid var(--border-strong);
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font: 700 12px var(--font-sans);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+.media-format-pill.is-active { background: var(--text); border-color: var(--text); color: #fff; }

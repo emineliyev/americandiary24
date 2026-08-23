@@ -1,0 +1,16 @@
+/* Light brand pass over CKEditor's default skin — not a full rebuild. */
+.ckeditor-wrap {
+  --ck-border-radius: 0;
+  --ck-color-base-border: var(--border-strong);
+  --ck-color-toolbar-border: var(--border-strong);
+  --ck-color-focus-border: var(--brand);
+  --ck-color-button-on-background: var(--brand-wash);
+  --ck-color-button-on-color: var(--brand);
+  --ck-font-face: var(--font-sans);
+}
+.ckeditor-wrap .ck-content {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 320px;
+}

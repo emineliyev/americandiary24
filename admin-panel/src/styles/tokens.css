@@ -1,0 +1,27 @@
+/* Mirrors site/static/css/tokens.css so the admin panel matches the
+   public site's brand instead of looking like a generic dashboard. */
+:root {
+  --brand: #010F64;
+  --brand-hover: #0a1f9c;
+  --brand-tint: #cfd4e2;
+  --brand-wash: #eceef6;
+
+  --bg: #ffffff;
+  --bg-alt: #f6f6f4;
+  --bg-sidebar: #0a0f3d;
+
+  --text: #12141a;
+  --text-secondary: #33383f;
+  --text-body: #4a5058;
+  --text-muted: #767c86;
+
+  --border: #e2e4e8;
+  --border-strong: #d9dce2;
+
+  --success: #1a7f4b;
+  --warning: #b06a00;
+  --error: #b31212;
+
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-sans: 'Libre Franklin', Helvetica, Arial, sans-serif;
+}
