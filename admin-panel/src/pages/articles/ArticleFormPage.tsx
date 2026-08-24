@@ -7,11 +7,11 @@ import { CKEditorBody } from '../../components/CKEditorBody';
 import { ImagePicker, type ImagePickerValue } from '../../components/ImagePicker';
 import { ARTICLE_IMAGE_SIZE } from '../../utils/imageSizes';
 import { TagPicker } from '../../components/TagPicker';
-import type { Article, ArticleStatus, ArticleWritePayload, Author, Tag } from '../../api/types';
+import type { ArticleStatus, ArticleWritePayload, Author, Tag } from '../../api/types';
 import { useAuth } from '../../auth/AuthContext';
 import { slugify } from '../../utils/slugify';
 import { useToast, errorMessage } from '../../components/toast/ToastContext';
-import { useFormValidation, required, requiredHtml, slug as slugRule, exactLength } from '../../utils/validation';
+import { useFormValidation, required, requiredHtml, slug as slugRule } from '../../utils/validation';
 
 const BOOLEAN_FIELDS: { key: keyof ArticleWritePayload; label: string; hint?: string }[] = [
   { key: 'is_breaking', label: 'Breaking News' },
@@ -40,7 +40,7 @@ export function ArticleFormPage() {
 
   const [form, setForm] = useState<ArticleWritePayload>({
     title: '', slug: '', dek: '', body: '',
-    meta_title: '', meta_description: '', image_credit: '', youtube_id: '',
+    meta_title: '', meta_description: '', image_credit: '',
     category_id: 0, author_id: 0, co_author_ids: [], tag_ids: [],
     status: 'draft', published_at: null,
     is_breaking: false, is_exclusive: false, is_editors_pick: false, is_reference: false,
@@ -49,7 +49,7 @@ export function ArticleFormPage() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [coAuthors, setCoAuthors] = useState<Author[]>([]);
   const [slugTouched, setSlugTouched] = useState(false);
-  const [articleId, setArticleId] = useState<number | null>(isNew ? null : Number(id));
+  const articleId = isNew ? null : Number(id);
   // Undefined id (-1) is fine here — it's only ever used for display via
   // ImagePicker's preview `url`; the real id is only read on submit, and
   // only when `imageTouched` (i.e. the picker was actually used this
@@ -82,7 +82,6 @@ export function ArticleFormPage() {
     body: requiredHtml('Body'),
     category_id: required('Category'),
     ...(needsAuthorPicker ? { author_id: required('Author') } : {}),
-    youtube_id: exactLength('YouTube Video ID', 11),
   });
 
   useEffect(() => {
@@ -90,7 +89,7 @@ export function ArticleFormPage() {
       setForm({
         title: existing.title, slug: existing.slug, dek: existing.dek, body: existing.body,
         meta_title: existing.meta_title, meta_description: existing.meta_description,
-        image_credit: existing.image_credit, youtube_id: existing.youtube_id,
+        image_credit: existing.image_credit,
         category_id: existing.category.id, author_id: existing.author.id,
         co_author_ids: existing.co_authors.map((a) => a.id),
         tag_ids: existing.tags.map((t) => t.id),
@@ -147,15 +146,15 @@ export function ArticleFormPage() {
         co_author_ids: coAuthors.map((a) => a.id),
         ...(imageTouched ? { image_asset_id: imageAsset?.id ?? null } : {}),
       };
-      let saved: Article;
       if (articleId) {
-        saved = await updateArticle(articleId, payload);
+        await updateArticle(articleId, payload);
+        toast.success('Article saved.');
       } else {
-        saved = await createArticle(payload);
-        setArticleId(saved.id);
+        await createArticle(payload);
+        toast.success('Article created.');
+        navigate('/articles');
+        return;
       }
-      toast.success(articleId ? 'Article saved.' : 'Article created.');
-      navigate(`/articles/${saved.id}`, { replace: true });
     } catch (err: any) {
       toast.error(errorMessage(err, 'Failed to save the article.'));
     } finally {
@@ -360,22 +359,6 @@ export function ArticleFormPage() {
             onChange={(e) => updateField('published_at', e.target.value ? new Date(e.target.value).toISOString() : null)}
           />
           <p className="field-hint">A future date + "Scheduled" status will hold it until then.</p>
-        </div>
-      </div>
-
-      <div className="card" style={{ marginBottom: 16 }}>
-        <div className="field">
-          <label>YouTube Video ID</label>
-          <input
-            type="text"
-            className={fieldClass('youtube_id')}
-            value={form.youtube_id}
-            onChange={(e) => updateField('youtube_id', e.target.value)}
-            onBlur={() => touch('youtube_id')}
-            placeholder="e.g. dQw4w9WgXcQ"
-            maxLength={11}
-          />
-          {fieldError('youtube_id') && <p className="field-error">{fieldError('youtube_id')}</p>}
         </div>
       </div>
 

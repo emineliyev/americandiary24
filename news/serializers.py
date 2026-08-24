@@ -109,7 +109,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'slug', 'dek', 'body',
             'meta_title', 'meta_description',
-            'image', 'image_asset_id', 'image_credit', 'youtube_id',
+            'image', 'image_asset_id', 'image_credit',
             'category', 'category_id', 'author', 'author_id',
             'co_authors', 'co_author_ids', 'tags', 'tag_ids',
             'status', 'published_at', 'updated_at', 'view_count',

@@ -78,11 +78,6 @@ export const minLength = (label: string, min: number): Validator<any> => (value)
   return String(value).length >= min ? null : `${label} must be at least ${min} characters.`;
 };
 
-export const exactLength = (label: string, len: number): Validator<any> => (value) => {
-  if (!value) return null;
-  return String(value).length === len ? null : `${label} must be exactly ${len} characters.`;
-};
-
 /** Combine multiple validators for one field — first failure wins. */
 export function all<T>(...validators: Validator<T>[]): Validator<T> {
   return (value, values) => {

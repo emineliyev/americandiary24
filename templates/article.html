@@ -89,19 +89,6 @@
           {{ article.body|external_links_blank }}
         </div>
 
-        {% if article.youtube_id %}
-        <div class="article-video">
-          <div class="video-embed">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/{{ article.youtube_id }}?rel=0&modestbranding=1"
-              title="{{ article.title }}"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen loading="lazy"></iframe>
-          </div>
-        </div>
-        {% endif %}
-
         {% if article_tags %}
         <div class="article-tags">
           {% for tag in article_tags %}

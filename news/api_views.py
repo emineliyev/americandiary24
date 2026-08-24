@@ -181,7 +181,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
             status=Article.Status.DRAFT, published_at=None, view_count=0,
             is_breaking=original.is_breaking, is_exclusive=original.is_exclusive,
             is_editors_pick=original.is_editors_pick, is_indexed=original.is_indexed,
-            show_author_name=original.show_author_name, youtube_id=original.youtube_id,
+            show_author_name=original.show_author_name,
         )
         copy.co_authors.set(original.co_authors.all())
         copy.tags.set(original.tags.all())

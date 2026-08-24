@@ -33,7 +33,6 @@ def home(request):
     editors_picks = list(published.filter(is_editors_pick=True)[:3])
     exclusives = list(published.filter(is_exclusive=True)[:3])
     breaking = published.filter(is_breaking=True).first()
-    videos = list(published.exclude(youtube_id='')[:4])
     reference_articles = list(published.filter(is_reference=True)[:6])
 
     # trending is just the top 3 of the same view_count ordering as most_read.
@@ -83,7 +82,6 @@ def home(request):
         'editors_picks': editors_picks,
         'exclusives': exclusives,
         'breaking': breaking,
-        'videos': videos,
         'reference_articles': reference_articles,
         'most_read': most_read,
         'trending': trending,

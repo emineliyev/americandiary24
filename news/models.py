@@ -135,7 +135,6 @@ class Article(models.Model):
         help_text='Uncheck to display "News Desk" instead of the author\'s name on this article.',
     )
 
-    youtube_id = models.CharField(max_length=11, blank=True)
     view_count = models.PositiveIntegerField(default=0)
 
     # Soft delete — moving to the admin panel's Silinənlər (trash) tab sets

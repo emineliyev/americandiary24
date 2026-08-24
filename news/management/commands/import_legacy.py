@@ -53,8 +53,6 @@ NEWS_COLUMNS = [
 ]
 SITAT_COLUMNS = ['id', 'date', 'ad', 'vezife', 'metn', 'image', 'read', 'lang', 'gorunme']
 
-YOUTUBE_RE = re.compile(r'(?:youtu\.be/|youtube\.com/watch\?v=|youtube\.com/embed/)([A-Za-z0-9_-]{11})')
-
 
 class Command(BaseCommand):
     help = (
@@ -140,12 +138,6 @@ class Command(BaseCommand):
 
             status = Article.Status.PUBLISHED if data['gorunme'] == 'he' else Article.Status.ARCHIVED
 
-            youtube_id = ''
-            if data['video']:
-                m = YOUTUBE_RE.search(data['video'])
-                if m:
-                    youtube_id = m.group(1)
-
             article = Article(
                 id=data['id'],
                 title=title,
@@ -157,7 +149,6 @@ class Command(BaseCommand):
                 status=status,
                 published_at=published_at,
                 view_count=data['read'] or 0,
-                youtube_id=youtube_id,
                 is_indexed=True,
             )
             article.save()

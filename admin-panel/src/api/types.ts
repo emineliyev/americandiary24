@@ -165,7 +165,6 @@ export interface Article extends ArticleListItem {
   meta_title: string;
   meta_description: string;
   image_credit: string;
-  youtube_id: string;
   co_authors: Author[];
   tags: Tag[];
   is_indexed: boolean;
@@ -183,7 +182,6 @@ export interface ArticleWritePayload {
   // present with a value (or null) only when the picker was actually used.
   image_asset_id?: number | null;
   image_credit: string;
-  youtube_id: string;
   category_id: number;
   author_id: number;
   co_author_ids: number[];
