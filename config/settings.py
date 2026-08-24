@@ -149,15 +149,22 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
 }
 
-# Admin panel (React/Vite) runs on a different origin only in dev — the
-# production build is served from the same origin as the API, so this
-# whole block is a no-op there.
-if DEBUG:
-    CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localhost:5173'])
+# Admin panel (React/Vite) is a static build with root-relative asset paths
+# (Vite's default `base: '/'`), so it's served from its own subdomain (e.g.
+# admin.americandiary24.com) rather than a sub-path of the main site — its
+# API calls to www.<domain>/api/v1 are therefore cross-origin in production
+# too, not just in dev. CORS_ALLOWED_ORIGINS must be set either way.
+CORS_ALLOWED_ORIGINS = env.list(
+    'CORS_ALLOWED_ORIGINS',
+    default=['http://localhost:5173'] if DEBUG else [],
+)
 
 # Production hardening — only takes effect once DEBUG=False on the VPS.
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    # Overridable so the site can be smoke-tested over plain http:// (e.g.
+    # by raw IP, before DNS/SSL are live) without an infinite redirect —
+    # flip back to the True default once certbot has issued a real cert.
+    SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 31536000
