@@ -23,7 +23,7 @@ def _apply_media_asset(instance, field_name, asset_id):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'slug', 'order', 'is_active']
+        fields = ['id', 'name', 'slug', 'order', 'is_active', 'show_on_homepage', 'homepage_order']
 
 
 class AuthorSerializer(serializers.ModelSerializer):

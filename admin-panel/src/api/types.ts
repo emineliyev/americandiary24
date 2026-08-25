@@ -52,6 +52,8 @@ export interface Category {
   slug: string;
   order: number;
   is_active: boolean;
+  show_on_homepage: boolean;
+  homepage_order: number;
 }
 
 export interface Author {
@@ -86,6 +88,8 @@ export interface CategoryWritePayload {
   slug: string;
   order: number;
   is_active: boolean;
+  show_on_homepage: boolean;
+  homepage_order: number;
 }
 
 export interface AuthorWritePayload {

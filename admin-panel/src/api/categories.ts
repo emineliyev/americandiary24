@@ -34,3 +34,12 @@ export async function reorderCategories(orderedIds: number[], previousOrders: Ma
     .filter(({ id, order }) => previousOrders.get(id) !== order);
   await Promise.all(updates.map(({ id, order }) => updateCategory(id, { order })));
 }
+
+// Same idea as reorderCategories, but for homepage_order — the two are
+// independent (nav order vs. which homepage section pairs with which).
+export async function reorderHomepageCategories(orderedIds: number[], previousOrders: Map<number, number>) {
+  const updates = orderedIds
+    .map((id, index) => ({ id, homepage_order: index }))
+    .filter(({ id, homepage_order }) => previousOrders.get(id) !== homepage_order);
+  await Promise.all(updates.map(({ id, homepage_order }) => updateCategory(id, { homepage_order })));
+}

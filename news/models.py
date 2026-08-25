@@ -9,6 +9,15 @@ class Category(models.Model):
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
+    # Homepage's own section list — deliberately independent of `order`
+    # (which drives the nav menu): the client wants full control over which
+    # categories get a homepage section and how they're paired side-by-side,
+    # which doesn't have to match nav order. Two categories with adjacent
+    # homepage_order values land in the same row — see core/views.py's
+    # category_section_rows.
+    show_on_homepage = models.BooleanField(default=True)
+    homepage_order = models.PositiveIntegerField(default=0)
+
     class Meta:
         verbose_name_plural = 'categories'
         ordering = ['order', 'name']

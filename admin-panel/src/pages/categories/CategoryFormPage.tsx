@@ -19,7 +19,9 @@ export function CategoryFormPage() {
     enabled: !isNew,
   });
 
-  const [form, setForm] = useState<CategoryWritePayload>({ name: '', slug: '', order: 0, is_active: true });
+  const [form, setForm] = useState<CategoryWritePayload>({
+    name: '', slug: '', order: 0, is_active: true, show_on_homepage: true, homepage_order: 0,
+  });
   const [slugTouched, setSlugTouched] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -30,7 +32,11 @@ export function CategoryFormPage() {
 
   useEffect(() => {
     if (existing) {
-      setForm({ name: existing.name, slug: existing.slug, order: existing.order, is_active: existing.is_active });
+      setForm({
+        name: existing.name, slug: existing.slug, order: existing.order,
+        is_active: existing.is_active, show_on_homepage: existing.show_on_homepage,
+        homepage_order: existing.homepage_order,
+      });
       setSlugTouched(true);
     }
   }, [existing]);
@@ -96,7 +102,7 @@ export function CategoryFormPage() {
         <div className="field">
           <label>Order</label>
           <input type="number" value={form.order} onChange={(e) => setForm((f) => ({ ...f, order: Number(e.target.value) }))} />
-          <p className="field-hint">Lower numbers appear first in navigation and section ordering.</p>
+          <p className="field-hint">Lower numbers appear first in the navigation menu.</p>
         </div>
         <div className="checkbox-field">
           <input
@@ -107,6 +113,19 @@ export function CategoryFormPage() {
           />
           <label htmlFor="is_active">Active</label>
         </div>
+        <div className="checkbox-field">
+          <input
+            type="checkbox"
+            id="show_on_homepage"
+            checked={form.show_on_homepage}
+            onChange={(e) => setForm((f) => ({ ...f, show_on_homepage: e.target.checked }))}
+          />
+          <label htmlFor="show_on_homepage">Show on Homepage</label>
+        </div>
+        <p className="field-hint" style={{ marginTop: -8 }}>
+          Which categories get a homepage section, and how they're paired side-by-side, is set from the
+          Categories list page — drag to reorder there.
+        </p>
       </div>
     </form>
   );

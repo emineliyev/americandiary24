@@ -46,7 +46,6 @@
       </div>
 
       {% include "includes/_exclusive.html" %}
-      {% include "includes/_latest_news.html" %}
       {% include "includes/_editors_picks.html" %}
 
       {% for row in category_section_rows %}
@@ -60,7 +59,7 @@
 
     <div class="hero__rail">
       {% include "includes/_reference_news.html" with label="Referenced by" articles=reference_articles %}
-      {% include "includes/_reference_news.html" with label="More Stories" articles=latest %}
+      {% include "includes/_reference_news.html" with label="Latest News" articles=latest %}
       {% include "includes/_reference_news.html" with label="Most Read" articles=most_read %}
       {% include "includes/_sidebar_quote.html" %}
       {% include "includes/_sidebar_trending.html" %}

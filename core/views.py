@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.db.models import Q, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
@@ -8,12 +7,6 @@ from django.views.decorators.cache import cache_page
 from news.models import Article, Author, Category, Quote
 
 from .models import Page, SiteSettings
-
-# Capped rather than showing every active category — as the site adds more
-# categories over time, an uncapped list would make the homepage (and its
-# per-category queries) grow unbounded. 6 was chosen to match the previous
-# hand-picked list's size.
-HOMEPAGE_CATEGORY_COUNT = 6
 
 
 @cache_page(60 * 3)  # homepage is our single hottest URL; 3 min balances freshness vs. load
@@ -43,22 +36,15 @@ def home(request):
     featured_quote = active_quotes[0] if active_quotes else None
     previous_quotes = active_quotes[1:4]
 
-    # Featured categories are whichever HOMEPAGE_CATEGORY_COUNT are
-    # currently the most-read (summed view_count across their own published
-    # articles) — not a hand-picked list, so this tracks real readership
-    # and needs no code change as categories are added/renamed.
-    top_categories = list(
-        Category.objects.filter(is_active=True)
-        .annotate(total_views=Sum(
-            'articles__view_count',
-            filter=Q(articles__status=Article.Status.PUBLISHED, articles__published_at__lte=timezone.now()),
-        ))
-        .filter(total_views__gt=0)
-        .order_by('-total_views')[:HOMEPAGE_CATEGORY_COUNT]
-    )
+    # Which categories get a homepage section, and in what order/pairing,
+    # is fully admin-controlled (Categories screen: "Show on Homepage" +
+    # drag-to-reorder) rather than an automatic top-N-by-views pick.
+    homepage_categories = Category.objects.filter(
+        is_active=True, show_on_homepage=True,
+    ).order_by('homepage_order', 'name')
 
     category_sections = []
-    for category in top_categories:
+    for category in homepage_categories:
         articles = list(published.filter(category=category)[:4])
         if not articles:
             continue
