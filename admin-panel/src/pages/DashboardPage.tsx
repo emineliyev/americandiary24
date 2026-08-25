@@ -56,7 +56,7 @@ export function DashboardPage() {
         <StatCard label="Users" value={data.users_count} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 20, marginBottom: 20 }}>
+      <div className="dashboard-grid" style={{ marginBottom: 20 }}>
         <div className="card">
           <h2 style={{ fontSize: 15, marginBottom: 12 }}>Last 7 days — articles published</h2>
           <LineChart data={data.weekly} />
@@ -67,7 +67,7 @@ export function DashboardPage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 20 }}>
+      <div className="dashboard-grid">
         <div className="card">
           <h2 style={{ fontSize: 15, marginBottom: 12 }}>Recent Articles</h2>
           <table className="data-table">

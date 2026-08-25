@@ -13,6 +13,7 @@ function Icon({ path, viewBox = '0 0 24 24' }: { path: string; viewBox?: string 
 
 const KEY_ICON = 'M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4';
 const LOGOUT_ICON = 'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9';
+const MENU_ICON = 'M3 6h18M3 12h18M3 18h18';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', end: true, icon: 'M4 4h6v7H4zM14 4h6v4h-6zM14 11h6v9h-6zM4 14h6v6H4z' },
@@ -31,10 +32,11 @@ const NAV_ITEMS = [
 export function AdminLayout() {
   const { user, logout } = useAuth();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      <aside className={'sidebar' + (sidebarOpen ? ' is-open' : '')}>
         <div className="sidebar__brand">American<span>Diary24</span></div>
         <nav className="sidebar__nav">
           {NAV_ITEMS.map((item) => (
@@ -42,6 +44,7 @@ export function AdminLayout() {
               key={item.to}
               to={item.to}
               end={item.end}
+              onClick={() => setSidebarOpen(false)}
               className={({ isActive }) => 'sidebar__link' + (isActive ? ' is-active' : '')}
             >
               <Icon path={item.icon} />
@@ -50,8 +53,17 @@ export function AdminLayout() {
           ))}
         </nav>
       </aside>
+      {sidebarOpen && <div className="sidebar__overlay" onClick={() => setSidebarOpen(false)} />}
       <div className="main">
         <div className="topbar">
+          <button
+            type="button"
+            className="topbar__menu-btn"
+            aria-label="Open menu"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Icon path={MENU_ICON} />
+          </button>
           <strong>Admin Panel</strong>
           <div className="topbar__user">
             {user?.author_avatar ? (

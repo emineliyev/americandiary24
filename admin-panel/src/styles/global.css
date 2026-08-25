@@ -79,7 +79,47 @@ h1, h2, h3 { margin: 0; font-family: var(--font-serif); }
   cursor: pointer;
 }
 .topbar__icon-btn:hover { border-color: var(--brand); color: var(--brand); }
-.content { padding: 24px; flex: 1; }
+.content { padding: 24px; flex: 1; min-width: 0; }
+
+.topbar__menu-btn {
+  display: none;
+  width: 34px; height: 34px;
+  align-items: center; justify-content: center;
+  border: 1px solid var(--border-strong);
+  background: #fff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.sidebar__overlay {
+  display: none;
+}
+
+/* ===== Mobile: off-canvas sidebar ===== */
+@media (max-width: 860px) {
+  .topbar__menu-btn { display: flex; }
+  .topbar { padding: 0 14px; gap: 10px; }
+  .topbar__role { display: none; }
+  .content { padding: 14px; }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 210;
+    width: 236px;
+    transform: translateX(-100%);
+    transition: transform 220ms ease;
+  }
+  .sidebar.is-open { transform: translateX(0); }
+
+  .sidebar__overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 20, 26, 0.45);
+    z-index: 200;
+  }
+}
 
 /* ===== Generic UI ===== */
 .card { background: #fff; border: 1px solid var(--border); padding: 20px; }
@@ -136,6 +176,13 @@ h1, h2, h3 { margin: 0; font-family: var(--font-serif); }
 .checkbox-field label { font: 600 13px var(--font-sans); margin: 0; }
 
 table.data-table { width: 100%; border-collapse: collapse; background: #fff; }
+@media (max-width: 860px) {
+  /* Scrolls the table itself horizontally (not the whole page) rather
+     than restructuring every table's columns into stacked cards — every
+     list page (Articles, Categories, Tags, Users, Pages, Inquiries,
+     Media folders) gets this for free with no per-page changes. */
+  table.data-table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+}
 .data-table th {
   text-align: left;
   font: 800 11px var(--font-sans);
@@ -164,6 +211,10 @@ table.data-table { width: 100%; border-collapse: collapse; background: #fff; }
   background: #fff;
 }
 .list-filters input { width: 240px; }
+@media (max-width: 860px) {
+  .list-filters { flex-wrap: wrap; }
+  .list-filters select, .list-filters input { flex: 1 1 140px; width: auto; }
+}
 
 .list-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 0; }
 .list-tabs button {
@@ -219,6 +270,17 @@ table.data-table { width: 100%; border-collapse: collapse; background: #fff; }
 
 /* ===== Dashboard ===== */
 .stat-card-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 20px; }
+.stat-card-row > * { min-width: 0; }
+@media (max-width: 860px) { .stat-card-row { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 520px) { .stat-card-row { grid-template-columns: repeat(2, 1fr); } }
+
+.dashboard-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; }
+/* Grid items default to min-width:auto, which refuses to shrink below the
+   "Recent Articles" table's intrinsic content width and blows out the
+   whole grid — this lets them shrink so the table's own overflow-x:auto
+   (see table.data-table above) can actually take effect. */
+.dashboard-grid > * { min-width: 0; }
+@media (max-width: 960px) { .dashboard-grid { grid-template-columns: 1fr; } }
 .stat-card { padding: 16px 18px; }
 .stat-card__label { font: 800 11px var(--font-sans); letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
 .stat-card__value { font: 700 30px var(--font-serif); color: var(--text); }

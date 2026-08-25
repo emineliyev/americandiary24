@@ -97,6 +97,12 @@
   margin-bottom: 16px;
 }
 .media-dropzone.is-dragging { border-color: var(--brand); background: #e4e7f4; }
+
+@media (max-width: 860px) {
+  .media-page { flex-direction: column; }
+  .media-sidebar { width: 100%; }
+  .media-dropzone { flex-wrap: wrap; }
+}
 .media-dropzone-left { display: flex; align-items: center; gap: 14px; }
 .media-dropzone-icon {
   width: 40px;
