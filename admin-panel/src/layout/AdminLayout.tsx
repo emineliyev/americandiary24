@@ -11,7 +11,7 @@ function Icon({ path, viewBox = '0 0 24 24' }: { path: string; viewBox?: string 
   );
 }
 
-const KEY_ICON = 'M15.5 8.5a4 4 0 11-4-4M11.5 4.5L3 13v3h3l1-1h2v-2h2l1.5-1.5';
+const KEY_ICON = 'M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4';
 const LOGOUT_ICON = 'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9';
 
 const NAV_ITEMS = [
