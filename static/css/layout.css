@@ -603,6 +603,18 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   margin-top: 6px;
   padding: 0 8px;
 }
+
+/* Legacy "Photo: ..." lines, detected and tagged by body-callout.js —
+   matches figure.image figcaption above for a consistent look. The
+   !important pair overrides whatever inline font-size/color junk the
+   legacy span carries, which plain specificity can't reliably beat. */
+.article-body .body-photo-credit {
+  font: italic 400 12px var(--font-sans) !important;
+  color: var(--text-muted) !important;
+  text-align: center;
+  margin: 6px 0 24px;
+  padding: 0 8px;
+}
 .article-body figure.image.image-style-align-left {
   float: left; width: 50%; margin: 6px 24px 16px 0;
 }

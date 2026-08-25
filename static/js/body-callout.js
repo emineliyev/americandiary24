@@ -162,8 +162,36 @@
     });
   }
 
+  // ---- Photo credit lines: legacy content wrote these as a plain text
+  // line ("Photo: Courtesy of X") in the block right after an image,
+  // instead of using a real caption. CKEditor-authored articles going
+  // forward use the editor's own figure/figcaption feature (styled
+  // separately, see figure.image figcaption in layout.css) - this only
+  // targets the legacy shape, and skips anything already inside a
+  // figcaption so the two don't double-handle the same content. ----
+  var PHOTO_CREDIT_RE = /^photo\s*:/i;
+
+  function processPhotoCredit(body) {
+    var candidates = [];
+    body.querySelectorAll('*').forEach(function (el) {
+      if (el.closest('figcaption')) return;
+      if (el.children.length > 1 || el.querySelector('img')) return;
+      if (PHOTO_CREDIT_RE.test(normalize(el.textContent))) candidates.push(el);
+    });
+
+    candidates.forEach(function (el) {
+      var block = topLevelBlock(body, el);
+      if (!block || !block.parentElement) return;
+      var prev = block.previousElementSibling;
+      if (prev && prev.querySelector('img')) {
+        block.classList.add('body-photo-credit');
+      }
+    });
+  }
+
   document.querySelectorAll('.article-body').forEach(function (body) {
     processBlockShape(body);
     processBrShape(body);
+    processPhotoCredit(body);
   });
 })();
