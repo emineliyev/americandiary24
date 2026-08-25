@@ -198,9 +198,46 @@
     });
   }
 
+  // ---- Legacy multi-author byline: a handful of older "Analysis by X, Y
+  // | Americandiary24 Staff" pieces wrote the credited names as the very
+  // first line of the body, instead of real author/co-author records (the
+  // real byline above the body still shows the generic "Editorial" for
+  // these). Deliberately only checks the body's FIRST block, not a
+  // sitewide text search - "analysis by" also shows up mid-sentence in
+  // ordinary, unrelated articles ("the analysis by Maxar shows..."), and
+  // those must never be touched. ----
+  var BYLINE_RE = /^analysis by\s*/i;
+
+  function firstMeaningfulChild(body) {
+    var child = body.firstElementChild;
+    while (child && !normalize(child.textContent)) child = child.nextElementSibling;
+    return child;
+  }
+
+  function joinNames(names) {
+    var bold = names.map(function (n) { return '<strong>' + n + '</strong>'; });
+    if (bold.length === 1) return bold[0];
+    return bold.slice(0, -1).join(', ') + ' and ' + bold[bold.length - 1];
+  }
+
+  function processLegacyByline(body) {
+    var first = firstMeaningfulChild(body);
+    if (!first) return;
+    var text = normalize(first.textContent);
+    if (!BYLINE_RE.test(text)) return;
+
+    var names = text.replace(BYLINE_RE, '').split('|')[0].split(',')
+      .map(function (n) { return n.trim(); }).filter(Boolean);
+    if (!names.length) return;
+
+    first.className = 'body-byline';
+    first.innerHTML = 'Analysis by ' + joinNames(names);
+  }
+
   document.querySelectorAll('.article-body').forEach(function (body) {
     processBlockShape(body);
     processBrShape(body);
     processPhotoCredit(body);
+    processLegacyByline(body);
   });
 })();

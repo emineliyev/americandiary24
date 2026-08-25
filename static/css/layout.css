@@ -521,6 +521,17 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   color: var(--text-muted); font-size: 12px;
 }
 .article-byline strong { color: var(--text-secondary); font-weight: 700; }
+
+/* Legacy "Analysis by X, Y | ... Staff" first line, rebuilt by
+   body-callout.js — matches .article-byline's own name styling above so
+   it reads as the same visual language, even though (unlike a real
+   author) these names don't link anywhere. */
+.article-body .body-byline {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+}
+.article-body .body-byline strong { color: var(--text-secondary); font-weight: 700; }
 /* height:0 + padding-top (not aspect-ratio) on the img itself — see
    .news-card__media's comment in components.css: Chromium doesn't
    reliably clip an aspect-ratio-sized box to its own border-radius on
