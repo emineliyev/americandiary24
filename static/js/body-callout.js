@@ -186,7 +186,15 @@
       var block = topLevelBlock(body, el);
       if (!block || !block.parentElement || block.classList.contains('body-photo-credit')) return;
       var prev = block.previousElementSibling;
-      if (!prev || !prev.querySelector('img')) return;
+      // Two legacy shapes both count: (a) the line right after an in-body
+      // image, or (b) the very first line of the body with nothing before
+      // it - that one's captioning the article's separate hero image
+      // (.article-media, rendered above .article-body entirely), which
+      // some editors credited this way instead of using the Photo Credit
+      // field on the article itself.
+      var captionsInBodyImage = prev && prev.querySelector('img');
+      var captionsHeroImage = !prev;
+      if (!captionsInBodyImage && !captionsHeroImage) return;
 
       // Same visual language as the hero image's own .image-credit strip
       // (icon + bold "Photo:" label) - rebuilt from the plain legacy text
