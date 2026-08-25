@@ -71,6 +71,10 @@
           {% include "includes/_byline.html" %}
           <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'F j, Y, g:i A' }}</time>
           <span>{{ article.body|reading_time }}</span>
+          <span class="article-byline__views">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            {{ article.view_count|intcomma }} views
+          </span>
         </div>
 
         {% if article.image %}

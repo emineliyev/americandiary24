@@ -379,7 +379,8 @@ body.menu-open {
 
 .trending__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
 .trending__item { padding: 14px 0; }
-.trending__reading { font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 4px; }
+.trending__reading { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+.trending__reading svg { flex-shrink: 0; opacity: 0.75; }
 
 .quote-card {
   position: relative;
@@ -525,6 +526,8 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
   color: var(--text-muted); font-size: 12px;
 }
+.article-byline__views { display: flex; align-items: center; gap: 4px; }
+.article-byline__views svg { flex-shrink: 0; opacity: 0.75; }
 .article-byline strong { color: var(--text-secondary); font-weight: 700; }
 
 /* Legacy "Analysis by X, Y | ... Staff" first line, rebuilt by

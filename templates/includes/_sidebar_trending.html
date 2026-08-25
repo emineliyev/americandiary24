@@ -13,7 +13,10 @@
     {% for article in trending %}
     <a href="{{ article.get_absolute_url }}" class="trending__item news-card">
       <span class="kicker">{{ article.category.name }}</span>
-      <span class="trending__reading">{{ article.view_count|intcomma }} reading now</span>
+      <span class="trending__reading">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        {{ article.view_count|intcomma }} views
+      </span>
       <h3 class="h3-card">{{ article.title }}</h3>
     </a>
     {% endfor %}
