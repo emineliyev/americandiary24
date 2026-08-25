@@ -533,6 +533,10 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
    it visually reads as "this belongs to the photo above it" and isn't
    mistaken for a second byline. */
 .image-credit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   gap: 6px;
