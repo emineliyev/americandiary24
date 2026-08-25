@@ -604,17 +604,26 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   padding: 0 8px;
 }
 
-/* Legacy "Photo: ..." lines, detected and tagged by body-callout.js —
-   matches figure.image figcaption above for a consistent look. The
-   !important pair overrides whatever inline font-size/color junk the
-   legacy span carries, which plain specificity can't reliably beat. */
+/* Legacy "Photo: ..." lines, rebuilt by body-callout.js into the same
+   icon + label markup as the hero image's own .image-credit strip (see
+   article.html) for a consistent look. Not position:absolute like that
+   one — legacy in-body images are arbitrary, often fixed-width sizes
+   rather than a full-bleed hero, so this just fuses flush underneath via
+   zero top margin instead of overlaying the image itself. */
 .article-body .body-photo-credit {
-  font: italic 400 12px var(--font-sans) !important;
-  color: var(--text-muted) !important;
-  text-align: center;
-  margin: 6px 0 24px;
-  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 11.5px var(--font-sans);
+  color: var(--text-muted);
+  margin: 0 0 24px;
+  padding: 7px 10px;
+  background: var(--bg-alt);
+  border-top: 2px solid var(--border);
+  max-width: fit-content;
 }
+.body-photo-credit svg { flex-shrink: 0; opacity: 0.7; }
+.body-photo-credit strong { color: var(--text-secondary); font-weight: 700; }
 .article-body figure.image.image-style-align-left {
   float: left; width: 50%; margin: 6px 24px 16px 0;
 }

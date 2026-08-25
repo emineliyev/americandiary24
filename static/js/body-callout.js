@@ -169,7 +169,10 @@
   // separately, see figure.image figcaption in layout.css) - this only
   // targets the legacy shape, and skips anything already inside a
   // figcaption so the two don't double-handle the same content. ----
-  var PHOTO_CREDIT_RE = /^photo\s*:/i;
+  var PHOTO_CREDIT_RE = /^photo\s*:\s*/i;
+  var CAMERA_ICON_SVG =
+    '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">' +
+    '<path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13.5" r="3.3"/></svg>';
 
   function processPhotoCredit(body) {
     var candidates = [];
@@ -181,11 +184,17 @@
 
     candidates.forEach(function (el) {
       var block = topLevelBlock(body, el);
-      if (!block || !block.parentElement) return;
+      if (!block || !block.parentElement || block.classList.contains('body-photo-credit')) return;
       var prev = block.previousElementSibling;
-      if (prev && prev.querySelector('img')) {
-        block.classList.add('body-photo-credit');
-      }
+      if (!prev || !prev.querySelector('img')) return;
+
+      // Same visual language as the hero image's own .image-credit strip
+      // (icon + bold "Photo:" label) - rebuilt from the plain legacy text
+      // rather than just restyled in place, since the original markup is
+      // an arbitrary mix of divs/spans with no label/value split.
+      var credit = normalize(el.textContent).replace(PHOTO_CREDIT_RE, '');
+      block.className = 'body-photo-credit';
+      block.innerHTML = CAMERA_ICON_SVG + '<strong>Photo:</strong> ' + credit;
     });
   }
 
