@@ -396,7 +396,10 @@ body.menu-open {
    since they all share this component. */
 .category-lead__grid .news-card__media { padding-top: 50%; }
 .category-lead__side > * + * { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 14px; }
-.category-lead__side-row { display: grid; grid-template-columns: 1fr 70px; gap: 12px; }
+/* Wider thumb (was 70px square) — same client request as the lead image
+   above, applied to the side-row thumbnails too. */
+.category-lead__side-row { display: grid; grid-template-columns: 1fr 110px; gap: 12px; }
+.category-lead__side-row .top-stories__thumb { padding-top: 75%; }
 @media (max-width: 1100px) { .category-lead__grid { grid-template-columns: 1fr; } }
 
 /* "Did You Know?" — same lead-column ratio as .category-lead__grid, but
