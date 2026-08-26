@@ -40,7 +40,7 @@ def home(request):
     news_category = Category.objects.filter(slug='news').first()
     more_stories = list(published.filter(category=news_category)[:7]) if news_category else []
 
-    editors_picks = list(published.filter(is_editors_pick=True)[:3])
+    editors_picks = list(published.filter(is_editors_pick=True)[:4])
     exclusives = list(published.filter(is_exclusive=True)[:3])
     breaking = published.filter(is_breaking=True).first()
     reference_articles = list(published.filter(is_reference=True)[:4])

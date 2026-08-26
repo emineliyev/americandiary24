@@ -354,14 +354,6 @@ body.menu-open {
   .category-row { grid-template-columns: 1fr; gap: 16px; padding: 20px 0; }
 }
 
-/* Editor's Picks — placeholder grid (_editors_picks.html), flat boxes
-   (not the diagonal-striped .media-placeholder--none used for genuinely
-   missing article images) until the client decides what populates it. */
-.editors-picks-placeholder__media { height: 0; padding-top: 62%; background: var(--img-a); margin-bottom: 14px; }
-.editors-picks-placeholder__line { height: 10px; background: var(--border); }
-.editors-picks-placeholder__line--title { width: 100%; margin-bottom: 8px; }
-.editors-picks-placeholder__line--sub { width: 60%; }
-
 /* AmericanDiary24 Analysis — light brand-tint panel (not the .exclusive
    block's solid navy, so the two full-width "highlighted card" sections
    don't look identical) so it stands out from the plain white page

@@ -1,22 +1,25 @@
-{% comment %}
-Placeholder only, per the client's updated wireframe — always renders
-regardless of real `is_editors_pick` data until the client decides what
-should actually appear here. The real lead+side layout this replaced is
-in git history if that decision
-brings back real article data instead of a placeholder grid.
-{% endcomment %}
+{% load humanize %}
+{% if editors_picks %}
 <section class="editors-picks">
   <div class="section-header section-header--brand">
     <h2 class="section-header-label">Editor's Picks</h2>
   </div>
 
   <div class="category-grid">
-    {% for _ in "1234" %}
-    <div class="editors-picks-placeholder">
-      <div class="editors-picks-placeholder__media"></div>
-      <div class="editors-picks-placeholder__line editors-picks-placeholder__line--title"></div>
-      <div class="editors-picks-placeholder__line editors-picks-placeholder__line--sub"></div>
-    </div>
+    {% for article in editors_picks %}
+    <a href="{{ article.get_absolute_url }}" class="news-card">
+      <div class="news-card__media">
+        {% if article.image %}
+          <img src="{{ article.image.url }}" alt="{{ article.title }}">
+        {% else %}
+          <div class="media-placeholder media-placeholder--none"></div>
+        {% endif %}
+      </div>
+      <span class="kicker">{{ article.category.name }}</span>
+      <h3 class="h4-list">{{ article.title }}</h3>
+      <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
+    </a>
     {% endfor %}
   </div>
 </section>
+{% endif %}
