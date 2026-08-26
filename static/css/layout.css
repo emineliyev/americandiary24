@@ -485,6 +485,10 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
 .briefing h3 { margin: 6px 0 16px; }
 .briefing form { display: flex; flex-direction: column; gap: 10px; }
 .briefing .btn-primary { width: 100%; }
+/* "Contribute" callout (_sidebar_contribute.html) reuses .briefing's box/
+   kicker/heading/button look but has a plain paragraph instead of a form,
+   so it needs its own bottom margin where the form's `gap` doesn't reach. */
+.briefing .body-sm { margin: 0 0 16px; }
 
 /* ===== Custom form validation message (replaces the native browser tooltip) ===== */
 .form-error {
