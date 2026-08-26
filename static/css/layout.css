@@ -441,9 +441,16 @@ body.menu-open {
 .category-section-row--1 { grid-template-columns: 1fr; }
 .category-section-row .category-lead__grid { grid-template-columns: 1fr; }
 .category-section-row--1 .category-lead__grid { grid-template-columns: 1.2fr 1fr; }
+/* .hero__incident-climate-full's row is full-page width (see .hero__grid),
+   not the narrow main-column width every other .category-section-row lives
+   in — plenty of room for each of its 2 columns to keep the normal
+   lead-left/side-right split instead of the cramped-width 1-column
+   collapse above. */
+.hero__incident-climate-full .category-lead__grid { grid-template-columns: 1.2fr 1fr; }
 @media (max-width: 700px) { .category-section-row, .category-section-row--3 { grid-template-columns: 1fr; } }
 @media (max-width: 1100px) { .category-section-row--3 { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 1100px) { .category-section-row--1 .category-lead__grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .hero__incident-climate-full .category-lead__grid { grid-template-columns: 1fr; } }
 
 /* Sidebar */
 .most-read__item { display: grid; grid-template-columns: 52px 1fr; gap: 14px; padding: 16px 0; }
