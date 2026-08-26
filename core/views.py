@@ -60,9 +60,7 @@ def home(request):
         'rest': dyk_articles[1:5],
     } if dyk_articles else None
 
-    # trending is just the top 3 of the same view_count ordering as most_read.
     most_read = list(published.order_by('-view_count')[:5])
-    trending = most_read[:3]
 
     active_quotes = list(Quote.objects.filter(is_active=True).select_related('related_article')[:4])
     featured_quote = active_quotes[0] if active_quotes else None
@@ -115,7 +113,6 @@ def home(request):
         'analysis_label': (analysis_category.homepage_title or analysis_category.name) if analysis_category else '',
         'did_you_know': did_you_know,
         'most_read': most_read,
-        'trending': trending,
         'category_section_rows': category_section_rows,
         'featured_quote': featured_quote,
         'previous_quotes': previous_quotes,
