@@ -150,19 +150,28 @@
     </div>
 
     <div class="hero__main-bottom hero__main-bottom-bottom">
-      {% with row=category_section_rows.3 %}
-        {% if row %}
-        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
-          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
-        </div>
-        {% endif %}
-      {% endwith %}
-
       {% for row in category_section_rows|slice:"4:" %}
         <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
           {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
         </div>
       {% endfor %}
+    </div>
+
+    {% comment %}
+    Final section — pairs the real "Crime & Incident" category (was alone
+    in category_section_rows.3, now renamed via homepage_title) with a
+    "Climate" placeholder (no category yet, see _climate_placeholder.html),
+    breaking out full-width like the other bespoke sections above. If the
+    admin regroups categories so Incident isn't at row index 3 anymore,
+    this needs updating to match.
+    {% endcomment %}
+    <div class="hero__incident-climate-full">
+      <div class="category-section-row">
+        {% with row=category_section_rows.3 %}
+          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+        {% endwith %}
+        {% include "includes/_climate_placeholder.html" %}
+      </div>
     </div>
   </div>
 </section>
