@@ -62,25 +62,30 @@
       {% include "includes/_analysis_row.html" %}
     </div>
 
-    <div class="hero__rail hero__rail-bottom">
+    {% comment %}
+    Same split-rail technique as .hero__analysis-full above — Editor's
+    Picks also breaks out full-width, so the rail is split a second time
+    around it. More Stories/Contribute/Most Read pair with main-bottom-top;
+    Quote/Trending/Follow move to after Editor's Picks (client's explicit
+    call on how to divide the rail here).
+    {% endcomment %}
+    <div class="hero__rail hero__rail-bottom-top">
       {% include "includes/_reference_news.html" with label="More Stories" articles=more_stories %}
       {% include "includes/_sidebar_contribute.html" %}
       {% include "includes/_reference_news.html" with label="Most Read" articles=most_read %}
-      {% include "includes/_sidebar_quote.html" %}
-      {% include "includes/_sidebar_trending.html" %}
-      {% include "includes/_sidebar_follow.html" %}
     </div>
 
-    <div class="hero__main-bottom">
+    <div class="hero__main-bottom hero__main-bottom-top">
       {% include "includes/_exclusive.html" %}
 
       {% comment %}
       Deliberately indexed rather than one flat loop over
       category_section_rows: the client's wireframe interleaves fixed
-      sections (Editor's Picks, Did You Know?) at specific points between
-      the admin-ordered category rows, not before/after all of them. If the
-      admin adds a 5th row group it won't appear here until this template
-      is extended to match wherever it should slot in.
+      sections (Research & Insights, Editor's Picks, Did You Know?) at
+      specific points between the admin-ordered category rows, not before/
+      after all of them. If the admin adds a 5th row group it won't appear
+      here until this template is extended to match wherever it should
+      slot in.
       {% endcomment %}
       {% with row=category_section_rows.0 %}
         {% if row %}
@@ -99,8 +104,19 @@
         </div>
         {% endif %}
       {% endwith %}
+    </div>
 
+    <div class="hero__editors-picks-full">
       {% include "includes/_editors_picks.html" %}
+    </div>
+
+    <div class="hero__rail hero__rail-bottom-bottom">
+      {% include "includes/_sidebar_quote.html" %}
+      {% include "includes/_sidebar_trending.html" %}
+      {% include "includes/_sidebar_follow.html" %}
+    </div>
+
+    <div class="hero__main-bottom hero__main-bottom-bottom">
       {% include "includes/_did_you_know.html" %}
 
       {% with row=category_section_rows.2 %}
