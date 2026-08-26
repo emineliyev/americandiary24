@@ -17,7 +17,7 @@ const BOOLEAN_FIELDS: { key: keyof ArticleWritePayload; label: string; hint?: st
   { key: 'is_breaking', label: 'Breaking News' },
   { key: 'is_exclusive', label: 'Exclusive' },
   { key: 'is_editors_pick', label: "Editor's Pick" },
-  { key: 'is_reference', label: 'Exclusive Opinion', hint: 'Featured in the "Exclusive Opinion" widget beside the homepage header (newest 6 shown).' },
+  { key: 'is_reference', label: 'Exclusive Opinion', hint: 'Featured in the "Exclusive Opinion" widget beside the homepage header (newest 4 shown).' },
   { key: 'is_indexed', label: 'Search-indexable', hint: 'Uncheck for syndicated/wire content — excludes it from sitemap.xml and adds noindex.' },
   { key: 'show_author_name', label: 'Show author name', hint: 'Uncheck to display "News Desk" instead of the author on this article.' },
 ];

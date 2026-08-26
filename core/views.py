@@ -41,7 +41,7 @@ def home(request):
     editors_picks = list(published.filter(is_editors_pick=True)[:3])
     exclusives = list(published.filter(is_exclusive=True)[:3])
     breaking = published.filter(is_breaking=True).first()
-    reference_articles = list(published.filter(is_reference=True)[:6])
+    reference_articles = list(published.filter(is_reference=True)[:4])
 
     # "AmericanDiary24 Analysis" — a fixed row of 4, sourced from Analysis &
     # Opinion specifically. Excluded from the generic category-section pool
