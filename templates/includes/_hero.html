@@ -81,11 +81,10 @@
       {% comment %}
       Deliberately indexed rather than one flat loop over
       category_section_rows: the client's wireframe interleaves fixed
-      sections (Research & Insights, Editor's Picks, Did You Know?) at
-      specific points between the admin-ordered category rows, not before/
-      after all of them. If the admin adds a 5th row group it won't appear
-      here until this template is extended to match wherever it should
-      slot in.
+      sections (Editor's Picks, Did You Know?) at specific points between
+      the admin-ordered category rows, not before/after all of them. If the
+      admin adds a 5th row group it won't appear here until this template
+      is extended to match wherever it should slot in.
       {% endcomment %}
       {% with row=category_section_rows.0 %}
         {% if row %}
@@ -94,8 +93,14 @@
         </div>
         {% endif %}
       {% endwith %}
+    </div>
 
-      {% include "includes/_research_insights.html" %}
+    {% comment %}
+    Editor's Picks now sits here — where Research & Insights (removed) used
+    to be — right after Politics/World, before Business/Energy/Health.
+    {% endcomment %}
+    <div class="hero__editors-picks-full">
+      {% include "includes/_editors_picks.html" %}
     </div>
 
     {% comment %}
@@ -114,10 +119,6 @@
         </div>
         {% endif %}
       {% endwith %}
-    </div>
-
-    <div class="hero__editors-picks-full">
-      {% include "includes/_editors_picks.html" %}
     </div>
 
     {% comment %}
