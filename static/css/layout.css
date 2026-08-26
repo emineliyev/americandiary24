@@ -235,6 +235,7 @@ body.menu-open {
 
 .top-stories__label {
   font: 800 11px var(--font-sans); letter-spacing: 0.14em; color: var(--brand);
+  text-transform: uppercase;
   padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; display: block;
 }
 .top-stories__thumb { position: relative; height: 0; padding-top: 100%; overflow: hidden; border-radius: 5px; }
