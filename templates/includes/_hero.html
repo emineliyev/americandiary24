@@ -96,7 +96,17 @@
       {% endwith %}
 
       {% include "includes/_research_insights.html" %}
+    </div>
 
+    {% comment %}
+    A 3-wide row (Business/Energy/Health right now) breaks out full-width
+    too, same as Analysis/Editor's Picks/Did You Know? — client's call:
+    any row of 3 side-by-side categories should span the full page, not
+    just sit in the main column. If the admin regroups this row down to
+    1-2 categories it'll render at main-column width instead (still fine,
+    just no longer full-width) since the --3 modifier class won't apply.
+    {% endcomment %}
+    <div class="hero__row1-full">
       {% with row=category_section_rows.1 %}
         {% if row %}
         <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
@@ -120,13 +130,11 @@
       {% include "includes/_did_you_know.html" %}
     </div>
 
-    <div class="hero__rail hero__rail-bottom-bottom">
-      {% include "includes/_sidebar_quote.html" %}
-      {% include "includes/_sidebar_trending.html" %}
-      {% include "includes/_sidebar_follow.html" %}
-    </div>
-
-    <div class="hero__main-bottom hero__main-bottom-bottom">
+    {% comment %}
+    Second 3-wide row (Sports/Travel/Entertainment right now) — same
+    full-width treatment as row1 above.
+    {% endcomment %}
+    <div class="hero__row2-full">
       {% with row=category_section_rows.2 %}
         {% if row %}
         <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
@@ -134,7 +142,15 @@
         </div>
         {% endif %}
       {% endwith %}
+    </div>
 
+    <div class="hero__rail hero__rail-bottom-bottom">
+      {% include "includes/_sidebar_quote.html" %}
+      {% include "includes/_sidebar_trending.html" %}
+      {% include "includes/_sidebar_follow.html" %}
+    </div>
+
+    <div class="hero__main-bottom hero__main-bottom-bottom">
       {% with row=category_section_rows.3 %}
         {% if row %}
         <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
