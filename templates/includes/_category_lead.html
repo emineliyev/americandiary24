@@ -13,9 +13,7 @@
           <div class="media-placeholder media-placeholder--none"></div>
         {% endif %}
       </div>
-      <span class="kicker">{{ section.lead.category.name }}</span>
       <h2 class="h2-cat-lead">{{ section.lead.title }}</h2>
-      <p class="body-sm">{{ section.lead.dek }}</p>
       <time class="meta" datetime="{{ section.lead.published_at|date:'c' }}">{{ section.lead.published_at|naturaltime }}</time>
     </a>
 
@@ -23,7 +21,6 @@
       {% for article in section.rest %}
       <a href="{{ article.get_absolute_url }}" class="category-lead__side-row news-card">
         <div>
-          <span class="kicker">{{ article.category.name }}</span>
           <h3 class="h4-list">{{ article.title }}</h3>
         </div>
         <div class="top-stories__thumb">

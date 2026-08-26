@@ -214,10 +214,6 @@ body.menu-open {
 .hero__rail-bottom-bottom { grid-column: 2; grid-row: 7; }
 .hero__main-bottom-bottom { grid-column: 1; grid-row: 7; }
 .hero__incident-climate-full { grid-column: 1 / -1; grid-row: 8; }
-/* Client's mockup for this row has no category kicker labels above the
-   titles — scoped hide, not a change to _category_lead.html itself since
-   every other row still wants its kicker. */
-.hero__incident-climate-full .kicker { display: none; }
 .hero__top { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.4fr); gap: clamp(28px, 3.5vw, 48px); align-items: center; margin-bottom: 40px; }
 .hero__top-text { display: flex; flex-direction: column; }
 /* Scoped to this hero only — .h1-hero itself is shared with article/
@@ -393,11 +389,12 @@ body.menu-open {
 
 /* Category sections */
 .category-lead__grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; }
-/* Browser-default h2/p margins otherwise stack a large gap between the
-   title and dek here — tightened locally rather than touching .body-sm's
-   own margin, since that class is shared across many unrelated cards. */
 .category-lead__grid .h2-cat-lead { margin: 0 0 4px; }
-.category-lead__grid .body-sm { margin: 0 0 6px; }
+/* Wider than the base .news-card__media ratio (62.5%) — client's call,
+   applies to every category row's lead image (Politics/World, Business/
+   Energy/Health, Sports/Travel/Entertainment, Crime & Incident, Climate)
+   since they all share this component. */
+.category-lead__grid .news-card__media { padding-top: 50%; }
 .category-lead__side > * + * { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 14px; }
 .category-lead__side-row { display: grid; grid-template-columns: 1fr 70px; gap: 12px; }
 @media (max-width: 1100px) { .category-lead__grid { grid-template-columns: 1fr; } }
@@ -406,7 +403,7 @@ body.menu-open {
    the side is a 2x2 grid of small cards instead of a vertical list. */
 .dyk-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; }
 .dyk-grid .h2-cat-lead { margin: 0 0 4px; }
-.dyk-grid .body-sm { margin: 0 0 6px; }
+.dyk-grid .news-card__media { padding-top: 50%; }
 .dyk-side { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .dyk-side .news-card__media { margin-bottom: 8px; }
 @media (max-width: 1100px) { .dyk-grid { grid-template-columns: 1fr; } }

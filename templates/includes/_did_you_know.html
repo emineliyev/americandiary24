@@ -14,9 +14,7 @@
           <div class="media-placeholder media-placeholder--none"></div>
         {% endif %}
       </div>
-      <span class="kicker">{{ did_you_know.lead.category.name }}</span>
       <h2 class="h2-cat-lead">{{ did_you_know.lead.title }}</h2>
-      <p class="body-sm">{{ did_you_know.lead.dek }}</p>
       <time class="meta" datetime="{{ did_you_know.lead.published_at|date:'c' }}">{{ did_you_know.lead.published_at|naturaltime }}</time>
     </a>
 
