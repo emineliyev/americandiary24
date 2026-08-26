@@ -110,6 +110,16 @@
       {% include "includes/_editors_picks.html" %}
     </div>
 
+    {% comment %}
+    Did You Know? breaks out full-width too — nothing in main-bottom-bottom
+    came before it, so unlike Editor's Picks this doesn't need a rail split
+    of its own: Quote/Trending/Follow simply move to after it, alongside
+    whatever's left in main-bottom-bottom.
+    {% endcomment %}
+    <div class="hero__did-you-know-full">
+      {% include "includes/_did_you_know.html" %}
+    </div>
+
     <div class="hero__rail hero__rail-bottom-bottom">
       {% include "includes/_sidebar_quote.html" %}
       {% include "includes/_sidebar_trending.html" %}
@@ -117,8 +127,6 @@
     </div>
 
     <div class="hero__main-bottom hero__main-bottom-bottom">
-      {% include "includes/_did_you_know.html" %}
-
       {% with row=category_section_rows.2 %}
         {% if row %}
         <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
