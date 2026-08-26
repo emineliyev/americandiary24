@@ -424,6 +424,13 @@ body.menu-open {
 @media (max-width: 860px) { .category-grid--3 { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .category-grid--2, .category-grid--3 { grid-template-columns: 1fr; } }
 
+/* Editor's Picks — taller image + a dek line (base .news-card is just
+   image/kicker/title/time) so the section carries more height here and
+   leaves less leftover blank space below it next to the taller sidebar
+   rail it's paired with. */
+.editors-picks .news-card__media { padding-top: 85%; }
+.editors-picks .body-sm { margin: 6px 0 0; }
+
 /* Two category sections side by side (e.g. Politics + Breaking) instead
    of stacked full-width. Each section is only ~half the usual width here,
    so its own internal grid is simplified — .category-lead__grid's normal

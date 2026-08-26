@@ -17,6 +17,7 @@
       </div>
       <span class="kicker">{{ article.category.name }}</span>
       <h3 class="h4-list">{{ article.title }}</h3>
+      {% if article.dek %}<p class="body-sm">{{ article.dek|truncatewords:16 }}</p>{% endif %}
       <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
     </a>
     {% endfor %}
