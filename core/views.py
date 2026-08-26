@@ -33,6 +33,11 @@ def home(request):
     # the above — a different widget, not part of this change.
     latest = list(published[:7])
 
+    # "More Stories" (sidebar, next to Politics/World) — News category only,
+    # unlike `latest` above which is sitewide recency.
+    news_category = Category.objects.filter(slug='news').first()
+    more_stories = list(published.filter(category=news_category)[:7]) if news_category else []
+
     editors_picks = list(published.filter(is_editors_pick=True)[:3])
     exclusives = list(published.filter(is_exclusive=True)[:3])
     breaking = published.filter(is_breaking=True).first()
@@ -101,6 +106,7 @@ def home(request):
         'hero': hero,
         'top_stories': top_stories,
         'latest': latest,
+        'more_stories': more_stories,
         'editors_picks': editors_picks,
         'exclusives': exclusives,
         'breaking': breaking,
