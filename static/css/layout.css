@@ -318,6 +318,14 @@ body.menu-open {
 }
 .reference-news__time { display: block; margin-top: 6px; }
 
+/* "Exclusive Opinion" (hero__rail-top) only — bigger thumbnail, no
+   excerpt/time. More Stories/Most Read etc. below share the same
+   _reference_news.html partial but keep the default compact look. */
+.hero__rail-top .reference-news__link { grid-template-columns: 1fr 130px; }
+.hero__rail-top .reference-news__thumb { width: 130px; padding-top: 97.5px; /* 130px × 4:3 */ }
+.hero__rail-top .reference-news__excerpt,
+.hero__rail-top .reference-news__time { display: none; }
+
 /* Latest News */
 .latest-row { display: grid; grid-template-columns: 148px 1fr auto; gap: 16px; padding: 20px 0; align-items: start; }
 .latest-row__thumb { position: relative; height: 0; padding-top: 62.5%; overflow: hidden; border-radius: 5px; }
