@@ -46,19 +46,60 @@
       </div>
 
       {% include "includes/_exclusive.html" %}
-      {% include "includes/_editors_picks.html" %}
+      {% include "includes/_analysis_row.html" %}
 
-      {% for row in category_section_rows %}
-        <div class="category-section-row">
-          {% for section in row %}
-            {% include "includes/_category_lead.html" with section=section %}
-          {% endfor %}
+      {% comment %}
+      Deliberately indexed rather than one flat loop over
+      category_section_rows: the client's wireframe interleaves fixed
+      sections (Analysis, Editor's Picks, Did You Know?) at specific points
+      between the admin-ordered category rows, not before/after all of
+      them. If the admin adds a 5th row group it won't appear here until
+      this template is extended to match wherever it should slot in.
+      {% endcomment %}
+      {% with row=category_section_rows.0 %}
+        {% if row %}
+        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% endif %}">
+          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+
+      {% with row=category_section_rows.1 %}
+        {% if row %}
+        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% endif %}">
+          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+
+      {% include "includes/_editors_picks.html" %}
+      {% include "includes/_did_you_know.html" %}
+
+      {% with row=category_section_rows.2 %}
+        {% if row %}
+        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% endif %}">
+          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+
+      {% with row=category_section_rows.3 %}
+        {% if row %}
+        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% endif %}">
+          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+
+      {% for row in category_section_rows|slice:"4:" %}
+        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% endif %}">
+          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
         </div>
       {% endfor %}
     </div>
 
     <div class="hero__rail">
-      {% include "includes/_reference_news.html" with label="Referenced by" articles=reference_articles %}
+      {% include "includes/_reference_news.html" with label="Exclusive Opinion" articles=reference_articles %}
       {% include "includes/_reference_news.html" with label="Latest News" articles=latest %}
       {% include "includes/_reference_news.html" with label="Most Read" articles=most_read %}
       {% include "includes/_sidebar_quote.html" %}

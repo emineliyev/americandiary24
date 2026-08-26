@@ -62,7 +62,12 @@ function SortableRow({ category, canManage, onToggleHomepage, onDelete }: {
   );
 }
 
-function SortableHomepageRow({ category, rowNumber }: { category: Category; rowNumber: number }) {
+function SortableHomepageRow({ category, rowNumber, isFirst, onToggleNewRow }: {
+  category: Category;
+  rowNumber: number;
+  isFirst: boolean;
+  onToggleNewRow: (category: Category) => void;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: category.id });
 
   return (
@@ -82,6 +87,15 @@ function SortableHomepageRow({ category, rowNumber }: { category: Category; rowN
       </td>
       <td>{category.name}</td>
       <td style={{ color: 'var(--text-muted)' }}>Row {rowNumber}</td>
+      <td>
+        <input
+          type="checkbox"
+          checked={category.homepage_new_row}
+          disabled={isFirst}
+          onChange={() => onToggleNewRow(category)}
+          title={isFirst ? 'The first section always starts a new row.' : 'Start a new row at this category'}
+        />
+      </td>
     </tr>
   );
 }
@@ -150,6 +164,18 @@ export function CategoryListPage() {
     }
   }
 
+  async function handleToggleNewRow(category: Category) {
+    const nextValue = !category.homepage_new_row;
+    setHomepageItems((prev) => prev.map((c) => (c.id === category.id ? { ...c, homepage_new_row: nextValue } : c)));
+    try {
+      await updateCategory(category.id, { homepage_new_row: nextValue });
+      queryClient.invalidateQueries({ queryKey: ['categories-admin'] });
+    } catch (err: any) {
+      setHomepageItems((prev) => prev.map((c) => (c.id === category.id ? { ...c, homepage_new_row: !nextValue } : c)));
+      toast.error(errorMessage(err, 'Failed to update this category.'));
+    }
+  }
+
   async function handleHomepageDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -209,8 +235,9 @@ export function CategoryListPage() {
 
           <h2 style={{ fontSize: 18, marginBottom: 6 }}>Homepage Sections</h2>
           <p className="field-hint" style={{ marginBottom: 10 }}>
-            Only categories checked "Homepage" above appear here. Drag ⠿ to set the order — every two
-            adjacent categories are shown side-by-side as one row on the homepage.
+            Only categories checked "Homepage" above appear here. Drag ⠿ to set the order. Check "New Row"
+            to start a fresh row at that category — un-check it to keep it side-by-side with the one above
+            (up to 3 per row).
           </p>
           {homepageItems.length === 0 ? (
             <p className="field-hint">No categories are set to show on the homepage.</p>
@@ -222,13 +249,26 @@ export function CategoryListPage() {
                     <th></th>
                     <th>Name</th>
                     <th>Homepage Row</th>
+                    <th>New Row</th>
                   </tr>
                 </thead>
                 <tbody>
                   <SortableContext items={homepageItems.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-                    {homepageItems.map((c, index) => (
-                      <SortableHomepageRow key={c.id} category={c} rowNumber={Math.floor(index / 2) + 1} />
-                    ))}
+                    {(() => {
+                      let rowNumber = 0;
+                      return homepageItems.map((c, index) => {
+                        if (index === 0 || c.homepage_new_row) rowNumber += 1;
+                        return (
+                          <SortableHomepageRow
+                            key={c.id}
+                            category={c}
+                            rowNumber={rowNumber}
+                            isFirst={index === 0}
+                            onToggleNewRow={handleToggleNewRow}
+                          />
+                        );
+                      });
+                    })()}
                   </SortableContext>
                 </tbody>
               </table>

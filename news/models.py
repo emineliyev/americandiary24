@@ -11,12 +11,19 @@ class Category(models.Model):
 
     # Homepage's own section list — deliberately independent of `order`
     # (which drives the nav menu): the client wants full control over which
-    # categories get a homepage section and how they're paired side-by-side,
-    # which doesn't have to match nav order. Two categories with adjacent
-    # homepage_order values land in the same row — see core/views.py's
-    # category_section_rows.
+    # categories get a homepage section, in what order, and how they're
+    # grouped side-by-side (1-3 per row) — see core/views.py's
+    # category_section_rows for the grouping logic driven by these fields.
     show_on_homepage = models.BooleanField(default=True)
     homepage_order = models.PositiveIntegerField(default=0)
+    # True starts a new row at this category; False continues the previous
+    # row (so 2 or 3 adjacent categories can share one row). The very first
+    # visible category always starts a row regardless of this flag.
+    homepage_new_row = models.BooleanField(default=True)
+    # Overrides the section header shown on the homepage only (e.g. "Analysis
+    # & Opinion" displayed as "AmericanDiary24 Analysis") — blank falls back
+    # to `name`. Nav menu, page titles, etc. always use `name` unchanged.
+    homepage_title = models.CharField(max_length=100, blank=True)
 
     class Meta:
         verbose_name_plural = 'categories'

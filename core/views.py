@@ -16,17 +16,44 @@ def home(request):
         .select_related('category', 'author').prefetch_related('co_authors')
     )
 
-    # hero/top_stories/latest are all just windows over the same default
-    # (-published_at) ordering — one fetch instead of three separate queries.
-    top_12 = list(published[:12])
-    hero = top_12[0] if top_12 else None
-    top_stories = top_12[1:5]
-    latest = top_12[5:12]
+    # Top Stories is specifically the "Breaking" category's own articles
+    # (not the is_breaking flag, which drives the separate thin news bar
+    # below) — falls back to plain recency if that category is ever empty,
+    # so the hero never goes blank.
+    breaking_articles = list(published.filter(category__slug='breaking')[:5])
+    if breaking_articles:
+        hero = breaking_articles[0]
+        top_stories = breaking_articles[1:5]
+    else:
+        recent = list(published[:5])
+        hero = recent[0] if recent else None
+        top_stories = recent[1:5]
+
+    # latest/"Latest News" (sidebar) stays sitewide-recency regardless of
+    # the above — a different widget, not part of this change.
+    latest = list(published[:7])
 
     editors_picks = list(published.filter(is_editors_pick=True)[:3])
     exclusives = list(published.filter(is_exclusive=True)[:3])
     breaking = published.filter(is_breaking=True).first()
     reference_articles = list(published.filter(is_reference=True)[:6])
+
+    # "AmericanDiary24 Analysis" — a fixed row of 4, sourced from Analysis &
+    # Opinion specifically. Excluded from the generic category-section pool
+    # below (along with Breaking and Did You Know?) since it renders with
+    # this bespoke layout instead of the standard lead+list one.
+    analysis_category = Category.objects.filter(slug='analysis-opinion').first()
+    analysis_articles = list(published.filter(category=analysis_category)[:4]) if analysis_category else []
+
+    # "Did You Know?" — 1 lead + 4 small (2x2), its own bespoke layout too.
+    dyk_category = Category.objects.filter(slug='did-you-know').first()
+    dyk_articles = list(published.filter(category=dyk_category)[:5]) if dyk_category else []
+    did_you_know = {
+        'category': dyk_category,
+        'label': (dyk_category.homepage_title or dyk_category.name) if dyk_category else '',
+        'lead': dyk_articles[0],
+        'rest': dyk_articles[1:5],
+    } if dyk_articles else None
 
     # trending is just the top 3 of the same view_count ordering as most_read.
     most_read = list(published.order_by('-view_count')[:5])
@@ -36,12 +63,14 @@ def home(request):
     featured_quote = active_quotes[0] if active_quotes else None
     previous_quotes = active_quotes[1:4]
 
-    # Which categories get a homepage section, and in what order/pairing,
-    # is fully admin-controlled (Categories screen: "Show on Homepage" +
-    # drag-to-reorder) rather than an automatic top-N-by-views pick.
+    # Which categories get a homepage section, in what order, and how
+    # they're grouped 1-3 per row, is fully admin-controlled (Categories
+    # screen: "Show on Homepage" + drag-to-reorder + "New Row"). Breaking/
+    # Analysis & Opinion/Did You Know? are excluded here since they're each
+    # already handled above with their own bespoke layout.
     homepage_categories = Category.objects.filter(
         is_active=True, show_on_homepage=True,
-    ).order_by('homepage_order', 'name')
+    ).exclude(slug__in=['breaking', 'analysis-opinion', 'did-you-know']).order_by('homepage_order', 'name')
 
     category_sections = []
     for category in homepage_categories:
@@ -50,16 +79,23 @@ def home(request):
             continue
         category_sections.append({
             'category': category,
-            'label': category.name,
+            'label': category.homepage_title or category.name,
             'lead': articles[0],
             'rest': articles[1:],
+            'new_row': category.homepage_new_row,
         })
 
-    # Paired up two-at-a-time for the homepage's side-by-side layout —
-    # sequential adjacent pairs (Politics+Breaking, News+World, ...), not
-    # grouped by lead/grid style. An odd section out just renders alone in
-    # the final row.
-    category_section_rows = [category_sections[i:i + 2] for i in range(0, len(category_sections), 2)]
+    # Grouped by each section's own "start a new row here" flag (admin-set,
+    # 1-3 categories can share a row) rather than a fixed pair-of-2.
+    category_section_rows = []
+    current_row = []
+    for section in category_sections:
+        if section['new_row'] and current_row:
+            category_section_rows.append(current_row)
+            current_row = []
+        current_row.append(section)
+    if current_row:
+        category_section_rows.append(current_row)
 
     context = {
         'hero': hero,
@@ -69,6 +105,9 @@ def home(request):
         'exclusives': exclusives,
         'breaking': breaking,
         'reference_articles': reference_articles,
+        'analysis_articles': analysis_articles,
+        'analysis_label': (analysis_category.homepage_title or analysis_category.name) if analysis_category else '',
+        'did_you_know': did_you_know,
         'most_read': most_read,
         'trending': trending,
         'category_section_rows': category_section_rows,

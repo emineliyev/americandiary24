@@ -21,6 +21,7 @@ export function CategoryFormPage() {
 
   const [form, setForm] = useState<CategoryWritePayload>({
     name: '', slug: '', order: 0, is_active: true, show_on_homepage: true, homepage_order: 0,
+    homepage_new_row: true, homepage_title: '',
   });
   const [slugTouched, setSlugTouched] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -36,6 +37,7 @@ export function CategoryFormPage() {
         name: existing.name, slug: existing.slug, order: existing.order,
         is_active: existing.is_active, show_on_homepage: existing.show_on_homepage,
         homepage_order: existing.homepage_order,
+        homepage_new_row: existing.homepage_new_row, homepage_title: existing.homepage_title,
       });
       setSlugTouched(true);
     }
@@ -122,8 +124,21 @@ export function CategoryFormPage() {
           />
           <label htmlFor="show_on_homepage">Show on Homepage</label>
         </div>
+        <div className="field">
+          <label>Homepage Title</label>
+          <input
+            type="text"
+            value={form.homepage_title}
+            onChange={(e) => setForm((f) => ({ ...f, homepage_title: e.target.value }))}
+            placeholder={form.name || 'Defaults to the category name'}
+          />
+          <p className="field-hint">
+            Optional. Overrides the section heading shown on the homepage only — the nav menu and page
+            titles always use the category name above.
+          </p>
+        </div>
         <p className="field-hint" style={{ marginTop: -8 }}>
-          Which categories get a homepage section, and how they're paired side-by-side, is set from the
+          Which categories get a homepage section, and how they're grouped into rows, is set from the
           Categories list page — drag to reorder there.
         </p>
       </div>

@@ -54,6 +54,8 @@ export interface Category {
   is_active: boolean;
   show_on_homepage: boolean;
   homepage_order: number;
+  homepage_new_row: boolean;
+  homepage_title: string;
 }
 
 export interface Author {
@@ -90,6 +92,8 @@ export interface CategoryWritePayload {
   is_active: boolean;
   show_on_homepage: boolean;
   homepage_order: number;
+  homepage_new_row: boolean;
+  homepage_title: string;
 }
 
 export interface AuthorWritePayload {

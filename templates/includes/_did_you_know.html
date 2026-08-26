@@ -1,0 +1,39 @@
+{% load humanize %}
+{% if did_you_know %}
+<section class="category-section">
+  <div class="section-header">
+    <h2 class="section-header-label">{{ did_you_know.label }}</h2>
+    <a href="{{ did_you_know.category.get_absolute_url }}" class="section-header__view-all">View All →</a>
+  </div>
+  <div class="dyk-grid">
+    <a href="{{ did_you_know.lead.get_absolute_url }}" class="news-card">
+      <div class="news-card__media">
+        {% if did_you_know.lead.image %}
+          <img src="{{ did_you_know.lead.image.url }}" alt="{{ did_you_know.lead.title }}">
+        {% else %}
+          <div class="media-placeholder media-placeholder--none"></div>
+        {% endif %}
+      </div>
+      <span class="kicker">{{ did_you_know.lead.category.name }}</span>
+      <h2 class="h2-cat-lead">{{ did_you_know.lead.title }}</h2>
+      <p class="body-sm">{{ did_you_know.lead.dek }}</p>
+      <time class="meta" datetime="{{ did_you_know.lead.published_at|date:'c' }}">{{ did_you_know.lead.published_at|naturaltime }}</time>
+    </a>
+
+    <div class="dyk-side">
+      {% for article in did_you_know.rest %}
+      <a href="{{ article.get_absolute_url }}" class="news-card">
+        <div class="news-card__media">
+          {% if article.image %}
+            <img src="{{ article.image.url }}" alt="{{ article.title }}">
+          {% else %}
+            <div class="media-placeholder media-placeholder--none"></div>
+          {% endif %}
+        </div>
+        <h3 class="h4-list">{{ article.title }}</h3>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
