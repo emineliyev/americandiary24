@@ -45,11 +45,25 @@
         </div>
       </div>
 
-      {% include "includes/_exclusive.html" %}
     </div>
 
-    <div class="hero__rail">
+    {% comment %}
+    Rail is split into two pieces (rather than one item spanning both rows
+    the way it did before) specifically so nothing in it can sit in the same
+    row as .hero__analysis-full's full-width breakout — a single spanning
+    rail collided with the breakout there. Exclusive Opinion alone pairs
+    with the hero/headlines row; Analysis then has the full row to itself;
+    the rest of the rail resumes alongside main-bottom.
+    {% endcomment %}
+    <div class="hero__rail hero__rail-top">
       {% include "includes/_reference_news.html" with label="Exclusive Opinion" articles=reference_articles %}
+    </div>
+
+    <div class="hero__analysis-full">
+      {% include "includes/_analysis_row.html" %}
+    </div>
+
+    <div class="hero__rail hero__rail-bottom">
       {% include "includes/_reference_news.html" with label="Latest News" articles=latest %}
       {% include "includes/_reference_news.html" with label="Most Read" articles=most_read %}
       {% include "includes/_sidebar_quote.html" %}
@@ -57,18 +71,9 @@
       {% include "includes/_sidebar_follow.html" %}
     </div>
 
-    {% comment %}
-    Breaks out of the main/rail two-column split to span the full container
-    width — the client's wireframe wants this one row full-bleed while the
-    sidebar continues alongside everything above and below it. Made possible
-    by .hero__rail spanning all 3 explicit grid rows (see layout.css) instead
-    of matching .hero__main's old single implicit row.
-    {% endcomment %}
-    <div class="hero__analysis-full">
-      {% include "includes/_analysis_row.html" %}
-    </div>
-
     <div class="hero__main-bottom">
+      {% include "includes/_exclusive.html" %}
+
       {% comment %}
       Deliberately indexed rather than one flat loop over
       category_section_rows: the client's wireframe interleaves fixed

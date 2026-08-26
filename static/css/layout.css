@@ -198,12 +198,14 @@ body.menu-open {
 .hero__grid { display: grid; grid-template-columns: minmax(0,1fr) 340px; column-gap: clamp(24px, 3vw, 40px); row-gap: 44px; align-items: start; }
 .hero__main-top { grid-column: 1; grid-row: 1; }
 .hero__main-top > * + * { margin-top: 44px; }
-/* Spans all 3 explicit rows (main-top / analysis-full / main-bottom) so it
-   still runs the full height of the main column even though .hero__analysis-full
-   breaks that column into two pieces to go full-width in the middle. */
-.hero__rail { grid-column: 2; grid-row: 1 / 4; }
+/* Split into rail-top/rail-bottom (not one item spanning all 3 rows) —
+   a spanning rail would occupy column 2 at row 2 too, colliding with
+   .hero__analysis-full's grid-column: 1 / -1 there. Each half only ever
+   shares a row with a main column item, never with the full-width one. */
 .hero__rail > * + * { margin-top: 44px; }
+.hero__rail-top { grid-column: 2; grid-row: 1; }
 .hero__analysis-full { grid-column: 1 / -1; grid-row: 2; }
+.hero__rail-bottom { grid-column: 2; grid-row: 3; }
 .hero__main-bottom { grid-column: 1; grid-row: 3; }
 .hero__main-bottom > * + * { margin-top: 44px; }
 .hero__top { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.4fr); gap: clamp(28px, 3.5vw, 48px); align-items: center; margin-bottom: 40px; }
