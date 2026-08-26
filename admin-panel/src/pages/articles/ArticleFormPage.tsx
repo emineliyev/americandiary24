@@ -16,7 +16,7 @@ import { useFormValidation, required, requiredHtml, slug as slugRule } from '../
 const BOOLEAN_FIELDS: { key: keyof ArticleWritePayload; label: string; hint?: string }[] = [
   { key: 'is_main', label: 'Main', hint: 'Eligible for the homepage hero + "More Headlines" row (newest 5 shown). Unflagged articles never appear there, no matter how recent.' },
   { key: 'is_breaking', label: 'Breaking News' },
-  { key: 'is_exclusive', label: 'Exclusive' },
+  { key: 'is_exclusive', label: 'Resources & Insights', hint: 'Featured in the "AmericanDiary24 Resources & Insights" section on the homepage (newest 3 shown).' },
   { key: 'is_editors_pick', label: "Editor's Pick" },
   { key: 'is_reference', label: 'Exclusive Opinion', hint: 'Featured in the "Exclusive Opinion" widget beside the homepage header (newest 4 shown).' },
   { key: 'is_indexed', label: 'Search-indexable', hint: 'Uncheck for syndicated/wire content — excludes it from sitemap.xml and adds noindex.' },
