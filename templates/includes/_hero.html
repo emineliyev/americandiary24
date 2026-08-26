@@ -2,7 +2,7 @@
 {% if hero %}
 <section class="hero">
   <div class="container hero__grid">
-    <div class="hero__main">
+    <div class="hero__main-top">
       <article class="hero__top">
         <div class="news-card hero__top-text">
           <a href="{{ hero.get_absolute_url }}">
@@ -46,15 +46,36 @@
       </div>
 
       {% include "includes/_exclusive.html" %}
-      {% include "includes/_analysis_row.html" %}
+    </div>
 
+    <div class="hero__rail">
+      {% include "includes/_reference_news.html" with label="Exclusive Opinion" articles=reference_articles %}
+      {% include "includes/_reference_news.html" with label="Latest News" articles=latest %}
+      {% include "includes/_reference_news.html" with label="Most Read" articles=most_read %}
+      {% include "includes/_sidebar_quote.html" %}
+      {% include "includes/_sidebar_trending.html" %}
+      {% include "includes/_sidebar_follow.html" %}
+    </div>
+
+    {% comment %}
+    Breaks out of the main/rail two-column split to span the full container
+    width — the client's wireframe wants this one row full-bleed while the
+    sidebar continues alongside everything above and below it. Made possible
+    by .hero__rail spanning all 3 explicit grid rows (see layout.css) instead
+    of matching .hero__main's old single implicit row.
+    {% endcomment %}
+    <div class="hero__analysis-full">
+      {% include "includes/_analysis_row.html" %}
+    </div>
+
+    <div class="hero__main-bottom">
       {% comment %}
       Deliberately indexed rather than one flat loop over
       category_section_rows: the client's wireframe interleaves fixed
-      sections (Analysis, Editor's Picks, Did You Know?) at specific points
-      between the admin-ordered category rows, not before/after all of
-      them. If the admin adds a 5th row group it won't appear here until
-      this template is extended to match wherever it should slot in.
+      sections (Editor's Picks, Did You Know?) at specific points between
+      the admin-ordered category rows, not before/after all of them. If the
+      admin adds a 5th row group it won't appear here until this template
+      is extended to match wherever it should slot in.
       {% endcomment %}
       {% with row=category_section_rows.0 %}
         {% if row %}
@@ -96,15 +117,6 @@
           {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
         </div>
       {% endfor %}
-    </div>
-
-    <div class="hero__rail">
-      {% include "includes/_reference_news.html" with label="Exclusive Opinion" articles=reference_articles %}
-      {% include "includes/_reference_news.html" with label="Latest News" articles=latest %}
-      {% include "includes/_reference_news.html" with label="Most Read" articles=most_read %}
-      {% include "includes/_sidebar_quote.html" %}
-      {% include "includes/_sidebar_trending.html" %}
-      {% include "includes/_sidebar_follow.html" %}
     </div>
   </div>
 </section>

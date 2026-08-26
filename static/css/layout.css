@@ -191,9 +191,21 @@ body.menu-open {
 /* 340px (not 280px) — this column now also carries the former sidebar-col
    widgets (quote, 300px-wide ad, trending, newsletter, follow), which need
    the same width they had in .content-split. */
-.hero__grid { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: clamp(24px, 3vw, 40px); align-items: start; }
-.hero__main > * + * { margin-top: 44px; }
+/* row-gap kept separate from column-gap (44px vs the narrower clamp) so
+   the vertical rhythm between main-top/analysis-full/main-bottom matches
+   what .hero__main's old `> * + * { margin-top: 44px }` produced — see
+   .hero__rail below for why this became 3 explicit rows instead of 1. */
+.hero__grid { display: grid; grid-template-columns: minmax(0,1fr) 340px; column-gap: clamp(24px, 3vw, 40px); row-gap: 44px; align-items: start; }
+.hero__main-top { grid-column: 1; grid-row: 1; }
+.hero__main-top > * + * { margin-top: 44px; }
+/* Spans all 3 explicit rows (main-top / analysis-full / main-bottom) so it
+   still runs the full height of the main column even though .hero__analysis-full
+   breaks that column into two pieces to go full-width in the middle. */
+.hero__rail { grid-column: 2; grid-row: 1 / 4; }
 .hero__rail > * + * { margin-top: 44px; }
+.hero__analysis-full { grid-column: 1 / -1; grid-row: 2; }
+.hero__main-bottom { grid-column: 1; grid-row: 3; }
+.hero__main-bottom > * + * { margin-top: 44px; }
 .hero__top { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.4fr); gap: clamp(28px, 3.5vw, 48px); align-items: center; margin-bottom: 40px; }
 .hero__top-text { display: flex; flex-direction: column; }
 /* Scoped to this hero only — .h1-hero itself is shared with article/
@@ -227,6 +239,15 @@ body.menu-open {
      viewport. This is what caused the horizontal overflow/blowout below
      1100px before this fix. */
   .hero__grid { grid-template-columns: minmax(0, 1fr); }
+  /* The desktop explicit row/column placement (see .hero__grid above) only
+     makes sense with 2 columns — reset it here and use `order` instead, so
+     single-column stacking falls back to the original main-then-rail order
+     (main-top, analysis, main-bottom, then rail) rather than interleaving
+     the rail in the middle where it sits in source order. */
+  .hero__main-top { grid-column: auto; grid-row: auto; order: 1; }
+  .hero__analysis-full { grid-column: auto; grid-row: auto; order: 2; }
+  .hero__main-bottom { grid-column: auto; grid-row: auto; order: 3; }
+  .hero__rail { grid-column: auto; grid-row: auto; order: 4; }
   .reference-news { margin-top: 32px; }
 }
 @media (max-width: 900px) {
