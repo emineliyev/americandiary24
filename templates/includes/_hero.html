@@ -90,6 +90,8 @@
         {% endif %}
       {% endwith %}
 
+      {% include "includes/_research_insights.html" %}
+
       {% with row=category_section_rows.1 %}
         {% if row %}
         <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">

@@ -391,6 +391,24 @@ body.menu-open {
 @media (max-width: 1100px) { .dyk-grid { grid-template-columns: 1fr; } }
 @media (max-width: 480px) { .dyk-side { grid-template-columns: 1fr; } }
 
+/* "Research & Insights" — reserved placeholder (_research_insights.html)
+   until the client assigns real categories to it. Flat boxes (not the
+   diagonal-striped .media-placeholder--none used for genuinely missing
+   article images) since these represent not-yet-built content, not a
+   normal empty state. */
+.research-insights__grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; }
+.research-insights__lead {
+  position: relative; height: 0; padding-top: 60%;
+  background: var(--img-a); display: flex; align-items: center; justify-content: center;
+}
+.research-insights__lead span {
+  position: absolute; font: 800 11px var(--font-sans); letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.research-insights__side { display: flex; flex-direction: column; gap: 16px; }
+.research-insights__box { height: 0; padding-top: 42%; background: var(--img-a); }
+@media (max-width: 1100px) { .research-insights__grid { grid-template-columns: 1fr; } }
+
 .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 @media (max-width: 860px) { .category-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .category-grid { grid-template-columns: 1fr; } }
