@@ -5,7 +5,7 @@
     <h2 class="section-header-label">Editor's Picks</h2>
   </div>
 
-  <div class="category-grid">
+  <div class="category-grid{% if editors_picks|length == 1 %} category-grid--1{% elif editors_picks|length == 2 %} category-grid--2{% elif editors_picks|length == 3 %} category-grid--3{% endif %}">
     {% for article in editors_picks %}
     <a href="{{ article.get_absolute_url }}" class="news-card">
       <div class="news-card__media">

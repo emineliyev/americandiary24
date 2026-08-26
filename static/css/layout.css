@@ -415,6 +415,14 @@ body.menu-open {
 .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 @media (max-width: 860px) { .category-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .category-grid { grid-template-columns: 1fr; } }
+/* Fewer than 4 items (e.g. Editor's Picks with only 1-3 flagged so far) —
+   size the grid to the actual count instead of leaving empty columns/a
+   half-empty-looking row at the fixed 4-up width. */
+.category-grid--1 { grid-template-columns: 1fr; }
+.category-grid--2 { grid-template-columns: repeat(2, 1fr); }
+.category-grid--3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 860px) { .category-grid--3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .category-grid--2, .category-grid--3 { grid-template-columns: 1fr; } }
 
 /* Two category sections side by side (e.g. Politics + Breaking) instead
    of stacked full-width. Each section is only ~half the usual width here,
