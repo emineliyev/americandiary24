@@ -208,13 +208,12 @@ body.menu-open {
 .hero__rail-bottom-top { grid-column: 2; grid-row: 3; }
 .hero__main-bottom > * + * { margin-top: 44px; }
 .hero__main-bottom-top { grid-column: 1; grid-row: 3; }
-.hero__editors-picks-full { grid-column: 1 / -1; grid-row: 4; }
-.hero__row1-full { grid-column: 1 / -1; grid-row: 5; }
-.hero__did-you-know-full { grid-column: 1 / -1; grid-row: 6; }
-.hero__row2-full { grid-column: 1 / -1; grid-row: 7; }
-.hero__rail-bottom-bottom { grid-column: 2; grid-row: 8; }
-.hero__main-bottom-bottom { grid-column: 1; grid-row: 8; }
-.hero__incident-climate-full { grid-column: 1 / -1; grid-row: 9; }
+.hero__row1-full { grid-column: 1 / -1; grid-row: 4; }
+.hero__did-you-know-full { grid-column: 1 / -1; grid-row: 5; }
+.hero__row2-full { grid-column: 1 / -1; grid-row: 6; }
+.hero__rail-bottom-bottom { grid-column: 2; grid-row: 7; }
+.hero__main-bottom-bottom { grid-column: 1; grid-row: 7; }
+.hero__incident-climate-full { grid-column: 1 / -1; grid-row: 8; }
 /* Client's mockup for this row has no category kicker labels above the
    titles — scoped hide, not a change to _category_lead.html itself since
    every other row still wants its kicker. */
@@ -261,15 +260,14 @@ body.menu-open {
   .hero__main-top { grid-column: auto; grid-row: auto; order: 1; }
   .hero__analysis-full { grid-column: auto; grid-row: auto; order: 2; }
   .hero__main-bottom-top { grid-column: auto; grid-row: auto; order: 3; }
-  .hero__editors-picks-full { grid-column: auto; grid-row: auto; order: 4; }
-  .hero__row1-full { grid-column: auto; grid-row: auto; order: 5; }
-  .hero__did-you-know-full { grid-column: auto; grid-row: auto; order: 6; }
-  .hero__row2-full { grid-column: auto; grid-row: auto; order: 7; }
-  .hero__main-bottom-bottom { grid-column: auto; grid-row: auto; order: 8; }
-  .hero__incident-climate-full { grid-column: auto; grid-row: auto; order: 9; }
-  .hero__rail-top { grid-column: auto; grid-row: auto; order: 10; }
-  .hero__rail-bottom-top { grid-column: auto; grid-row: auto; order: 10; }
-  .hero__rail-bottom-bottom { grid-column: auto; grid-row: auto; order: 10; }
+  .hero__row1-full { grid-column: auto; grid-row: auto; order: 4; }
+  .hero__did-you-know-full { grid-column: auto; grid-row: auto; order: 5; }
+  .hero__row2-full { grid-column: auto; grid-row: auto; order: 6; }
+  .hero__main-bottom-bottom { grid-column: auto; grid-row: auto; order: 7; }
+  .hero__incident-climate-full { grid-column: auto; grid-row: auto; order: 8; }
+  .hero__rail-top { grid-column: auto; grid-row: auto; order: 9; }
+  .hero__rail-bottom-top { grid-column: auto; grid-row: auto; order: 9; }
+  .hero__rail-bottom-bottom { grid-column: auto; grid-row: auto; order: 9; }
   .reference-news { margin-top: 32px; }
 }
 @media (max-width: 900px) {

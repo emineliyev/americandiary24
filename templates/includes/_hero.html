@@ -63,11 +63,14 @@
     </div>
 
     {% comment %}
-    Same split-rail technique as .hero__analysis-full above — Editor's
-    Picks also breaks out full-width, so the rail is split a second time
-    around it. More Stories/Contribute/Most Read pair with main-bottom-top;
-    Quote/Trending/Follow move to after Editor's Picks (client's explicit
-    call on how to divide the rail here).
+    Same split-rail technique as .hero__analysis-full above — row1-full
+    (Business/Energy/Health) breaks out full-width next, so the rail is
+    split a second time around it. More Stories/Contribute/Most Read pair
+    with main-bottom-top (Exclusive + Politics/World + Editor's Picks);
+    Follow moves to after row1-full (see git history — this rail split
+    originally existed around Editor's Picks before that moved into
+    main-bottom-top; Quote/Trending were later removed from the homepage
+    entirely).
     {% endcomment %}
     <div class="hero__rail hero__rail-bottom-top">
       {% include "includes/_reference_news.html" with label="More Stories" articles=more_stories %}
@@ -93,23 +96,17 @@
         </div>
         {% endif %}
       {% endwith %}
-    </div>
 
-    {% comment %}
-    Editor's Picks now sits here — where Research & Insights (removed) used
-    to be — right after Politics/World, before Business/Energy/Health.
-    {% endcomment %}
-    <div class="hero__editors-picks-full">
       {% include "includes/_editors_picks.html" %}
     </div>
 
     {% comment %}
-    A 3-wide row (Business/Energy/Health right now) breaks out full-width
-    too, same as Analysis/Editor's Picks/Did You Know? — client's call:
-    any row of 3 side-by-side categories should span the full page, not
-    just sit in the main column. If the admin regroups this row down to
-    1-2 categories it'll render at main-column width instead (still fine,
-    just no longer full-width) since the --3 modifier class won't apply.
+    A 3-wide row (Business/Energy/Health right now) breaks out full-width,
+    same as Analysis/Did You Know? — client's call: any row of 3 side-by-
+    side categories should span the full page, not just sit in the main
+    column. If the admin regroups this row down to 1-2 categories it'll
+    render at main-column width instead (still fine, just no longer
+    full-width) since the --3 modifier class won't apply.
     {% endcomment %}
     <div class="hero__row1-full">
       {% with row=category_section_rows.1 %}
