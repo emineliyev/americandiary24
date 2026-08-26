@@ -665,7 +665,7 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   border-left: 3px solid var(--brand);
   border-radius: 5px;
   padding: 14px 20px;
-  margin: 28px 0;
+  margin: 0;
 }
 .body-callout__label {
   display: block;
