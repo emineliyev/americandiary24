@@ -380,9 +380,12 @@ body.menu-open {
    problem plain media queries can't see). */
 .category-section-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 40px); }
 .category-section-row--3 { grid-template-columns: repeat(3, 1fr); }
+.category-section-row--1 { grid-template-columns: 1fr; }
 .category-section-row .category-lead__grid { grid-template-columns: 1fr; }
+.category-section-row--1 .category-lead__grid { grid-template-columns: 1.2fr 1fr; }
 @media (max-width: 700px) { .category-section-row, .category-section-row--3 { grid-template-columns: 1fr; } }
 @media (max-width: 1100px) { .category-section-row--3 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 1100px) { .category-section-row--1 .category-lead__grid { grid-template-columns: 1fr; } }
 
 /* Sidebar */
 .most-read__item { display: grid; grid-template-columns: 52px 1fr; gap: 14px; padding: 16px 0; }
