@@ -14,7 +14,6 @@
           <div class="media-placeholder media-placeholder--none"></div>
         {% endif %}
       </div>
-      <span class="kicker">{{ article.category.name }}</span>
       <h3 class="h4-list">{{ article.title }}</h3>
       <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
     </a>
