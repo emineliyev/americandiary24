@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 
-from news.models import Article, Author, Category, Quote
+from news.models import Article, Author, Category
 
 from .models import Page, SiteSettings
 
@@ -62,10 +62,6 @@ def home(request):
 
     most_read = list(published.order_by('-view_count')[:5])
 
-    active_quotes = list(Quote.objects.filter(is_active=True).select_related('related_article')[:4])
-    featured_quote = active_quotes[0] if active_quotes else None
-    previous_quotes = active_quotes[1:4]
-
     # Which categories get a homepage section, in what order, and how
     # they're grouped 1-3 per row, is fully admin-controlled (Categories
     # screen: "Show on Homepage" + drag-to-reorder + "New Row"). Breaking/
@@ -114,8 +110,6 @@ def home(request):
         'did_you_know': did_you_know,
         'most_read': most_read,
         'category_section_rows': category_section_rows,
-        'featured_quote': featured_quote,
-        'previous_quotes': previous_quotes,
     }
     return render(request, 'home.html', context)
 
