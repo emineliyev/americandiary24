@@ -1,51 +1,22 @@
-{% load humanize %}
-{% if editors_picks %}
+{% comment %}
+Placeholder only, per the client's updated wireframe — always renders
+regardless of real `is_editors_pick` data until the client decides what
+should actually appear here (same treatment as _research_insights.html).
+The real lead+side layout this replaced is in git history if that decision
+brings back real article data instead of a placeholder grid.
+{% endcomment %}
 <section class="editors-picks">
   <div class="section-header section-header--brand">
     <h2 class="section-header-label">Editor's Picks</h2>
-    <span class="editors-picks__selected">Selected by the newsroom</span>
   </div>
 
-  <div class="editors-picks__grid">
-    {% with lead=editors_picks.0 %}
-    {% if lead %}
-    <div class="editors-picks__lead news-card">
-      <a href="{{ lead.get_absolute_url }}">
-        <div class="news-card__media">
-          {% if lead.image %}
-            <img src="{{ lead.image.url }}" alt="{{ lead.title }}">
-          {% else %}
-            <div class="media-placeholder media-placeholder--none"></div>
-          {% endif %}
-        </div>
-        <span class="kicker">The Long Read</span>
-        <h2 class="h2-feature">{{ lead.title }}</h2>
-        <p class="body-sm">{{ lead.dek }}</p>
-      </a>
-      <div class="hero__byline">
-        {% include "includes/_byline.html" with article=lead %}
-        <span>{{ lead.published_at|naturaltime }}</span>
-      </div>
+  <div class="category-grid">
+    {% for _ in "1234" %}
+    <div class="editors-picks-placeholder">
+      <div class="editors-picks-placeholder__media"></div>
+      <div class="editors-picks-placeholder__line editors-picks-placeholder__line--title"></div>
+      <div class="editors-picks-placeholder__line editors-picks-placeholder__line--sub"></div>
     </div>
-    {% endif %}
-    {% endwith %}
-
-    <div class="editors-picks__side">
-      {% for article in editors_picks|slice:"1:3" %}
-      <a href="{{ article.get_absolute_url }}" class="news-card">
-        <div class="news-card__media">
-          {% if article.image %}
-            <img src="{{ article.image.url }}" alt="{{ article.title }}">
-          {% else %}
-            <div class="media-placeholder media-placeholder--none"></div>
-          {% endif %}
-        </div>
-        <span class="kicker">{{ article.category.name }}</span>
-        <h3 class="h3-card">{{ article.title }}</h3>
-        <time class="meta" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|naturaltime }}</time>
-      </a>
-      {% endfor %}
-    </div>
+    {% endfor %}
   </div>
 </section>
-{% endif %}

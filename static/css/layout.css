@@ -326,16 +326,13 @@ body.menu-open {
   .category-row { grid-template-columns: 1fr; gap: 16px; padding: 20px 0; }
 }
 
-/* Editor's Picks */
-.editors-picks__grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 28px; }
-.editors-picks__lead { background: var(--bg-alt); padding: 22px 26px; }
-.editors-picks__lead .news-card__media { margin-bottom: 18px; }
-.editors-picks__selected { font: italic 400 14px var(--font-serif); color: var(--text-muted); }
-.editors-picks__side > * { border-top: 1px solid var(--border); padding-top: 16px; }
-.editors-picks__side > * + * { margin-top: 20px; }
-@media (max-width: 1100px) {
-  .editors-picks__grid { grid-template-columns: 1fr; }
-}
+/* Editor's Picks — placeholder grid (_editors_picks.html), same flat-box
+   treatment as .research-insights__box until the client decides what
+   populates this section. */
+.editors-picks-placeholder__media { height: 0; padding-top: 62%; background: var(--img-a); margin-bottom: 14px; }
+.editors-picks-placeholder__line { height: 10px; background: var(--border); }
+.editors-picks-placeholder__line--title { width: 100%; margin-bottom: 8px; }
+.editors-picks-placeholder__line--sub { width: 60%; }
 
 /* Exclusive */
 .exclusive { background: var(--brand); color: #fff; padding: 32px 34px 36px; border-radius: 5px; }
