@@ -141,6 +141,11 @@ class Article(models.Model):
         'reference article', default=False,
         help_text='Featured in the "Referenced by" widget beside the homepage header (newest 6, shown with a circular thumbnail).',
     )
+    is_main = models.BooleanField(
+        default=False,
+        help_text='Eligible for the homepage hero + "More Headlines" row (newest 5 shown). '
+                   'Unflagged articles never appear there, no matter how recent.',
+    )
     is_indexed = models.BooleanField(
         'search-indexable',
         default=True,

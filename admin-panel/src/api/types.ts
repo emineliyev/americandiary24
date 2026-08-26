@@ -165,6 +165,7 @@ export interface ArticleListItem {
   is_exclusive: boolean;
   is_editors_pick: boolean;
   is_reference: boolean;
+  is_main: boolean;
 }
 
 export interface Article extends ArticleListItem {
@@ -200,6 +201,7 @@ export interface ArticleWritePayload {
   is_exclusive: boolean;
   is_editors_pick: boolean;
   is_reference: boolean;
+  is_main: boolean;
   is_indexed: boolean;
   show_author_name: boolean;
 }

@@ -77,7 +77,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'slug', 'category', 'author', 'status',
             'published_at', 'updated_at', 'view_count', 'image', 'deleted_at',
-            'is_breaking', 'is_exclusive', 'is_editors_pick', 'is_reference',
+            'is_breaking', 'is_exclusive', 'is_editors_pick', 'is_reference', 'is_main',
         ]
 
 
@@ -116,7 +116,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             'category', 'category_id', 'author', 'author_id',
             'co_authors', 'co_author_ids', 'tags', 'tag_ids',
             'status', 'published_at', 'updated_at', 'view_count',
-            'is_breaking', 'is_exclusive', 'is_editors_pick', 'is_reference',
+            'is_breaking', 'is_exclusive', 'is_editors_pick', 'is_reference', 'is_main',
             'is_indexed', 'show_author_name',
         ]
         read_only_fields = ['image', 'view_count', 'updated_at']

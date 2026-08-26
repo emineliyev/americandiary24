@@ -14,6 +14,7 @@ import { useToast, errorMessage } from '../../components/toast/ToastContext';
 import { useFormValidation, required, requiredHtml, slug as slugRule } from '../../utils/validation';
 
 const BOOLEAN_FIELDS: { key: keyof ArticleWritePayload; label: string; hint?: string }[] = [
+  { key: 'is_main', label: 'Main', hint: 'Eligible for the homepage hero + "More Headlines" row (newest 5 shown). Unflagged articles never appear there, no matter how recent.' },
   { key: 'is_breaking', label: 'Breaking News' },
   { key: 'is_exclusive', label: 'Exclusive' },
   { key: 'is_editors_pick', label: "Editor's Pick" },
@@ -43,7 +44,7 @@ export function ArticleFormPage() {
     meta_title: '', meta_description: '', image_credit: '',
     category_id: 0, author_id: 0, co_author_ids: [], tag_ids: [],
     status: 'draft', published_at: null,
-    is_breaking: false, is_exclusive: false, is_editors_pick: false, is_reference: false,
+    is_breaking: false, is_exclusive: false, is_editors_pick: false, is_reference: false, is_main: false,
     is_indexed: true, show_author_name: true,
   });
   const [tags, setTags] = useState<Tag[]>([]);
@@ -95,7 +96,7 @@ export function ArticleFormPage() {
         tag_ids: existing.tags.map((t) => t.id),
         status: existing.status, published_at: existing.published_at,
         is_breaking: existing.is_breaking, is_exclusive: existing.is_exclusive, is_editors_pick: existing.is_editors_pick,
-        is_reference: existing.is_reference,
+        is_reference: existing.is_reference, is_main: existing.is_main,
         is_indexed: existing.is_indexed, show_author_name: existing.show_author_name,
       });
       setTags(existing.tags);

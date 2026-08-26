@@ -16,14 +16,16 @@ def home(request):
         .select_related('category', 'author').prefetch_related('co_authors')
     )
 
-    # Top Stories is specifically the "Breaking" category's own articles
-    # (not the is_breaking flag, which drives the separate thin news bar
-    # below) — falls back to plain recency if that category is ever empty,
-    # so the hero never goes blank.
-    breaking_articles = list(published.filter(category__slug='breaking')[:5])
-    if breaking_articles:
-        hero = breaking_articles[0]
-        top_stories = breaking_articles[1:5]
+    # Hero + "More Headlines" is driven by the is_main flag (editors opt an
+    # article in explicitly when publishing) — not the is_breaking flag,
+    # which drives the separate thin news bar below, and not a category.
+    # Unflagged articles never appear here, no matter how recent. Falls
+    # back to plain recency only if literally nothing is flagged yet, so
+    # the hero doesn't go blank before any editor has used the new flag.
+    main_articles = list(published.filter(is_main=True)[:5])
+    if main_articles:
+        hero = main_articles[0]
+        top_stories = main_articles[1:5]
     else:
         recent = list(published[:5])
         hero = recent[0] if recent else None
