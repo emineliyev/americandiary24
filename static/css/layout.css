@@ -440,9 +440,15 @@ body.menu-open {
    lead-left/side-right split instead of the cramped-width 1-column
    collapse above. */
 .hero__incident-climate-full .category-lead__grid { grid-template-columns: 1.2fr 1fr; }
-@media (max-width: 700px) { .category-section-row, .category-section-row--3 { grid-template-columns: 1fr; } }
+/* Order matters here: both conditions can be true at once (e.g. a 375px
+   viewport matches both max-width:1100px and max-width:700px) — with
+   equal-specificity selectors, CSS applies whichever rule is LAST in the
+   file, not whichever media query is "narrower". The 700px full-collapse
+   must come after the 1100px 2-up step so mobile actually gets 1 column
+   instead of being stuck at 2 (this exact bug shipped once already). */
 @media (max-width: 1100px) { .category-section-row--3 { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 1100px) { .category-section-row--1 .category-lead__grid { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .category-section-row, .category-section-row--3 { grid-template-columns: 1fr; } }
 @media (max-width: 900px) { .hero__incident-climate-full .category-lead__grid { grid-template-columns: 1fr; } }
 
 /* Sidebar */
