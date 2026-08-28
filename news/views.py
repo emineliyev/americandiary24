@@ -53,7 +53,7 @@ def article_detail(request):
 
     published = Article.objects.filter(
         status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
-    ).select_related('category', 'author')
+    ).select_related('category', 'author').prefetch_related('co_authors')
 
     article_tags = list(article.tags.all())
     related_articles = _related_articles(article, published, article_tags)
@@ -112,7 +112,7 @@ def category_detail(request):
 
     published = Article.objects.filter(
         category=category, status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
-    ).select_related('category', 'author')
+    ).select_related('category', 'author').prefetch_related('co_authors')
 
     page_obj, page_range = _paginate(request, published, page_size=10)
 
@@ -138,7 +138,7 @@ def tag_detail(request, slug):
 
     published = Article.objects.filter(
         tags=tag, status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
-    ).select_related('category', 'author')
+    ).select_related('category', 'author').prefetch_related('co_authors')
 
     page_obj, page_range = _paginate(request, published, page_size=10)
     most_read = _most_read()
@@ -162,7 +162,7 @@ def team_detail(request, slug):
 
     published = Article.objects.filter(
         author=member, status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
-    ).select_related('category', 'author')
+    ).select_related('category', 'author').prefetch_related('co_authors')
 
     page_obj, page_range = _paginate(request, published)
 
@@ -180,7 +180,7 @@ def team_detail(request, slug):
 def exclusive_list(request):
     published = Article.objects.filter(
         is_exclusive=True, status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
-    ).select_related('category', 'author')
+    ).select_related('category', 'author').prefetch_related('co_authors')
 
     page_obj, page_range = _paginate(request, published, page_size=10)
     most_read = _most_read()
@@ -204,7 +204,7 @@ def search(request):
         results = Article.objects.filter(
             Q(title__icontains=query) | Q(dek__icontains=query) | Q(body__icontains=query),
             status=Article.Status.PUBLISHED, published_at__lte=timezone.now(),
-        ).select_related('category', 'author')
+        ).select_related('category', 'author').prefetch_related('co_authors')
 
     page_obj, page_range = _paginate(request, results, page_size=10)
     most_read = _most_read()
