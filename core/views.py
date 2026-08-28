@@ -62,16 +62,29 @@ def home(request):
         'rest': dyk_articles[1:5],
     } if dyk_articles else None
 
+    # "Climate" — pairs with Crime & Incident in the homepage's final row.
+    # No fake/placeholder content: if nothing's published under this
+    # category yet, climate_section is None and the template gives
+    # Crime & Incident the full row width instead of a half-empty one.
+    climate_category = Category.objects.filter(slug='climate').first()
+    climate_articles = list(published.filter(category=climate_category)[:4]) if climate_category else []
+    climate_section = {
+        'category': climate_category,
+        'label': (climate_category.homepage_title or climate_category.name) if climate_category else '',
+        'lead': climate_articles[0],
+        'rest': climate_articles[1:4],
+    } if climate_articles else None
+
     most_read = list(published.order_by('-view_count')[:5])
 
     # Which categories get a homepage section, in what order, and how
     # they're grouped 1-3 per row, is fully admin-controlled (Categories
     # screen: "Show on Homepage" + drag-to-reorder + "New Row"). Breaking/
-    # Analysis & Opinion/Did You Know? are excluded here since they're each
-    # already handled above with their own bespoke layout.
+    # Analysis & Opinion/Did You Know?/Climate are excluded here since
+    # they're each already handled above with their own bespoke layout.
     homepage_categories = Category.objects.filter(
         is_active=True, show_on_homepage=True,
-    ).exclude(slug__in=['breaking', 'analysis-opinion', 'did-you-know']).order_by('homepage_order', 'name')
+    ).exclude(slug__in=['breaking', 'analysis-opinion', 'did-you-know', 'climate']).order_by('homepage_order', 'name')
 
     category_sections = []
     for category in homepage_categories:
@@ -110,6 +123,7 @@ def home(request):
         'analysis_articles': analysis_articles,
         'analysis_label': (analysis_category.homepage_title or analysis_category.name) if analysis_category else '',
         'did_you_know': did_you_know,
+        'climate_section': climate_section,
         'most_read': most_read,
         'category_section_rows': category_section_rows,
     }

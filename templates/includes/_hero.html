@@ -156,18 +156,21 @@
 
     {% comment %}
     Final section — pairs the real "Crime & Incident" category (was alone
-    in category_section_rows.3, now renamed via homepage_title) with a
-    "Climate" placeholder (no category yet, see _climate_placeholder.html),
-    breaking out full-width like the other bespoke sections above. If the
-    admin regroups categories so Incident isn't at row index 3 anymore,
-    this needs updating to match.
+    in category_section_rows.3, now renamed via homepage_title) with the
+    real "Climate" category. No fake placeholder content — if nothing's
+    published under Climate yet, climate_section is None and Crime &
+    Incident gets the full row width (category-section-row--1) instead of
+    sitting next to an empty column; once real Climate articles exist the
+    row goes back to a normal 2-up split automatically. If the admin
+    regroups categories so Incident isn't at row index 3 anymore, this
+    needs updating to match.
     {% endcomment %}
     <div class="hero__incident-climate-full">
-      <div class="category-section-row">
+      <div class="category-section-row{% if not climate_section %} category-section-row--1{% endif %}">
         {% with row=category_section_rows.3 %}
           {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
         {% endwith %}
-        {% include "includes/_climate_placeholder.html" %}
+        {% if climate_section %}{% include "includes/_category_lead.html" with section=climate_section %}{% endif %}
       </div>
     </div>
   </div>
