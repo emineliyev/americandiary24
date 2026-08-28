@@ -150,4 +150,16 @@
 
 {% block extra_scripts %}
 <script src="{% static 'js/body-callout.js' %}" defer></script>
+{% comment %}
+Social embed widget scripts — HtmlEmbed in CKEditor lets editors paste a
+platform's own "Embed" code (Instagram/X/Facebook) straight into the
+article body. Those embeds are just static blockquote/div markup until
+the platform's own JS parses them into the real interactive post, which
+is what these three scripts do. Only loaded on article pages, not
+site-wide, since only articles can contain them.
+{% endcomment %}
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0"></script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script async src="https://www.instagram.com/embed.js"></script>
 {% endblock %}

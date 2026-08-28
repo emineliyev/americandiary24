@@ -5,7 +5,7 @@ import {
   FontColor, FontBackgroundColor, Link, LinkImage, List, BlockQuote,
   Table, TableToolbar, TableColumnResize,
   Image, ImageToolbar, ImageStyle, ImageResize, ImageUpload, ImageCaption,
-  MediaEmbed, Alignment,
+  MediaEmbed, Alignment, HtmlEmbed,
 } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 import { DjangoUploadAdapterPlugin } from './ckeditorUploadAdapter';
@@ -58,14 +58,14 @@ export function CKEditorBody({
             FontColor, FontBackgroundColor, Link, LinkImage, List, BlockQuote,
             Table, TableToolbar, TableColumnResize,
             Image, ImageToolbar, ImageStyle, ImageResize, ImageUpload, ImageCaption,
-            MediaEmbed, Alignment,
+            MediaEmbed, Alignment, HtmlEmbed,
           ],
           toolbar: [
             'undo', 'redo', '|',
             'heading', '|',
             'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
             'bulletedList', 'numberedList', 'blockQuote', 'link', '|',
-            'alignment', 'insertTable', 'mediaEmbed', 'uploadImage',
+            'alignment', 'insertTable', 'mediaEmbed', 'htmlEmbed', 'uploadImage',
           ],
           image: {
             toolbar: [
