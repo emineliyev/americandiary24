@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models import Exists, OuterRef
+from django.utils import timezone
 
-from news.models import Category
+from news.models import Article, Category
 
 from .models import Page, SiteSettings
 
@@ -14,7 +16,23 @@ CACHE_TTL = 60 * 60
 def _get_active_categories():
     categories = cache.get('active_categories')
     if categories is None:
-        categories = list(Category.objects.filter(is_active=True).order_by('order', 'name'))
+        # Hides a category from nav (and the "more" overflow menu) the
+        # moment it has zero published articles — e.g. Climate right now,
+        # before the client has published anything under it. Reappears on
+        # its own once an article is published there, no manual toggle
+        # needed. Exists() subquery, not a join+distinct, so a category
+        # with hundreds of articles doesn't cost more than one with one.
+        published_in_category = Article.objects.filter(
+            category=OuterRef('pk'),
+            status=Article.Status.PUBLISHED,
+            published_at__lte=timezone.now(),
+        )
+        categories = list(
+            Category.objects.filter(is_active=True)
+            .annotate(has_published_articles=Exists(published_in_category))
+            .filter(has_published_articles=True)
+            .order_by('order', 'name')
+        )
         cache.set('active_categories', categories, CACHE_TTL)
     return categories
 

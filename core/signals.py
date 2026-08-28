@@ -2,7 +2,7 @@ from django.core.cache import cache
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from news.models import Category
+from news.models import Article, Category
 
 from .models import Page, SiteSettings
 
@@ -20,3 +20,16 @@ from .models import Page, SiteSettings
 @receiver([post_save, post_delete], sender=Page)
 def clear_full_cache(**kwargs):
     cache.clear()
+
+
+# Article saves/deletes are frequent (every publish, edit, status change) —
+# unlike the rare admin edits above, a full cache.clear() on every one of
+# these would defeat the point of @cache_page on the homepage/category
+# pages. Only the narrow active_categories key needs to react here: nav
+# visibility now depends on whether a category has any published article
+# (see core/context_processors.py), so publishing the first article in an
+# empty category, or archiving the last one, needs to update the nav
+# without waiting for that key's 1-hour safety-net TTL.
+@receiver([post_save, post_delete], sender=Article)
+def clear_active_categories_cache(**kwargs):
+    cache.delete('active_categories')
