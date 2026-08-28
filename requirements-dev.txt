@@ -1,3 +1,4 @@
 -r requirements.txt
 playwright==1.62.0
 beautifulsoup4==4.15.0
+django-debug-toolbar==7.1.1

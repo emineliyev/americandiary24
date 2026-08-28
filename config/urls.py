@@ -30,6 +30,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [path('__debug__/', include('debug_toolbar.urls'))]
 
 # 500.html uses Django's default handler, which deliberately renders with an
 # empty context (no context processors) so it stays robust even when the
