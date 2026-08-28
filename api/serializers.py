@@ -31,7 +31,7 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             'contact_email', 'contact_whatsapp', 'contact_address',
             'facebook_url', 'twitter_url', 'instagram_url', 'youtube_url',
             'ga_measurement_id', 'adsense_publisher_id', 'ads_txt_content',
-            'default_meta_description', 'google_site_verification',
+            'default_meta_description', 'homepage_meta_title', 'google_site_verification',
             'default_share_image', 'default_share_image_asset_id',
         ]
         read_only_fields = ['default_share_image']  # set via default_share_image_asset_id, see update() below

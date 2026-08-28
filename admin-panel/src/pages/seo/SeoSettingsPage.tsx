@@ -12,6 +12,7 @@ export function SeoSettingsPage() {
   const { data: existing } = useQuery({ queryKey: ['site-settings'], queryFn: fetchSiteSettings });
 
   const [metaDescription, setMetaDescription] = useState('');
+  const [homepageTitle, setHomepageTitle] = useState('');
   const [googleVerification, setGoogleVerification] = useState('');
   const [shareImage, setShareImage] = useState<ImagePickerValue | null>(null);
   const [shareImageTouched, setShareImageTouched] = useState(false);
@@ -23,6 +24,7 @@ export function SeoSettingsPage() {
   useEffect(() => {
     if (existing) {
       setMetaDescription(existing.default_meta_description);
+      setHomepageTitle(existing.homepage_meta_title);
       setGoogleVerification(existing.google_site_verification);
       setShareImage(existing.default_share_image ? { id: -1, url: existing.default_share_image } : null);
       setShareImageTouched(false);
@@ -36,6 +38,7 @@ export function SeoSettingsPage() {
     try {
       await updateSiteSettings({
         default_meta_description: metaDescription,
+        homepage_meta_title: homepageTitle,
         google_site_verification: googleVerification,
         ...(shareImageTouched ? { default_share_image_asset_id: shareImage?.id ?? null } : {}),
       });
@@ -56,6 +59,24 @@ export function SeoSettingsPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <h1 style={{ fontSize: 22 }}>SEO</h1>
         <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+      </div>
+
+      <div className="card" style={{ marginBottom: 16 }}>
+        <h2 style={{ fontSize: 15, marginBottom: 12 }}>Homepage SEO Title</h2>
+        <p className="field-hint" style={{ marginBottom: 12 }}>
+          Overrides the homepage's browser-tab title and Google search-result headline only — every
+          other page (articles, categories, static Pages) keeps its own title untouched.
+        </p>
+        <div className="field">
+          <input
+            type="text"
+            maxLength={150}
+            placeholder="The American Diary 24 — American News & Analysis"
+            value={homepageTitle}
+            onChange={(e) => setHomepageTitle(e.target.value)}
+          />
+          <p className="field-hint">{homepageTitle.length}/150</p>
+        </div>
       </div>
 
       <div className="card" style={{ marginBottom: 16 }}>

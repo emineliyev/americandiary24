@@ -39,6 +39,7 @@ export interface SiteSettings {
   adsense_publisher_id: string;
   ads_txt_content: string;
   default_meta_description: string;
+  homepage_meta_title: string;
   google_site_verification: string;
   default_share_image: string;
   // Write-only — not present on the GET response, only ever sent on PATCH.

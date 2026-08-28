@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}{% if site_settings.homepage_meta_title %}{{ site_settings.homepage_meta_title }}{% else %}{{ SITE_NAME }} — {{ SITE_TAGLINE }}{% endif %}{% endblock %}
+
 {% block content %}
 {% include "includes/_breaking.html" %}
 {% include "includes/_hero.html" %}

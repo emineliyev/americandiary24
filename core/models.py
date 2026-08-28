@@ -98,6 +98,12 @@ class SiteSettings(models.Model):
                    'that don\'t set their own (homepage, category pages, ...). '
                    'A generic sentence is used if left blank.',
     )
+    homepage_meta_title = models.CharField(
+        'Homepage SEO title', max_length=150, blank=True,
+        help_text='Overrides the homepage\'s <title> tag (browser tab + Google\'s '
+                   'search result headline) only — every other page keeps its own. '
+                   'Leave blank to use the default site name + tagline.',
+    )
     google_site_verification = models.CharField(
         'Google Search Console verification', max_length=100, blank=True,
         help_text='Paste just the content value from Search Console\'s HTML tag '
