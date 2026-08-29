@@ -33,5 +33,14 @@
     {% for nav_cat in nav_categories %}
     <a href="{{ nav_cat.get_absolute_url }}"{% if category.pk == nav_cat.pk %} class="is-active"{% endif %}>{{ nav_cat.name }}</a>
     {% endfor %}
+    {% comment %}
+    Desktop shows these under the separate "More ▾" dropdown (hidden on
+    mobile, see .nav-more { display: none } below the hamburger
+    breakpoint) — the drawer is one continuous list already, so no need
+    for that grouping here, just keep appending.
+    {% endcomment %}
+    {% for nav_cat in more_categories %}
+    <a href="{{ nav_cat.get_absolute_url }}"{% if category.pk == nav_cat.pk %} class="is-active"{% endif %}>{{ nav_cat.name }}</a>
+    {% endfor %}
   </div>
 </div>
