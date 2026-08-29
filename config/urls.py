@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
@@ -18,8 +17,11 @@ sitemaps = {
     'team': AuthorSitemap,
 }
 
+# Django's own built-in admin (raw, unstyled — not the custom React admin
+# panel at admin.<domain>) is deliberately NOT routed here: no reason to
+# leave a second, unbranded login screen publicly reachable as a bot/
+# credential-stuffing target when nobody actually uses it.
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('api/v1/', include('api.urls')),
     path('sitemap.xml', cache_page(60 * 60)(sitemap), {'sitemaps': sitemaps}, name='sitemap'),
     path('robots.txt', core_views.robots_txt, name='robots'),
