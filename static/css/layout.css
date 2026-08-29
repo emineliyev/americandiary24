@@ -550,7 +550,14 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   background: var(--brand-wash); color: var(--brand);
   transition: background 150ms ease, color 150ms ease;
 }
-@media (max-width: 860px) { .follow__grid { grid-template-columns: repeat(4, 1fr); } }
+/* No mobile override here on purpose — the previous one forced 4 columns
+   below 860px, but each cell's content ("Instagram", "YouTube", ...)
+   can't shrink under ~90px, so 4-across at a ~340px mobile viewport
+   overflowed the whole page horizontally (root cause of a real bug:
+   every line of text at the top of the page appeared to have its first
+   few characters cut off, because the extra ~130px of page width let
+   mobile browsers scroll the page horizontally). 2 columns (the base
+   rule above) fits comfortably at every width down to ~300px. */
 
 /* ===== Newsletter band ===== */
 .newsletter-band { background: var(--brand); color: #fff; padding: clamp(36px,4vw,56px) 0; }
