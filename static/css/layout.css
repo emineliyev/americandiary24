@@ -356,9 +356,9 @@ body.menu-open {
 .analysis-row { background: var(--brand-wash); padding: 32px clamp(16px, 3.5vw, 40px); border-radius: 5px; }
 
 /* Exclusive */
-.exclusive { background: var(--brand); color: #fff; padding: 32px 34px 36px; border-radius: 5px; }
+.exclusive { background: #007aff; color: #fff; padding: 32px 34px 36px; border-radius: 5px; }
 .exclusive__head { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.22); margin-bottom: 26px; }
-.exclusive__title { font: 800 14px var(--font-sans); letter-spacing: 0.14em; }
+.exclusive__title { font: 800 14px var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase; }
 .exclusive__view-all { margin-left: auto; color: rgba(255,255,255,.85); font: 700 12px var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; }
 .exclusive__view-all:hover { color: #ffffff; }
 
@@ -432,6 +432,7 @@ body.menu-open {
 .category-section-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 40px); }
 .category-section-row--3 { grid-template-columns: repeat(3, 1fr); }
 .category-section-row--1 { grid-template-columns: 1fr; }
+.category-section-row:not(.category-section-row--1) { padding-bottom: 32px; border-bottom: 3px solid var(--brand); }
 .category-section-row .category-lead__grid { grid-template-columns: 1fr; }
 .category-section-row--1 .category-lead__grid { grid-template-columns: 1.2fr 1fr; }
 /* .hero__incident-climate-full's row is full-page width (see .hero__grid),
@@ -608,7 +609,7 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
 .breadcrumb span { margin: 0 6px; }
 
 .article-layout { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: clamp(32px, 4vw, 56px); align-items: start; }
-.article-title { margin-top: 8px; }
+.article-title { margin-top: 8px; font-size: 32px; }
 .article-dek { margin: 14px 0; }
 .article-byline {
   display: flex; align-items: center; gap: 10px;

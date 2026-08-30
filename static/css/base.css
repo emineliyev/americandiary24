@@ -31,7 +31,7 @@ h1, h2, h3, h4, h5 {
 .h1-hero       { font: 700 clamp(30px, 4.2vw, 52px)/1.06 var(--font-serif); letter-spacing: -0.025em; }
 .dek-hero      { font: 400 clamp(17px, 1.7vw, 20px)/1.5 var(--font-serif); color: var(--text-body); }
 .h2-feature    { font: 700 clamp(24px, 2.8vw, 30px)/1.16 var(--font-serif); letter-spacing: -0.02em; }
-.h2-cat-lead   { font: 700 clamp(23px, 2.7vw, 29px)/1.16 var(--font-serif); letter-spacing: -0.02em; }
+.h2-cat-lead   { font: 700 24px/1.16 var(--font-serif); letter-spacing: -0.02em; }
 .h3-latest     { font: 600 clamp(20px, 2.2vw, 23px)/1.22 var(--font-serif); letter-spacing: -0.015em; }
 .h3-card       { font: 600 21px/1.22 var(--font-serif); letter-spacing: -0.015em; }
 .h4-list       { font: 600 18px/1.26 var(--font-serif); }
