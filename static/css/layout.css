@@ -439,11 +439,18 @@ body.menu-open {
    1.2fr/1fr split and .category-grid's 4-up grid would both be too
    cramped at half width regardless of viewport (a container-width
    problem plain media queries can't see). */
-.category-section-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 40px); }
+.category-section-row { --row-gap: clamp(24px, 3vw, 40px); display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--row-gap); }
 .category-section-row--3 { grid-template-columns: repeat(3, 1fr); }
 .category-section-row--1 { grid-template-columns: 1fr; }
 .category-section-row:not(.category-section-row--1) { padding-bottom: 32px; border-bottom: 3px solid var(--brand); }
-.category-section-row > .category-section:not(:last-child) { border-right: 1px solid var(--brand); }
+/* Centered in the gutter (not flush against either column) via an
+   absolutely-positioned line offset by half the row's own gap, rather
+   than a border-right sitting flush on the left column's edge. */
+.category-section-row > .category-section:not(:last-child) { position: relative; }
+.category-section-row > .category-section:not(:last-child)::after {
+  content: ''; position: absolute; top: 0; bottom: 0;
+  right: calc(var(--row-gap) / -2); width: 1px; background: var(--brand);
+}
 .category-section-row .category-lead__grid { grid-template-columns: 1fr; }
 .category-section-row--1 .category-lead__grid { grid-template-columns: 1.2fr 1fr; }
 /* .hero__incident-climate-full's row is full-page width (see .hero__grid),
@@ -462,7 +469,7 @@ body.menu-open {
 @media (max-width: 1100px) { .category-section-row--1 .category-lead__grid { grid-template-columns: 1fr; } }
 @media (max-width: 700px) {
   .category-section-row, .category-section-row--3 { grid-template-columns: 1fr; }
-  .category-section-row > .category-section:not(:last-child) { border-right: 0; }
+  .category-section-row > .category-section:not(:last-child)::after { display: none; }
 }
 @media (max-width: 900px) { .hero__incident-climate-full .category-lead__grid { grid-template-columns: 1fr; } }
 
