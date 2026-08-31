@@ -238,6 +238,16 @@ body.menu-open {
   text-transform: uppercase;
   padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px; display: block;
 }
+.reference-news__head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px;
+}
+.reference-news__head .top-stories__label { padding-bottom: 0; border-bottom: 0; margin-bottom: 0; }
+.reference-news__view-all {
+  font: 700 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--brand); white-space: nowrap;
+}
+.reference-news__view-all:hover { color: var(--brand-hover); }
 .top-stories__thumb { position: relative; height: 0; padding-top: 100%; overflow: hidden; border-radius: 5px; }
 .top-stories__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 

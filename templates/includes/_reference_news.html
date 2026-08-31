@@ -1,7 +1,10 @@
 {% load humanize %}
 {% if articles %}
 <div class="reference-news">
-  <span class="top-stories__label">{{ label }}</span>
+  <div class="reference-news__head">
+    <span class="top-stories__label">{{ label }}</span>
+    {% if view_all_url %}<a href="{{ view_all_url }}" class="reference-news__view-all">View All →</a>{% endif %}
+  </div>
   <ul class="reference-news__list">
     {% for article in articles %}
     <li class="reference-news__item">

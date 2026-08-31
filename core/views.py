@@ -51,6 +51,12 @@ def home(request):
     # this bespoke layout instead of the standard lead+list one.
     analysis_category = Category.objects.filter(slug='analysis-opinion').first()
     analysis_articles = list(published.filter(category=analysis_category)[:4]) if analysis_category else []
+    # This section's "View All" deliberately points at a separate, dedicated
+    # category (not analysis_category above) — editors browse the full
+    # archive there, distinct from the curated Analysis & Opinion nav
+    # category this row's 4 articles are drawn from.
+    analysis_view_all_category = Category.objects.filter(slug='americandiary24-analysis').first()
+    exclusive_opinion_category = Category.objects.filter(slug='exclusive-opinion').first()
 
     # "Did You Know?" — 1 lead + 4 small (2x2), its own bespoke layout too.
     dyk_category = Category.objects.filter(slug='did-you-know').first()
@@ -121,8 +127,9 @@ def home(request):
         'breaking': breaking,
         'reference_articles': reference_articles,
         'analysis_articles': analysis_articles,
-        'analysis_category': analysis_category,
+        'analysis_view_all_category': analysis_view_all_category,
         'analysis_label': (analysis_category.homepage_title or analysis_category.name) if analysis_category else '',
+        'exclusive_opinion_category': exclusive_opinion_category,
         'did_you_know': did_you_know,
         'climate_section': climate_section,
         'most_read': most_read,
