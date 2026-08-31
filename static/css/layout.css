@@ -560,8 +560,6 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
   color: var(--error);
 }
 .form-error.is-visible { display: block; }
-.newsletter-form input.has-error { outline: 2px solid var(--error); outline-offset: -1px; }
-.form-error--band { color: #ff9c9c; margin: 8px 0 0; }
 
 .follow__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
 .follow__cell { background: #fff; padding: 16px; display: flex; align-items: center; gap: 10px; }
@@ -580,26 +578,6 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
    few characters cut off, because the extra ~130px of page width let
    mobile browsers scroll the page horizontally). 2 columns (the base
    rule above) fits comfortably at every width down to ~300px. */
-
-/* ===== Newsletter band ===== */
-.newsletter-band { background: var(--brand); color: #fff; padding: clamp(36px,4vw,56px) 0; }
-.newsletter-band .container { display: grid; grid-template-columns: 1fr 460px; gap: 32px; align-items: center; }
-.newsletter-band__kicker { color: rgba(255,255,255,.65); }
-.newsletter-band h2 { font: 700 40px var(--font-serif); color: #fff; margin: 8px 0 10px; }
-.newsletter-band p { font: 400 19px var(--font-serif); color: rgba(255,255,255,.78); margin: 0; }
-.newsletter-band__form { display: flex; height: 54px; }
-.newsletter-band__form input {
-  flex: 1; border: 0; padding: 0 16px; font: 400 14px var(--font-sans);
-}
-.newsletter-band__form button {
-  border: 0; border-left: 1px solid var(--brand);
-  background: #fff; color: var(--brand); padding: 0 20px;
-  font: 800 12px var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
-}
-.newsletter-band .newsletter-band__fine { font-size: 12px; color: rgba(255,255,255,.6); margin-top: 10px; }
-@media (max-width: 860px) {
-  .newsletter-band .container { grid-template-columns: 1fr; }
-}
 
 /* ===== Footer ===== */
 .footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding: clamp(32px,4vw,48px) 0 0; }
