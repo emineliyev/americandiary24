@@ -121,6 +121,7 @@ def home(request):
         'breaking': breaking,
         'reference_articles': reference_articles,
         'analysis_articles': analysis_articles,
+        'analysis_category': analysis_category,
         'analysis_label': (analysis_category.homepage_title or analysis_category.name) if analysis_category else '',
         'did_you_know': did_you_know,
         'climate_section': climate_section,
