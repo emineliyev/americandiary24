@@ -142,6 +142,10 @@ export function CategoryFormPage() {
           Categories list page — drag to reorder there.
         </p>
       </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
+        <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+      </div>
     </form>
   );
 }

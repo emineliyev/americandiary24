@@ -134,6 +134,10 @@ export function SiteSettingsPage() {
           <p className="field-hint">Leave blank to auto-generate from the Publisher ID above. Only fill this in if Google gives you different/additional lines.</p>
         </div>
       </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
+        <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+      </div>
     </form>
   );
 }

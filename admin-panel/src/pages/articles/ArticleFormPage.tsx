@@ -392,6 +392,10 @@ export function ArticleFormPage() {
           <textarea rows={2} value={form.meta_description} onChange={(e) => updateField('meta_description', e.target.value)} placeholder={form.dek} maxLength={300} />
         </div>
       </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
+        <button type="submit" className="btn btn-primary" disabled={saving || !formReady}>{saving ? 'Saving…' : 'Save'}</button>
+      </div>
     </form>
   );
 }
