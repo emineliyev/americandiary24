@@ -433,6 +433,7 @@ body.menu-open {
 .category-section-row--3 { grid-template-columns: repeat(3, 1fr); }
 .category-section-row--1 { grid-template-columns: 1fr; }
 .category-section-row:not(.category-section-row--1) { padding-bottom: 32px; border-bottom: 3px solid var(--brand); }
+.category-section-row > .category-section:not(:last-child) { border-right: 1px solid var(--brand); }
 .category-section-row .category-lead__grid { grid-template-columns: 1fr; }
 .category-section-row--1 .category-lead__grid { grid-template-columns: 1.2fr 1fr; }
 /* .hero__incident-climate-full's row is full-page width (see .hero__grid),
@@ -449,7 +450,10 @@ body.menu-open {
    instead of being stuck at 2 (this exact bug shipped once already). */
 @media (max-width: 1100px) { .category-section-row--3 { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 1100px) { .category-section-row--1 .category-lead__grid { grid-template-columns: 1fr; } }
-@media (max-width: 700px) { .category-section-row, .category-section-row--3 { grid-template-columns: 1fr; } }
+@media (max-width: 700px) {
+  .category-section-row, .category-section-row--3 { grid-template-columns: 1fr; }
+  .category-section-row > .category-section:not(:last-child) { border-right: 0; }
+}
 @media (max-width: 900px) { .hero__incident-climate-full .category-lead__grid { grid-template-columns: 1fr; } }
 
 /* Sidebar */
