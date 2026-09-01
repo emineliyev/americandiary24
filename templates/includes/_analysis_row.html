@@ -3,7 +3,7 @@
 <section class="analysis-row">
   <div class="section-header">
     <h2 class="section-header-label">{{ analysis_label }}</h2>
-    {% if analysis_view_all_category %}<a href="{{ analysis_view_all_category.get_absolute_url }}" class="section-header__view-all">View All →</a>{% endif %}
+    {% if analysis_category %}<a href="{{ analysis_category.get_absolute_url }}" class="section-header__view-all">View All →</a>{% endif %}
   </div>
   <div class="category-grid">
     {% for article in analysis_articles %}
