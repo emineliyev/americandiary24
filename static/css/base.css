@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5 {
 .h2-feature    { font: 700 20px/1.16 var(--font-serif); letter-spacing: -0.02em; }
 .h2-cat-lead   { font: 700 20px/1.16 var(--font-serif); letter-spacing: -0.02em; }
 .h3-latest     { font: 600 clamp(20px, 2.2vw, 23px)/1.22 var(--font-serif); letter-spacing: -0.015em; }
-.h3-card       { font: 600 21px/1.22 var(--font-serif); letter-spacing: -0.015em; }
+.h3-card       { font: 600 16px/1.22 var(--font-serif); letter-spacing: -0.015em; }
 .h4-list       { font: 600 18px/1.26 var(--font-serif); }
 .body-sm       { font: 400 14px/1.55 var(--font-sans); color: var(--text-body); }
 
