@@ -122,6 +122,7 @@ def home(request):
         'top_stories': top_stories,
         'latest': latest,
         'more_stories': more_stories,
+        'news_category': news_category,
         'editors_picks': editors_picks,
         'exclusives': exclusives,
         'breaking': breaking,

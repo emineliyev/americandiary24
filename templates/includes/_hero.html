@@ -73,7 +73,7 @@
     entirely).
     {% endcomment %}
     <div class="hero__rail hero__rail-bottom-top">
-      {% include "includes/_reference_news.html" with label="More Stories" articles=more_stories %}
+      {% include "includes/_reference_news.html" with label="More Stories" articles=more_stories view_all_url=news_category.get_absolute_url %}
       {% include "includes/_sidebar_contribute.html" %}
       {% include "includes/_reference_news.html" with label="Most Read" articles=most_read %}
     </div>
