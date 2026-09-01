@@ -659,7 +659,8 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
 .image-credit svg { flex-shrink: 0; opacity: 0.7; }
 .image-credit strong { color: var(--text-secondary); font-weight: 700; }
 
-.article-body { font: 400 17px/1.75 var(--font-serif); color: var(--text); }
+.article-body { font: 400 20px/1.75 var(--font-serif); color: var(--text); }
+@media (max-width: 700px) { .article-body { font-size: 16px; } }
 .article-body p { margin: 0 0 20px; }
 .article-body img { width: 100%; height: auto; margin: 8px 0; border-radius: 5px; }
 .article-body a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
