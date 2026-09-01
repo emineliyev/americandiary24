@@ -7,8 +7,8 @@ from news.api_views import (
     body_image_upload, change_password, current_user, dashboard_stats,
 )
 from .views import (
-    ContactMessageCreateView, ContactMessageViewSet, MediaAssetViewSet, MediaFolderViewSet,
-    PageViewSet, SiteSettingsView, UserViewSet,
+    BackupDetailView, BackupListCreateView, ContactMessageCreateView, ContactMessageViewSet,
+    MediaAssetViewSet, MediaFolderViewSet, PageViewSet, SiteSettingsView, UserViewSet,
 )
 
 router = DefaultRouter()
@@ -33,5 +33,7 @@ urlpatterns = [
     path('site-settings/', SiteSettingsView.as_view({'get': 'list', 'patch': 'partial_update'}), name='site-settings'),
     # Public, unauthenticated — the Contact page's own form posts here.
     path('public/contact/', ContactMessageCreateView.as_view(), name='public-contact'),
+    path('backups/', BackupListCreateView.as_view(), name='backup-list-create'),
+    path('backups/<str:filename>/', BackupDetailView.as_view(), name='backup-detail'),
     path('', include(router.urls)),
 ]

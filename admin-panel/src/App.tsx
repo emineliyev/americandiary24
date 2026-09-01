@@ -19,6 +19,7 @@ import { SeoSettingsPage } from './pages/seo/SeoSettingsPage';
 import { ContactMessageListPage } from './pages/inquiries/ContactMessageListPage';
 import { ContactMessageDetailPage } from './pages/inquiries/ContactMessageDetailPage';
 import { HelpPage } from './pages/HelpPage';
+import { BackupsPage } from './pages/backups/BackupsPage';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
         <Route path="users/new" element={<UserFormPage />} />
         <Route path="users/:id" element={<UserFormPage />} />
         <Route path="settings" element={<SiteSettingsPage />} />
+        <Route path="backups" element={<BackupsPage />} />
         <Route path="help" element={<HelpPage />} />
       </Route>
     </Routes>

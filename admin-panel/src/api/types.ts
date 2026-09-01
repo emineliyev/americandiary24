@@ -249,3 +249,9 @@ export interface DashboardStats {
   most_read: ArticleListItem[];
   latest: ArticleListItem[];
 }
+
+export interface Backup {
+  filename: string;
+  size_bytes: number;
+  created_at: string;
+}

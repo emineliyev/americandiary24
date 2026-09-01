@@ -1,9 +1,16 @@
+import re
+from datetime import datetime, timezone
+
 import django_filters
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.management import call_command
 from django.db.models import Count
-from rest_framework import generics, mixins, permissions, viewsets
+from django.http import FileResponse, Http404
+from rest_framework import generics, mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
+from rest_framework.views import APIView
 
 from core.models import ContactMessage, MediaAsset, MediaFolder, Page, SiteSettings
 from news.api_views import IsTaxonomyManagerOrReadOnly, _create_media_asset
@@ -187,3 +194,65 @@ class MediaAssetViewSet(viewsets.ModelViewSet):
         asset.file.delete(save=False)
         asset.delete()
         return Response(status=204)
+
+
+_BACKUP_FILENAME_RE = re.compile(r'^backup_\d{8}_\d{6}\.tar\.gz$')
+
+
+def _backup_dir():
+    d = settings.BASE_DIR / 'backups'
+    d.mkdir(exist_ok=True)
+    return d
+
+
+class BackupListCreateView(APIView):
+    """Full-site backups (database dump + media) — Administrator only,
+    since a backup file contains everything: user credentials, contact
+    form submissions, the works. GET lists what's on disk (also populated
+    by the VPS's daily cron job, not just manual creates here); POST runs
+    create_backup synchronously — acceptable for a manually-triggered,
+    infrequent admin action on a site this size, no background job
+    infrastructure needed."""
+    permission_classes = [IsAdministratorOnly]
+
+    def get(self, request):
+        backups = []
+        for path in sorted(_backup_dir().glob('backup_*.tar.gz'), key=lambda p: p.stat().st_mtime, reverse=True):
+            stat = path.stat()
+            backups.append({
+                'filename': path.name,
+                'size_bytes': stat.st_size,
+                'created_at': datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+            })
+        return Response(backups)
+
+    def post(self, request):
+        try:
+            call_command('create_backup')
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status=status.HTTP_201_CREATED)
+
+
+class BackupDetailView(APIView):
+    """Download or delete one backup file. Filename is validated against a
+    strict pattern (not just "does this path exist") before ever touching
+    the filesystem, so a crafted filename can't walk outside backups/."""
+    permission_classes = [IsAdministratorOnly]
+
+    def _resolve(self, filename):
+        if not _BACKUP_FILENAME_RE.match(filename):
+            raise Http404
+        path = _backup_dir() / filename
+        if not path.exists():
+            raise Http404
+        return path
+
+    def get(self, request, filename):
+        path = self._resolve(filename)
+        return FileResponse(open(path, 'rb'), as_attachment=True, filename=path.name)
+
+    def delete(self, request, filename):
+        path = self._resolve(filename)
+        path.unlink()
+        return Response(status=status.HTTP_204_NO_CONTENT)
