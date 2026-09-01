@@ -664,6 +664,7 @@ a.quote-prev:hover .quote-prev__text { color: var(--brand); }
 .article-body img { width: 100%; height: auto; margin: 8px 0; border-radius: 5px; }
 .article-body a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
 .article-body h3 { font: 700 23px/1.3 var(--font-serif); color: var(--text); margin: 0; }
+.article-body h4 { margin-bottom: 18px; }
 /* base.css strips all list-style/padding globally (nav menus rely on
    that) — restored here so a genuine content list (legal pages, any
    article body) still reads as a list instead of unmarked paragraphs. */
