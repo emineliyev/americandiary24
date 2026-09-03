@@ -138,6 +138,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # the system PATH.
 GOOGLE_DRIVE_REMOTE_PATH = env('GOOGLE_DRIVE_REMOTE_PATH', default='')
 RCLONE_BINARY_PATH = env('RCLONE_BINARY_PATH', default='')
+# Explicit --config path so both the root-run cron job and a www-data-run
+# admin panel click see the same rclone remote — see create_backup.py.
+RCLONE_CONFIG_PATH = env('RCLONE_CONFIG_PATH', default='')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

@@ -31,10 +31,16 @@ def _upload_to_drive(stdout, style, archive_path, archive_name):
         return
 
     rclone_bin = settings.RCLONE_BINARY_PATH or 'rclone'
+    # Both the nightly cron job (runs as root) and a manual "Create Backup
+    # Now" click (runs as www-data, via Gunicorn) call this same command —
+    # rclone's default per-user config path would only be visible to
+    # whichever user first set it up, silently no-oping for the other.
+    # A shared, explicit --config path fixes that for both callers.
+    config_flag = ['--config', settings.RCLONE_CONFIG_PATH] if settings.RCLONE_CONFIG_PATH else []
     try:
         stdout.write('Uploading to Google Drive...')
         result = subprocess.run(
-            [rclone_bin, 'copy', str(archive_path), remote_path],
+            [rclone_bin, *config_flag, 'copy', str(archive_path), remote_path],
             capture_output=True, text=True,
         )
         if result.returncode != 0:
@@ -45,7 +51,7 @@ def _upload_to_drive(stdout, style, archive_path, archive_name):
         # Mirror the local retention policy on Drive too, so the folder
         # doesn't grow forever — newest-first, keep the newest DRIVE_RETENTION_COUNT.
         listing = subprocess.run(
-            [rclone_bin, 'lsjson', remote_path],
+            [rclone_bin, *config_flag, 'lsjson', remote_path],
             capture_output=True, text=True,
         )
         if listing.returncode != 0:
@@ -53,7 +59,7 @@ def _upload_to_drive(stdout, style, archive_path, archive_name):
         drive_files = json.loads(listing.stdout)
         drive_files.sort(key=lambda f: f.get('ModTime', ''), reverse=True)
         for old in drive_files[DRIVE_RETENTION_COUNT:]:
-            subprocess.run([rclone_bin, 'deletefile', f"{remote_path}/{old['Name']}"], capture_output=True, text=True)
+            subprocess.run([rclone_bin, *config_flag, 'deletefile', f"{remote_path}/{old['Name']}"], capture_output=True, text=True)
             stdout.write(f'Pruned old Drive backup: {old["Name"]}')
     except FileNotFoundError:
         stdout.write(style.WARNING('rclone binary not found — skipping Drive upload.'))
