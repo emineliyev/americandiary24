@@ -9,7 +9,12 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 BACKUP_DIR = settings.BASE_DIR / 'backups'
-RETENTION_COUNT = 14
+# Local disk is the constrained resource (a growing media/ folder means
+# each backup gets bigger over time) — Drive isn't, so it keeps a much
+# longer history. Local only needs to cover "restore from a few days ago
+# without touching the network"; Drive is the real depth-of-history copy.
+LOCAL_RETENTION_COUNT = 3
+DRIVE_RETENTION_COUNT = 14
 
 
 def _upload_to_drive(stdout, style, archive_path, archive_name):
@@ -38,7 +43,7 @@ def _upload_to_drive(stdout, style, archive_path, archive_name):
         stdout.write(style.SUCCESS(f'Uploaded to Google Drive: {remote_path}/{archive_name}'))
 
         # Mirror the local retention policy on Drive too, so the folder
-        # doesn't grow forever — newest-first, keep the newest RETENTION_COUNT.
+        # doesn't grow forever — newest-first, keep the newest DRIVE_RETENTION_COUNT.
         listing = subprocess.run(
             [rclone_bin, 'lsjson', remote_path],
             capture_output=True, text=True,
@@ -47,7 +52,7 @@ def _upload_to_drive(stdout, style, archive_path, archive_name):
             return
         drive_files = json.loads(listing.stdout)
         drive_files.sort(key=lambda f: f.get('ModTime', ''), reverse=True)
-        for old in drive_files[RETENTION_COUNT:]:
+        for old in drive_files[DRIVE_RETENTION_COUNT:]:
             subprocess.run([rclone_bin, 'deletefile', f"{remote_path}/{old['Name']}"], capture_output=True, text=True)
             stdout.write(f'Pruned old Drive backup: {old["Name"]}')
     except FileNotFoundError:
@@ -61,7 +66,7 @@ class Command(BaseCommand):
         'Create a full site backup (database dump + media files) as a '
         'single timestamped .tar.gz in BASE_DIR/backups/, upload it to '
         'Google Drive if configured, then prune anything beyond the last '
-        'RETENTION_COUNT backups (both locally and on Drive).'
+        'LOCAL_RETENTION_COUNT backups locally and DRIVE_RETENTION_COUNT on Drive.'
     )
 
     def handle(self, *args, **options):
@@ -106,6 +111,6 @@ class Command(BaseCommand):
         _upload_to_drive(self.stdout, self.style, archive_path, archive_name)
 
         backups = sorted(BACKUP_DIR.glob('backup_*.tar.gz'), key=lambda p: p.stat().st_mtime, reverse=True)
-        for old in backups[RETENTION_COUNT:]:
+        for old in backups[LOCAL_RETENTION_COUNT:]:
             old.unlink()
             self.stdout.write(f'Pruned old backup: {old.name}')

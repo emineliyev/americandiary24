@@ -105,7 +105,9 @@ Never `restart` Nginx for a config change — `reload` re-reads the config witho
 
 ## 4. Database backups
 
-Built into the admin panel (Administrator role only): **Backups** page — "Create Backup Now" triggers `manage.py create_backup`, which dumps the database (`pg_dump`) and archives it with the `media/` folder into a single `.tar.gz` under `backups/` on the VPS. The last 14 are kept automatically.
+Built into the admin panel (Administrator role only): **Backups** page — "Create Backup Now" triggers `manage.py create_backup`, which dumps the database (`pg_dump`) and archives it with the `media/` folder into a single `.tar.gz` under `backups/` on the VPS. A copy is also uploaded to Google Drive via `rclone` (remote configured in `~/.config/rclone/rclone.conf`, path set by `GOOGLE_DRIVE_REMOTE_PATH` in `.env`) if configured. Retention: last **3** kept locally (disk is the constrained resource), last **14** kept on Drive — older ones pruned automatically in both places. A nightly cron job (root's crontab, `0 22 * * *` UTC = 02:00 Baku) runs the same command automatically.
+
+Note: the `backups/` directory must be owned by the same user Gunicorn runs as (`www-data`) — otherwise deleting a backup from the admin panel fails with a permission error, since Unix file deletion needs write access to the *directory*, not the file. If a manually-run backup (e.g. via `sudo`) ends up owned by `root`, fix it with `sudo chown -R www-data:www-data backups/`.
 
 Manual run from the VPS shell:
 

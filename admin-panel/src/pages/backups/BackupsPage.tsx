@@ -69,8 +69,8 @@ export function BackupsPage() {
 
       <p className="field-hint" style={{ marginBottom: 16 }}>
         Each backup is a single file containing the full database and all uploaded media. A backup also
-        runs automatically every night on the server. The last 14 backups are kept; older ones are removed
-        automatically.
+        runs automatically every night. The last 3 are kept here on the server; a copy of each also goes to
+        Google Drive, which keeps the last 14. Older ones are removed automatically in both places.
       </p>
 
       {isLoading ? <p>Loading…</p> : !backups?.length ? (
