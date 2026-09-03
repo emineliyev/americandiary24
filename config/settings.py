@@ -128,6 +128,17 @@ STORAGES = {
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Offsite copy of create_backup's output, via rclone (a personal Google
+# account authorized once with `rclone config` — a bare service account
+# can't write to a regular Drive, only a paid-Workspace Shared Drive).
+# GOOGLE_DRIVE_REMOTE_PATH is an rclone remote:path, e.g.
+# "gdrive:AmericanDiary24Backups". Blank by default, in which case
+# create_backup just skips the upload and only keeps the local copy under
+# BASE_DIR/backups/. RCLONE_BINARY_PATH is only needed if rclone isn't on
+# the system PATH.
+GOOGLE_DRIVE_REMOTE_PATH = env('GOOGLE_DRIVE_REMOTE_PATH', default='')
+RCLONE_BINARY_PATH = env('RCLONE_BINARY_PATH', default='')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
