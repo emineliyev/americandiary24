@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import {
   ClassicEditor, Essentials, Paragraph, Heading, Bold, Italic, Underline,
-  FontColor, FontBackgroundColor, Link, LinkImage, List, BlockQuote,
+  FontFamily, FontSize, FontColor, FontBackgroundColor, Link, LinkImage, List, BlockQuote,
   Table, TableToolbar, TableColumnResize,
   Image, ImageToolbar, ImageStyle, ImageResize, ImageUpload, ImageCaption,
   MediaEmbed, Alignment, HtmlEmbed,
@@ -55,7 +55,7 @@ export function CKEditorBody({
           licenseKey: 'GPL',
           plugins: [
             Essentials, Paragraph, Heading, Bold, Italic, Underline,
-            FontColor, FontBackgroundColor, Link, LinkImage, List, BlockQuote,
+            FontFamily, FontSize, FontColor, FontBackgroundColor, Link, LinkImage, List, BlockQuote,
             Table, TableToolbar, TableColumnResize,
             Image, ImageToolbar, ImageStyle, ImageResize, ImageUpload, ImageCaption,
             MediaEmbed, Alignment, HtmlEmbed,
@@ -63,10 +63,25 @@ export function CKEditorBody({
           toolbar: [
             'undo', 'redo', '|',
             'heading', '|',
-            'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
+            'fontFamily', 'fontSize', 'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
             'bulletedList', 'numberedList', 'blockQuote', 'link', '|',
             'alignment', 'insertTable', 'mediaEmbed', 'htmlEmbed', 'uploadImage',
           ],
+          fontSize: {
+            options: [10, 12, 14, 'default', 18, 20, 24, 28, 32],
+            supportAllValues: true,
+          },
+          fontFamily: {
+            options: [
+              'default',
+              'Arial, Helvetica, sans-serif',
+              'Georgia, serif',
+              'Times New Roman, Times, serif',
+              'Courier New, Courier, monospace',
+              'Verdana, Geneva, sans-serif',
+            ],
+            supportAllValues: true,
+          },
           image: {
             toolbar: [
               'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', '|',
