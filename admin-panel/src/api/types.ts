@@ -255,3 +255,22 @@ export interface Backup {
   size_bytes: number;
   created_at: string;
 }
+
+export interface ArticleImportPreviewRow {
+  filename: string;
+  id: number | null;
+  found: boolean;
+  error: string | null;
+  old_title?: string;
+  new_title?: string;
+  old_dek?: string;
+  new_dek?: string;
+  new_body?: string;
+  updated_at?: string;
+}
+
+export interface ArticleImportApplyResult {
+  id: number;
+  success: boolean;
+  error: string | null;
+}

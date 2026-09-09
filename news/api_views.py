@@ -1,14 +1,18 @@
+import html
 import io
 import re
 import uuid
+import zipfile
 from datetime import timedelta
 
+from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models import Count, ProtectedError
+from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.text import slugify
 from PIL import Image
@@ -186,6 +190,159 @@ class ArticleViewSet(viewsets.ModelViewSet):
         copy.co_authors.set(original.co_authors.all())
         copy.tags.set(original.tags.all())
         return Response(ArticleSerializer(copy, context={'request': request}).data, status=201)
+
+    @action(detail=False, methods=['post'])
+    def bulk_export(self, request):
+        """Export one or more articles as raw-HTML files for offline
+        editing (title + dek + body — everything else about the article is
+        untouched by the round trip). One .html download for a single
+        article, a .zip for several. The filename (`{id}__{slug}.html`) is
+        the source of truth for which article a re-imported file targets —
+        <title>, the dek <meta> tag, and <body> are standard enough to
+        survive being opened in almost any editor, unlike e.g. HTML
+        comments some tools strip."""
+        ids = request.data.get('ids') or []
+        articles = list(self.get_queryset().filter(pk__in=ids))
+        if not articles:
+            return Response({'detail': 'No matching articles found.'}, status=400)
+
+        def build_html(article):
+            return (
+                '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n'
+                f'<title>{html.escape(article.title)}</title>\n'
+                f'<meta name="dek" content="{html.escape(article.dek)}">\n</head>\n<body>\n'
+                f'{article.body}\n</body>\n</html>\n'
+            )
+
+        def export_filename(article):
+            slug_part = slugify(article.title)[:50] or 'untitled'
+            return f'{article.id}__{slug_part}.html'
+
+        if len(articles) == 1:
+            article = articles[0]
+            # application/octet-stream (not text/html) forces a download in
+            # every browser and — locally, with DEBUG=True — keeps Django
+            # Debug Toolbar from splicing its own UI into the file: it only
+            # instruments text/html responses, and its injected markup has
+            # nothing to do with the article but would still land inside
+            # the downloaded .html. Production never has the toolbar
+            # installed at all, so this only matters for local testing.
+            response = HttpResponse(build_html(article), content_type='application/octet-stream')
+            response['Content-Disposition'] = f'attachment; filename="{export_filename(article)}"'
+            return response
+
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+            for article in articles:
+                zf.writestr(export_filename(article), build_html(article))
+        response = HttpResponse(buffer.getvalue(), content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="articles-export.zip"'
+        return response
+
+    @action(detail=False, methods=['post'], parser_classes=[MultiPartParser])
+    def import_preview(self, request):
+        """First step of the two-step import flow: parses the uploaded
+        file(s), reports what *would* change per article, and makes no
+        database writes at all. The frontend holds this response in memory
+        and lets the admin uncheck any row before calling import_apply —
+        nothing is committed here, so a bad upload is always safe to
+        preview and walk away from."""
+        upload = request.FILES.get('file')
+        if not upload:
+            return Response({'detail': 'No file provided.'}, status=400)
+
+        files = []  # (filename, content_bytes)
+        if upload.name.lower().endswith('.zip'):
+            try:
+                with zipfile.ZipFile(upload) as zf:
+                    for name in zf.namelist():
+                        if name.lower().endswith('.html'):
+                            files.append((name.rsplit('/', 1)[-1], zf.read(name)))
+            except zipfile.BadZipFile:
+                return Response({'detail': 'That doesn\'t look like a valid .zip file.'}, status=400)
+        else:
+            files.append((upload.name, upload.read()))
+
+        if not files:
+            return Response({'detail': 'No .html files found in the upload.'}, status=400)
+
+        queryset = self.get_queryset()
+        results = []
+        for filename, content in files:
+            match = re.match(r'^(\d+)__.*\.html$', filename, re.IGNORECASE)
+            if not match:
+                results.append({
+                    'filename': filename, 'id': None, 'found': False,
+                    'error': 'Could not read an article ID from this filename — don\'t rename exported files.',
+                })
+                continue
+
+            article_id = int(match.group(1))
+            article = queryset.filter(pk=article_id).first()
+            if article is None:
+                results.append({
+                    'filename': filename, 'id': article_id, 'found': False,
+                    'error': 'No article with this ID (or you don\'t have permission to edit it).',
+                })
+                continue
+
+            try:
+                soup = BeautifulSoup(content.decode('utf-8', errors='replace'), 'html.parser')
+                title_tag = soup.find('title')
+                dek_tag = soup.find('meta', attrs={'name': 'dek'})
+                body_tag = soup.find('body')
+                new_title = title_tag.get_text().strip() if title_tag else ''
+                new_dek = dek_tag.get('content', '').strip() if dek_tag else ''
+                new_body = body_tag.decode_contents().strip() if body_tag else ''
+            except Exception as e:
+                results.append({
+                    'filename': filename, 'id': article_id, 'found': True,
+                    'error': f'Could not parse this file as HTML: {e}',
+                })
+                continue
+
+            if not new_title or not new_body:
+                results.append({
+                    'filename': filename, 'id': article_id, 'found': True,
+                    'error': 'Missing a <title> or <body> — the file structure looks broken.',
+                })
+                continue
+
+            results.append({
+                'filename': filename, 'id': article_id, 'found': True, 'error': None,
+                'old_title': article.title, 'new_title': new_title,
+                'old_dek': article.dek, 'new_dek': new_dek, 'new_body': new_body,
+                'updated_at': article.updated_at.isoformat(),
+            })
+        return Response(results)
+
+    @action(detail=False, methods=['post'])
+    def import_apply(self, request):
+        """Second step — applies exactly the items the frontend sends
+        (whatever survived the admin's review of import_preview's output).
+        Re-checks permission and updated_at per item, independently of
+        preview, since time may have passed between the two calls."""
+        items = request.data.get('items') or []
+        queryset = self.get_queryset()
+        results = []
+        for item in items:
+            article_id = item.get('id')
+            article = queryset.filter(pk=article_id).first()
+            if article is None:
+                results.append({'id': article_id, 'success': False, 'error': 'Article not found.'})
+                continue
+            if item.get('updated_at') and article.updated_at.isoformat() != item['updated_at']:
+                results.append({
+                    'id': article_id, 'success': False,
+                    'error': 'This article was changed since you previewed the import — re-export and try again.',
+                })
+                continue
+            article.title = item.get('new_title', article.title)
+            article.dek = item.get('new_dek', article.dek)
+            article.body = item.get('new_body', article.body)
+            article.save(update_fields=['title', 'dek', 'body'])
+            results.append({'id': article_id, 'success': True, 'error': None})
+        return Response(results)
 
 
 class CategoryViewSet(ProtectedDestroyMixin, viewsets.ModelViewSet):

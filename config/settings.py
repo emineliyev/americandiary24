@@ -179,6 +179,11 @@ CORS_ALLOWED_ORIGINS = env.list(
     'CORS_ALLOWED_ORIGINS',
     default=['http://localhost:5173'] if DEBUG else [],
 )
+# Browsers only expose a small default whitelist of response headers to JS
+# (Content-Disposition isn't in it) — without this, the admin panel's file
+# downloads (backups, article export) can't read the server-provided
+# filename and silently fall back to a generic one.
+CORS_EXPOSE_HEADERS = ['Content-Disposition']
 
 # Production hardening — only takes effect once DEBUG=False on the VPS.
 if not DEBUG:

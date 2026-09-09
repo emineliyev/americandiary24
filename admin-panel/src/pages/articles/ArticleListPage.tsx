@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  deleteArticle, duplicateArticle, fetchArticles, permanentDeleteArticle, restoreArticle,
+  deleteArticle, duplicateArticle, exportArticles, fetchArticles, permanentDeleteArticle, restoreArticle,
 } from '../../api/articles';
 import { fetchCategories } from '../../api/lookups';
 import { Pagination } from '../../components/Pagination';
+import { ImportArticlesModal } from '../../components/articles/ImportArticlesModal';
 import { useAuth } from '../../auth/AuthContext';
 import { canDeleteArticle } from '../../utils/roles';
 import { useToast, errorMessage } from '../../components/toast/ToastContext';
@@ -43,8 +44,12 @@ export function ArticleListPage() {
   const [category, setCategory] = useState('');
   const [search, setSearch] = useState('');
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [exporting, setExporting] = useState(false);
+  const [showImport, setShowImport] = useState(false);
 
   useEffect(() => { setPage(1); }, [tab, status, category, search]);
+  useEffect(() => { setSelected(new Set()); }, [tab, page, status, category, search]);
 
   const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: fetchCategories });
   const { data, isLoading } = useQuery({
@@ -109,6 +114,32 @@ export function ArticleListPage() {
     }
   }
 
+  function toggleSelected(id: number) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    if (!data) return;
+    setSelected((prev) => (
+      prev.size === data.results.length ? new Set() : new Set(data.results.map((a) => a.id))
+    ));
+  }
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      await exportArticles(Array.from(selected));
+    } catch (err: any) {
+      toast.error(errorMessage(err, 'Failed to export the selected article(s).'));
+    } finally {
+      setExporting(false);
+    }
+  }
+
   async function handlePermanentDelete(article: ArticleListItem) {
     const ok = await confirm({
       message: `Permanently delete "${article.title}"? This can't be undone — the article and its image will be removed for good.`,
@@ -129,7 +160,17 @@ export function ArticleListPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <h1 style={{ fontSize: 22 }}>Articles</h1>
-        <Link to="/articles/new" className="btn btn-primary">+ New Article</Link>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {tab === 'active' && selected.size > 0 && (
+            <button type="button" className="btn" disabled={exporting} onClick={handleExport}>
+              {exporting ? 'Exporting…' : `Export Selected (${selected.size})`}
+            </button>
+          )}
+          {tab === 'active' && (
+            <button type="button" className="btn" onClick={() => setShowImport(true)}>Import</button>
+          )}
+          <Link to="/articles/new" className="btn btn-primary">+ New Article</Link>
+        </div>
       </div>
 
       <div className="list-filters">
@@ -163,6 +204,15 @@ export function ArticleListPage() {
           <table className="data-table">
             <thead>
               <tr>
+                {tab === 'active' && (
+                  <th style={{ width: 24 }}>
+                    <input
+                      type="checkbox"
+                      checked={data.results.length > 0 && selected.size === data.results.length}
+                      onChange={toggleSelectAll}
+                    />
+                  </th>
+                )}
                 <th>Title</th>
                 <th>Author</th>
                 <th>Category</th>
@@ -174,6 +224,11 @@ export function ArticleListPage() {
             <tbody>
               {data.results.map((a) => (
                 <tr key={a.id}>
+                  {tab === 'active' && (
+                    <td>
+                      <input type="checkbox" checked={selected.has(a.id)} onChange={() => toggleSelected(a.id)} />
+                    </td>
+                  )}
                   <td>
                     {tab === 'active' ? <Link to={`/articles/${a.id}`}>{a.title}</Link> : a.title}
                   </td>
@@ -218,6 +273,13 @@ export function ArticleListPage() {
 
           <Pagination page={page} count={data.count} hasPrevious={!!data.previous} hasNext={!!data.next} onChange={setPage} />
         </>
+      )}
+
+      {showImport && (
+        <ImportArticlesModal
+          onClose={() => setShowImport(false)}
+          onImported={invalidate}
+        />
       )}
     </div>
   );
