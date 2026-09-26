@@ -15,7 +15,7 @@ import { useAuth } from '../../auth/AuthContext';
 import { canManageTaxonomy } from '../../utils/roles';
 import { useToast, errorMessage } from '../../components/toast/ToastContext';
 import { useConfirm } from '../../components/confirm/ConfirmContext';
-import type { Category } from '../../api/types';
+import { HOMEPAGE_ZONE_OPTIONS, type Category, type HomepageZone } from '../../api/types';
 
 function SortableRow({ category, canManage, onToggleHomepage, onDelete }: {
   category: Category;
@@ -62,11 +62,12 @@ function SortableRow({ category, canManage, onToggleHomepage, onDelete }: {
   );
 }
 
-function SortableHomepageRow({ category, rowNumber, isFirst, onToggleNewRow }: {
+function SortableHomepageRow({ category, rowNumber, isFirst, onToggleNewRow, onZoneChange }: {
   category: Category;
   rowNumber: number;
   isFirst: boolean;
   onToggleNewRow: (category: Category) => void;
+  onZoneChange: (category: Category, zone: HomepageZone) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: category.id });
 
@@ -86,6 +87,16 @@ function SortableHomepageRow({ category, rowNumber, isFirst, onToggleNewRow }: {
         </span>
       </td>
       <td>{category.name}</td>
+      <td>
+        <select
+          value={category.homepage_zone}
+          onChange={(e) => onZoneChange(category, e.target.value as HomepageZone)}
+        >
+          {HOMEPAGE_ZONE_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+      </td>
       <td style={{ color: 'var(--text-muted)' }}>Row {rowNumber}</td>
       <td>
         <input
@@ -93,7 +104,7 @@ function SortableHomepageRow({ category, rowNumber, isFirst, onToggleNewRow }: {
           checked={category.homepage_new_row}
           disabled={isFirst}
           onChange={() => onToggleNewRow(category)}
-          title={isFirst ? 'The first section always starts a new row.' : 'Start a new row at this category'}
+          title={isFirst ? 'The first section in its zone always starts a new row.' : 'Start a new row at this category'}
         />
       </td>
     </tr>
@@ -176,6 +187,18 @@ export function CategoryListPage() {
     }
   }
 
+  async function handleZoneChange(category: Category, zone: HomepageZone) {
+    const previous = category.homepage_zone;
+    setHomepageItems((prev) => prev.map((c) => (c.id === category.id ? { ...c, homepage_zone: zone } : c)));
+    try {
+      await updateCategory(category.id, { homepage_zone: zone });
+      queryClient.invalidateQueries({ queryKey: ['categories-admin'] });
+    } catch (err: any) {
+      setHomepageItems((prev) => prev.map((c) => (c.id === category.id ? { ...c, homepage_zone: previous } : c)));
+      toast.error(errorMessage(err, 'Failed to update this category.'));
+    }
+  }
+
   async function handleHomepageDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -235,9 +258,10 @@ export function CategoryListPage() {
 
           <h2 style={{ fontSize: 18, marginBottom: 6 }}>Homepage Sections</h2>
           <p className="field-hint" style={{ marginBottom: 10 }}>
-            Only categories checked "Homepage" above appear here. Drag ⠿ to set the order. Check "New Row"
-            to start a fresh row at that category — un-check it to keep it side-by-side with the one above
-            (up to 3 per row).
+            Only categories checked "Homepage" above appear here. "Zone" picks which fixed spot on the
+            homepage this category's section renders in (e.g. right after Editor's Picks). Drag ⠿ to set
+            the order — order and "New Row" (up to 3 side-by-side) apply within each zone separately, not
+            across zones.
           </p>
           {homepageItems.length === 0 ? (
             <p className="field-hint">No categories are set to show on the homepage.</p>
@@ -248,23 +272,36 @@ export function CategoryListPage() {
                   <tr>
                     <th></th>
                     <th>Name</th>
-                    <th>Homepage Row</th>
+                    <th>Zone</th>
+                    <th>Zone Row</th>
                     <th>New Row</th>
                   </tr>
                 </thead>
                 <tbody>
                   <SortableContext items={homepageItems.map((c) => c.id)} strategy={verticalListSortingStrategy}>
                     {(() => {
-                      let rowNumber = 0;
-                      return homepageItems.map((c, index) => {
-                        if (index === 0 || c.homepage_new_row) rowNumber += 1;
+                      // Row number and "is the first section in its zone" (which always
+                      // starts a row, regardless of its own New Row flag — see
+                      // core/views.py's build_rows) are computed per zone, mirroring the
+                      // backend exactly: each zone groups/numbers its own rows
+                      // independently of what's going on in the other zones.
+                      const rowNumberByZone = new Map<HomepageZone, number>();
+                      const seenZones = new Set<HomepageZone>();
+                      return homepageItems.map((c) => {
+                        const zone = c.homepage_zone;
+                        const isFirstInZone = !seenZones.has(zone);
+                        seenZones.add(zone);
+                        if (isFirstInZone || c.homepage_new_row) {
+                          rowNumberByZone.set(zone, (rowNumberByZone.get(zone) ?? 0) + 1);
+                        }
                         return (
                           <SortableHomepageRow
                             key={c.id}
                             category={c}
-                            rowNumber={rowNumber}
-                            isFirst={index === 0}
+                            rowNumber={rowNumberByZone.get(zone) ?? 1}
+                            isFirst={isFirstInZone}
                             onToggleNewRow={handleToggleNewRow}
+                            onZoneChange={handleZoneChange}
                           />
                         );
                       });

@@ -194,6 +194,17 @@ table.data-table { width: 100%; border-collapse: collapse; background: #fff; }
 }
 .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
 .data-table tr:hover td { background: var(--bg-alt); }
+/* An inline <select> inside a table cell (e.g. Categories' homepage Zone
+   picker) — same border/focus language as .field select, just shorter to
+   fit the row. */
+.data-table select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border-strong);
+  background: #fff;
+  color: var(--text);
+}
+.data-table select:focus { outline: none; border-color: var(--brand); }
 
 .badge { display: inline-block; padding: 3px 8px; font: 700 10px var(--font-sans); text-transform: uppercase; letter-spacing: .04em; }
 .badge-published { background: #e6f4ec; color: var(--success); }

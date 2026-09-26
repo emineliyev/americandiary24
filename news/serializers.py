@@ -25,7 +25,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = [
             'id', 'name', 'slug', 'order', 'is_active',
-            'show_on_homepage', 'homepage_order', 'homepage_new_row', 'homepage_title',
+            'show_on_homepage', 'homepage_order', 'homepage_new_row', 'homepage_title', 'homepage_zone',
         ]
 
 

@@ -21,7 +21,7 @@ export function CategoryFormPage() {
 
   const [form, setForm] = useState<CategoryWritePayload>({
     name: '', slug: '', order: 0, is_active: true, show_on_homepage: true, homepage_order: 0,
-    homepage_new_row: true, homepage_title: '',
+    homepage_new_row: true, homepage_title: '', homepage_zone: 'top',
   });
   const [slugTouched, setSlugTouched] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -38,6 +38,7 @@ export function CategoryFormPage() {
         is_active: existing.is_active, show_on_homepage: existing.show_on_homepage,
         homepage_order: existing.homepage_order,
         homepage_new_row: existing.homepage_new_row, homepage_title: existing.homepage_title,
+        homepage_zone: existing.homepage_zone,
       });
       setSlugTouched(true);
     }

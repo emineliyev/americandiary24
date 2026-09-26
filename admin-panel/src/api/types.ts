@@ -47,6 +47,17 @@ export interface SiteSettings {
   default_share_image_asset_id?: number | null;
 }
 
+export type HomepageZone = 'top' | 'after_editors_picks' | 'row1' | 'row2' | 'bottom' | 'with_climate';
+
+export const HOMEPAGE_ZONE_OPTIONS: { value: HomepageZone; label: string }[] = [
+  { value: 'top', label: "Top (before Editor's Picks)" },
+  { value: 'after_editors_picks', label: "After Editor's Picks" },
+  { value: 'row1', label: 'Full-width row (before Did You Know?)' },
+  { value: 'row2', label: 'Full-width row (after Did You Know?)' },
+  { value: 'bottom', label: 'Bottom (after Follow)' },
+  { value: 'with_climate', label: 'Paired with Climate (page end)' },
+];
+
 export interface Category {
   id: number;
   name: string;
@@ -57,6 +68,7 @@ export interface Category {
   homepage_order: number;
   homepage_new_row: boolean;
   homepage_title: string;
+  homepage_zone: HomepageZone;
 }
 
 export interface Author {
@@ -95,6 +107,7 @@ export interface CategoryWritePayload {
   homepage_order: number;
   homepage_new_row: boolean;
   homepage_title: string;
+  homepage_zone: HomepageZone;
 }
 
 export interface AuthorWritePayload {

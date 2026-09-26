@@ -12,8 +12,8 @@ class Category(models.Model):
     # Homepage's own section list — deliberately independent of `order`
     # (which drives the nav menu): the client wants full control over which
     # categories get a homepage section, in what order, and how they're
-    # grouped side-by-side (1-3 per row) — see core/views.py's
-    # category_section_rows for the grouping logic driven by these fields.
+    # grouped side-by-side (1-3 per row) — see core/views.py's zone_rows
+    # for the grouping logic driven by these fields.
     show_on_homepage = models.BooleanField(default=True)
     homepage_order = models.PositiveIntegerField(default=0)
     # True starts a new row at this category; False continues the previous
@@ -24,6 +24,29 @@ class Category(models.Model):
     # & Opinion" displayed as "AmericanDiary24 Analysis") — blank falls back
     # to `name`. Nav menu, page titles, etc. always use `name` unchanged.
     homepage_title = models.CharField(max_length=100, blank=True)
+
+    # Which one of the homepage's fixed template slots this category's
+    # section renders in — lets a category be placed relative to bespoke
+    # sections (Editor's Picks, Did You Know?, Climate) instead of only
+    # among other generic categories. `homepage_order`/`homepage_new_row`
+    # still control ordering/1-3-per-row grouping *within* whichever zone
+    # is chosen here — grouping happens per-zone, independently of the
+    # other zones. See core/views.py's zone_rows for the render-time logic.
+    ZONE_TOP = 'top'
+    ZONE_AFTER_EDITORS_PICKS = 'after_editors_picks'
+    ZONE_ROW1 = 'row1'
+    ZONE_ROW2 = 'row2'
+    ZONE_BOTTOM = 'bottom'
+    ZONE_WITH_CLIMATE = 'with_climate'
+    HOMEPAGE_ZONE_CHOICES = [
+        (ZONE_TOP, "Top (before Editor's Picks)"),
+        (ZONE_AFTER_EDITORS_PICKS, "After Editor's Picks"),
+        (ZONE_ROW1, 'Full-width row (before Did You Know?)'),
+        (ZONE_ROW2, 'Full-width row (after Did You Know?)'),
+        (ZONE_BOTTOM, 'Bottom (after Follow)'),
+        (ZONE_WITH_CLIMATE, 'Paired with Climate (page end)'),
+    ]
+    homepage_zone = models.CharField(max_length=30, choices=HOMEPAGE_ZONE_CHOICES, default=ZONE_TOP)
 
     class Meta:
         verbose_name_plural = 'categories'

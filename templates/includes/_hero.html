@@ -82,22 +82,24 @@
       {% include "includes/_exclusive.html" %}
 
       {% comment %}
-      Deliberately indexed rather than one flat loop over
-      category_section_rows: the client's wireframe interleaves fixed
-      sections (Editor's Picks, Did You Know?) at specific points between
-      the admin-ordered category rows, not before/after all of them. If the
-      admin adds a 5th row group it won't appear here until this template
-      is extended to match wherever it should slot in.
+      Zone-driven now (Category.homepage_zone), not positional index into a
+      flat row list: each category explicitly picks which fixed slot it
+      renders in, including relative to the bespoke Editor's Picks section
+      right below — see core/views.py's zone_rows.
       {% endcomment %}
-      {% with row=category_section_rows.0 %}
-        {% if row %}
-        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
-          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
-        </div>
-        {% endif %}
-      {% endwith %}
+      {% for row in zone_rows.top %}
+      <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
+        {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+      </div>
+      {% endfor %}
 
       {% include "includes/_editors_picks.html" %}
+
+      {% for row in zone_rows.after_editors_picks %}
+      <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
+        {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+      </div>
+      {% endfor %}
     </div>
 
     {% comment %}
@@ -108,71 +110,78 @@
     render at main-column width instead (still fine, just no longer
     full-width) since the --3 modifier class won't apply.
     {% endcomment %}
+    {% if zone_rows.row1 %}
     <div class="hero__row1-full">
-      {% with row=category_section_rows.1 %}
-        {% if row %}
-        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
-          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
-        </div>
-        {% endif %}
-      {% endwith %}
+      {% for row in zone_rows.row1 %}
+      <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
+        {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+      </div>
+      {% endfor %}
     </div>
+    {% endif %}
 
     {% comment %}
     Did You Know? breaks out full-width too — nothing in main-bottom-bottom
     came before it, so unlike Editor's Picks this doesn't need a rail split
     of its own: Quote/Trending/Follow simply move to after it, alongside
-    whatever's left in main-bottom-bottom.
+    whatever's left in main-bottom-bottom. Guarded here (not just inside the
+    include) so an empty did_you_know contributes zero grid footprint —
+    an unconditional empty wrapper would still consume its explicit grid
+    row and pick up a row-gap on both sides.
     {% endcomment %}
+    {% if did_you_know %}
     <div class="hero__did-you-know-full">
       {% include "includes/_did_you_know.html" %}
     </div>
+    {% endif %}
 
-    {% comment %}
-    Second 3-wide row (Sports/Travel/Entertainment right now) — same
-    full-width treatment as row1 above.
-    {% endcomment %}
+    {% if zone_rows.row2 %}
     <div class="hero__row2-full">
-      {% with row=category_section_rows.2 %}
-        {% if row %}
-        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
-          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
-        </div>
-        {% endif %}
-      {% endwith %}
+      {% for row in zone_rows.row2 %}
+      <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
+        {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+      </div>
+      {% endfor %}
     </div>
+    {% endif %}
 
     <div class="hero__rail hero__rail-bottom-bottom">
       {% include "includes/_sidebar_follow.html" %}
     </div>
 
+    {% if zone_rows.bottom %}
     <div class="hero__main-bottom hero__main-bottom-bottom">
-      {% for row in category_section_rows|slice:"4:" %}
-        <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
-          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
-        </div>
+      {% for row in zone_rows.bottom %}
+      <div class="category-section-row{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}">
+        {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+      </div>
       {% endfor %}
     </div>
+    {% endif %}
 
     {% comment %}
-    Final section — pairs the real "Crime & Incident" category (was alone
-    in category_section_rows.3, now renamed via homepage_title) with the
-    real "Climate" category. No fake placeholder content — if nothing's
-    published under Climate yet, climate_section is None and Crime &
-    Incident gets the full row width (category-section-row--1) instead of
-    sitting next to an empty column; once real Climate articles exist the
-    row goes back to a normal 2-up split automatically. If the admin
-    regroups categories so Incident isn't at row index 3 anymore, this
-    needs updating to match.
+    Final section — whichever categories are assigned the "Paired with
+    Climate" zone. The first of those rows shares its row with the real
+    "Climate" category (no fake placeholder content — if nothing's
+    published under Climate yet, climate_section is None and that row gets
+    full width instead of sitting next to an empty column); any further
+    rows in this zone (rare) render as plain full-width rows after it.
     {% endcomment %}
+    {% if zone_rows.with_climate or climate_section %}
     <div class="hero__incident-climate-full">
-      <div class="category-section-row{% if not climate_section %} category-section-row--1{% endif %}">
-        {% with row=category_section_rows.3 %}
-          {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
-        {% endwith %}
-        {% if climate_section %}{% include "includes/_category_lead.html" with section=climate_section %}{% endif %}
+      {% for row in zone_rows.with_climate %}
+      <div class="category-section-row{% if forloop.first %}{% if not climate_section %} category-section-row--1{% endif %}{% else %}{% if row|length == 3 %} category-section-row--3{% elif row|length == 1 %} category-section-row--1{% endif %}{% endif %}">
+        {% for section in row %}{% include "includes/_category_lead.html" with section=section %}{% endfor %}
+        {% if forloop.first and climate_section %}{% include "includes/_category_lead.html" with section=climate_section %}{% endif %}
       </div>
+      {% endfor %}
+      {% if not zone_rows.with_climate and climate_section %}
+      <div class="category-section-row category-section-row--1">
+        {% include "includes/_category_lead.html" with section=climate_section %}
+      </div>
+      {% endif %}
     </div>
+    {% endif %}
   </div>
 </section>
 {% endif %}

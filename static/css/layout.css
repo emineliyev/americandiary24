@@ -214,6 +214,12 @@ body.menu-open {
 .hero__rail-bottom-bottom { grid-column: 2; grid-row: 7; }
 .hero__main-bottom-bottom { grid-column: 1; grid-row: 7; }
 .hero__incident-climate-full { grid-column: 1 / -1; grid-row: 8; }
+/* These zones only ever held one .category-section-row before homepage_zone
+   let several row-groups target the same zone — stack them with the same
+   rhythm as everywhere else on the page when that happens. */
+.hero__row1-full > * + *,
+.hero__row2-full > * + *,
+.hero__incident-climate-full > * + * { margin-top: 44px; }
 .hero__top { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.4fr); gap: clamp(28px, 3.5vw, 48px); align-items: center; margin-bottom: 40px; }
 .hero__top-text { display: flex; flex-direction: column; }
 /* Scoped to this hero only — .h1-hero itself is shared with article/

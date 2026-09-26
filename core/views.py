@@ -88,30 +88,42 @@ def home(request):
         is_active=True, show_on_homepage=True,
     ).exclude(slug__in=['breaking', 'analysis-opinion', 'did-you-know', 'climate']).order_by('homepage_order', 'name')
 
-    category_sections = []
-    for category in homepage_categories:
-        articles = list(published.filter(category=category)[:4])
-        if not articles:
-            continue
-        category_sections.append({
-            'category': category,
-            'label': category.homepage_title or category.name,
-            'lead': articles[0],
-            'rest': articles[1:],
-            'new_row': category.homepage_new_row,
-        })
+    def build_rows(categories):
+        sections = []
+        for category in categories:
+            articles = list(published.filter(category=category)[:4])
+            if not articles:
+                continue
+            sections.append({
+                'category': category,
+                'label': category.homepage_title or category.name,
+                'lead': articles[0],
+                'rest': articles[1:],
+                'new_row': category.homepage_new_row,
+            })
+        # Grouped by each section's own "start a new row here" flag
+        # (admin-set, 1-3 categories can share a row) rather than a fixed
+        # pair-of-2.
+        rows = []
+        current_row = []
+        for section in sections:
+            if section['new_row'] and current_row:
+                rows.append(current_row)
+                current_row = []
+            current_row.append(section)
+        if current_row:
+            rows.append(current_row)
+        return rows
 
-    # Grouped by each section's own "start a new row here" flag (admin-set,
-    # 1-3 categories can share a row) rather than a fixed pair-of-2.
-    category_section_rows = []
-    current_row = []
-    for section in category_sections:
-        if section['new_row'] and current_row:
-            category_section_rows.append(current_row)
-            current_row = []
-        current_row.append(section)
-    if current_row:
-        category_section_rows.append(current_row)
+    # Which of the homepage's fixed template slots each category's section
+    # renders in (Category.homepage_zone) is admin-controlled too, letting a
+    # category be placed relative to bespoke sections like Editor's Picks —
+    # not just among other generic categories. Ordering/1-3-per-row grouping
+    # (homepage_order/homepage_new_row) is computed independently per zone.
+    zone_rows = {
+        zone: build_rows(homepage_categories.filter(homepage_zone=zone))
+        for zone, _ in Category.HOMEPAGE_ZONE_CHOICES
+    }
 
     context = {
         'hero': hero,
@@ -130,7 +142,7 @@ def home(request):
         'did_you_know': did_you_know,
         'climate_section': climate_section,
         'most_read': most_read,
-        'category_section_rows': category_section_rows,
+        'zone_rows': zone_rows,
     }
     return render(request, 'home.html', context)
 
