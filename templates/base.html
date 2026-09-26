@@ -29,7 +29,18 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+{% comment %}
+display=optional (not swap) deliberately — swap was the main driver of this
+site's poor CLS score: text renders in a fallback font first, then jumps to
+Work Sans/Noto Serif once it downloads, reflowing the nav and every headline
+since the two fonts have different letter widths. optional shows the
+fallback and, if the web font isn't ready within its ~100ms block window,
+just keeps the fallback for this pageview (it still downloads and caches for
+next time) instead of swapping mid-render — trading "custom font on every
+first visit" for "no layout shift," which is the right side of that trade
+for a Core Web Vital that affects Google ranking.
+{% endcomment %}
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Work+Sans:wght@400;600;700;800&display=optional" rel="stylesheet">
 
 <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
 <link rel="stylesheet" href="{% static 'css/base.css' %}">
