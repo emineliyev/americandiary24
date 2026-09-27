@@ -42,7 +42,10 @@ def home(request):
 
     editors_picks = list(published.filter(is_editors_pick=True)[:4])
     exclusives = list(published.filter(is_exclusive=True)[:4])
-    breaking = published.filter(is_breaking=True).first()
+    # No cap — the client wants to be able to flag as many as needed; the
+    # homepage bar rotates through all of them (see includes/_breaking.html
+    # and static/js/breaking.js).
+    breaking_articles = list(published.filter(is_breaking=True).order_by('-published_at'))
     reference_articles = list(published.filter(is_reference=True)[:4])
 
     # "AmericanDiary24 Analysis" — a fixed row of 4, sourced from its own
@@ -133,7 +136,7 @@ def home(request):
         'news_category': news_category,
         'editors_picks': editors_picks,
         'exclusives': exclusives,
-        'breaking': breaking,
+        'breaking_articles': breaking_articles,
         'reference_articles': reference_articles,
         'analysis_articles': analysis_articles,
         'analysis_category': analysis_category,

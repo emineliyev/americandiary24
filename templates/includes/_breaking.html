@@ -1,10 +1,38 @@
 {% load humanize %}
-{% if breaking %}
+{% if breaking_articles %}
 <div class="breaking-bar">
   <div class="container">
     <span class="badge-breaking">Breaking News</span>
-    <a href="{{ breaking.get_absolute_url }}" class="breaking-bar__headline">{{ breaking.title }}</a>
-    <time class="breaking-bar__updated" datetime="{{ breaking.updated_at|date:'c' }}">Updated {{ breaking.updated_at|naturaltime }}</time>
+    <div class="breaking-bar__track">
+      {% if breaking_articles|length > 1 %}
+      {% comment %}
+      The list is rendered twice back-to-back (2nd copy aria-hidden, links
+      untabbable) — a continuously-scrolling strip needs a seamless loop,
+      and translating by exactly one copy's width while a second identical
+      copy trails right behind it is what makes the wrap-around invisible.
+      See .breaking-bar__ticker's animation in layout.css.
+      {% endcomment %}
+      <div class="breaking-bar__ticker">
+        {% for article in breaking_articles %}
+        <div class="breaking-bar__item">
+          <a href="{{ article.get_absolute_url }}" class="breaking-bar__headline">{{ article.title }}</a>
+          <time class="breaking-bar__updated" datetime="{{ article.updated_at|date:'c' }}">Updated {{ article.updated_at|naturaltime }}</time>
+        </div>
+        {% endfor %}
+        {% for article in breaking_articles %}
+        <div class="breaking-bar__item" aria-hidden="true">
+          <a href="{{ article.get_absolute_url }}" class="breaking-bar__headline" tabindex="-1">{{ article.title }}</a>
+          <time class="breaking-bar__updated">Updated {{ article.updated_at|naturaltime }}</time>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="breaking-bar__item">
+        <a href="{{ breaking_articles.0.get_absolute_url }}" class="breaking-bar__headline">{{ breaking_articles.0.title }}</a>
+        <time class="breaking-bar__updated" datetime="{{ breaking_articles.0.updated_at|date:'c' }}">Updated {{ breaking_articles.0.updated_at|naturaltime }}</time>
+      </div>
+      {% endif %}
+    </div>
   </div>
 </div>
 {% endif %}
