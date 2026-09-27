@@ -42,10 +42,10 @@ def home(request):
 
     editors_picks = list(published.filter(is_editors_pick=True)[:4])
     exclusives = list(published.filter(is_exclusive=True)[:4])
-    # No cap — the client wants to be able to flag as many as needed; the
-    # homepage bar rotates through all of them (see includes/_breaking.html
-    # and static/js/breaking.js).
-    breaking_articles = list(published.filter(is_breaking=True).order_by('-published_at'))
+    # Latest 5 only — an earlier unlimited version turned out to be
+    # impractical in practice (see includes/_breaking.html and
+    # static/js/breaking.js for the scrolling ticker itself).
+    breaking_articles = list(published.filter(is_breaking=True).order_by('-published_at')[:5])
     reference_articles = list(published.filter(is_reference=True)[:4])
 
     # "AmericanDiary24 Analysis" — a fixed row of 4, sourced from its own
@@ -80,7 +80,7 @@ def home(request):
         'rest': climate_articles[1:4],
     } if climate_articles else None
 
-    most_read = list(published.order_by('-view_count')[:5])
+    most_read = list(published.order_by('-view_count')[:8])
 
     # Which categories get a homepage section, in what order, and how
     # they're grouped 1-3 per row, is fully admin-controlled (Categories

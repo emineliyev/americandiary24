@@ -14,6 +14,16 @@
         {% endif %}
       </div>
       <h2 class="h2-cat-lead">{{ section.lead.title }}</h2>
+      {% comment %}
+      Explainers (FAQ) titles are phrased as questions — a dek clarifying
+      the answer is more useful there than on the other generic category
+      sections, which don't show one. Bespoke to this one category, same as
+      Analysis/Exclusive Opinion/Did You Know? each having their own layout
+      quirks elsewhere in the homepage.
+      {% endcomment %}
+      {% if section.category.slug == 'explainers-faq' and section.lead.dek %}
+      <p class="dek-hero article-dek">{{ section.lead.dek }}</p>
+      {% endif %}
       <time class="meta" datetime="{{ section.lead.published_at|date:'c' }}">{{ section.lead.published_at|naturaltime }}</time>
     </a>
 

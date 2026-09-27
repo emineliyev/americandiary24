@@ -182,14 +182,15 @@ body.menu-open {
    headline sits in one long flex row (.breaking-bar__ticker), rendered
    twice back-to-back in the template so a second identical copy trails
    right behind the first — animating exactly one copy-width therefore
-   loops with no visible seam. Moves left-to-right (entering from the left,
-   exiting to the right): translateX animates from -50% (the 2nd copy's
-   start aligned to the track's left edge) up to 0% (the 1st copy's start
-   aligned there — pixel-identical to -50% since the copies are identical,
-   which is what makes the loop-restart invisible). --ticker-duration is
-   set by static/js/breaking.js from the actual rendered width, so the
-   scroll speed (px/sec) stays constant whether there are 2 or 20 headlines
-   — the 25s fallback below only applies before that JS runs / if it fails. */
+   loops with no visible seam. Moves right-to-left (entering from the
+   right, exiting to the left): translateX animates from 0% (the 1st
+   copy's start aligned to the track's left edge) down to -50% (the 2nd
+   copy's start aligned there — pixel-identical to 0% since the copies are
+   identical, which is what makes the loop-restart invisible).
+   --ticker-duration is set by static/js/breaking.js from the actual
+   rendered width, so the scroll speed (px/sec) stays constant whether
+   there are 2 or 5 headlines — the 25s fallback below only applies before
+   that JS runs / if it fails. */
 .breaking-bar__track { position: relative; flex: 1; overflow: hidden; }
 .breaking-bar__ticker {
   display: flex; align-items: center;
@@ -199,8 +200,8 @@ body.menu-open {
 .breaking-bar:hover .breaking-bar__ticker,
 .breaking-bar:focus-within .breaking-bar__ticker { animation-play-state: paused; }
 @keyframes breaking-ticker {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0%); }
+  from { transform: translateX(0%); }
+  to { transform: translateX(-50%); }
 }
 @media (prefers-reduced-motion: reduce) {
   .breaking-bar__ticker { animation: none; }

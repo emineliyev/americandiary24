@@ -207,10 +207,16 @@ class ArticleViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'No matching articles found.'}, status=400)
 
         def build_html(article):
+            # published_at is display-only here (like the filename's id
+            # prefix, just for the person editing offline to see at a
+            # glance) — import_preview/import_apply never read it back, the
+            # round trip only ever touches title/dek/body.
+            published = article.published_at.strftime('%Y-%m-%d %H:%M') if article.published_at else ''
             return (
                 '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n'
                 f'<title>{html.escape(article.title)}</title>\n'
-                f'<meta name="dek" content="{html.escape(article.dek)}">\n</head>\n<body>\n'
+                f'<meta name="dek" content="{html.escape(article.dek)}">\n'
+                f'<meta name="published_at" content="{html.escape(published)}">\n</head>\n<body>\n'
                 f'{article.body}\n</body>\n</html>\n'
             )
 
