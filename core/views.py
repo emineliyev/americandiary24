@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -80,7 +82,13 @@ def home(request):
         'rest': climate_articles[1:4],
     } if climate_articles else None
 
-    most_read = list(published.order_by('-view_count')[:8])
+    # Most-viewed among articles published in the last 30 days — not
+    # lifetime view_count, so an old evergreen story with huge historical
+    # traffic doesn't permanently camp on this widget over fresher stories.
+    most_read = list(
+        published.filter(published_at__gte=timezone.now() - timedelta(days=30))
+        .order_by('-view_count')[:8]
+    )
 
     # Which categories get a homepage section, in what order, and how
     # they're grouped 1-3 per row, is fully admin-controlled (Categories
@@ -170,8 +178,32 @@ def about(request):
 
 
 def robots_txt(request):
-    context = {'sitemap_url': f'{settings.SITE_DOMAIN}/sitemap.xml'}
+    context = {
+        'sitemap_url': f'{settings.SITE_DOMAIN}/sitemap.xml',
+        'news_sitemap_url': f'{settings.SITE_DOMAIN}/news-sitemap.xml',
+    }
     return render(request, 'robots.txt', context, content_type='text/plain')
+
+
+def news_sitemap(request):
+    # Google News' own sitemap format (the news: namespace) — separate from
+    # the regular sitemap.xml since it has a completely different schema and
+    # a hard rule Google enforces: only articles from the last 2 days, so
+    # this is a live query, not the once-an-hour-cached general sitemap.
+    # is_indexed reused as-is from ArticleSitemap: the same flag that keeps
+    # syndicated/non-original wire content out of the regular sitemap keeps
+    # it out of the News one too.
+    cutoff = timezone.now() - timedelta(hours=48)
+    articles = (
+        Article.objects.filter(
+            status=Article.Status.PUBLISHED,
+            published_at__lte=timezone.now(),
+            published_at__gte=cutoff,
+            is_indexed=True,
+        )
+        .order_by('-published_at')[:1000]
+    )
+    return render(request, 'news_sitemap.xml', {'articles': articles}, content_type='application/xml')
 
 
 def ads_txt(request):

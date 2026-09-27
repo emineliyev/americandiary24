@@ -3,3 +3,4 @@ Disallow: /admin/
 Disallow: /api/
 
 Sitemap: {{ sitemap_url }}
+Sitemap: {{ news_sitemap_url }}

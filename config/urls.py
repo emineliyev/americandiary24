@@ -24,6 +24,7 @@ sitemaps = {
 urlpatterns = [
     path('api/v1/', include('api.urls')),
     path('sitemap.xml', cache_page(60 * 60)(sitemap), {'sitemaps': sitemaps}, name='sitemap'),
+    path('news-sitemap.xml', cache_page(60 * 15)(core_views.news_sitemap), name='news_sitemap'),
     path('robots.txt', core_views.robots_txt, name='robots'),
     path('ads.txt', core_views.ads_txt, name='ads_txt'),
     path('', include('core.urls')),
