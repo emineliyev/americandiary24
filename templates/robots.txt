@@ -2,5 +2,15 @@ User-agent: *
 Disallow: /admin/
 Disallow: /api/
 
+# SEO-tool crawlers with no reader value, confirmed via VPS nginx logs
+# (2026-09-30) to account for a large share of total requests. robots.txt
+# is advisory only — a Cloudflare rule also actively blocks these, since
+# not every bot honors this file.
+User-agent: SERankingBacklinksBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
 Sitemap: {{ sitemap_url }}
 Sitemap: {{ news_sitemap_url }}
