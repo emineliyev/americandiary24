@@ -12,5 +12,18 @@ Disallow: /
 User-agent: DataForSeoBot
 Disallow: /
 
+# AI answer-engine crawlers (2026-10-08) — they read full article content to
+# generate answers elsewhere; the reader never reaches this site, so there's
+# no traffic or ad-revenue benefit, same reasoning as the SEO bots above.
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: ExaSearchBot
+Disallow: /
+
+# Unidentified/low-recognition bot, no clear reader value (2026-10-08).
+User-agent: SofyaBot
+Disallow: /
+
 Sitemap: {{ sitemap_url }}
 Sitemap: {{ news_sitemap_url }}
