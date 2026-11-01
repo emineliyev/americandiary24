@@ -25,5 +25,54 @@ Disallow: /
 User-agent: SofyaBot
 Disallow: /
 
+# More SEO-tool crawlers, confirmed via VPS nginx logs (2026-11-01) — same
+# reasoning as SERankingBacklinksBot/DataForSeoBot above.
+User-agent: AwarioBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+# More AI answer-engine / indexing crawlers (2026-11-01) — same reasoning as
+# PerplexityBot/ExaSearchBot above. Claude-SearchBot is Anthropic's own
+# indexing crawler, in the same category as the others below; Claude-User
+# (a live fetch on behalf of a person actively using Claude) is deliberately
+# NOT in this list — that's a real reader's own request, not indexing.
+User-agent: HatchFeed
+Disallow: /
+
+User-agent: meta-webindexer
+Disallow: /
+
+User-agent: Meta-WebIndexer
+Disallow: /
+
+User-agent: Meta-ExternalFetcher
+Disallow: /
+
+User-agent: Hunyuan
+Disallow: /
+
+User-agent: GrokBot
+Disallow: /
+
+User-agent: MoonshotBot
+Disallow: /
+
+User-agent: Kimi-SearchBot
+Disallow: /
+
+User-agent: Qwenbot
+Disallow: /
+
+User-agent: ibou-search
+Disallow: /
+
+User-agent: Bravebot
+Disallow: /
+
+User-agent: Claude-SearchBot
+Disallow: /
+
 Sitemap: {{ sitemap_url }}
 Sitemap: {{ news_sitemap_url }}
