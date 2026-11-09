@@ -48,7 +48,24 @@ def article_detail(request):
         status=Article.Status.PUBLISHED,
         published_at__lte=timezone.now(),
     )
+    return _render_article_detail(request, article)
 
+
+def article_detail_by_slug(request, category_slug, article_slug):
+    # Only ever matches "new-style" articles — url_category_slug is blank
+    # for everything published before this URL scheme existed, so a legacy
+    # article's slug can't accidentally resolve here too.
+    article = get_object_or_404(
+        Article.objects.select_related('category', 'author').prefetch_related('co_authors'),
+        url_category_slug=category_slug,
+        slug=article_slug,
+        status=Article.Status.PUBLISHED,
+        published_at__lte=timezone.now(),
+    )
+    return _render_article_detail(request, article)
+
+
+def _render_article_detail(request, article):
     Article.objects.filter(pk=article.pk).update(view_count=F('view_count') + 1)
 
     published = Article.objects.filter(

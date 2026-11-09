@@ -181,6 +181,16 @@ class Article(models.Model):
 
     view_count = models.PositiveIntegerField(default=0)
 
+    # Snapshot of the category's slug at the moment this article was first
+    # published — NOT a live lookup of article.category.slug, deliberately,
+    # so a later category rename can't silently break every article's URL
+    # that was already published under it. Blank for every article that was
+    # already published before this feature existed, which is exactly what
+    # get_absolute_url() below uses to tell "old" articles (keep the legacy
+    # news.php?id= URL every previously indexed/shared link depends on)
+    # apart from "new" ones (get the pretty /category/article/ URL).
+    url_category_slug = models.SlugField(max_length=100, blank=True)
+
     # Soft delete — moving to the admin panel's Silinənlər (trash) tab sets
     # this instead of actually deleting the row, so it can be restored.
     # Only ArticleViewSet.permanent_delete does a real .delete().
@@ -205,11 +215,16 @@ class Article(models.Model):
         # point (admin panel, Django admin, a script) saves the row.
         if self.status == self.Status.PUBLISHED and self.published_at is None:
             self.published_at = timezone.now()
+            self.url_category_slug = self.category.slug
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        # URL scheme intentionally mirrors the legacy site (news.php?id=<id>)
-        # so every previously indexed/shared link keeps working unchanged.
+        # New-style articles (first published after this feature shipped)
+        # get a pretty, SEO-friendly URL; everything published before that
+        # keeps the legacy news.php?id=<id> scheme intentionally, so every
+        # previously indexed/shared link keeps working unchanged.
+        if self.url_category_slug:
+            return f'/{self.url_category_slug}/{self.slug}/'
         return f'/news.php?id={self.pk}'
 
     @property
