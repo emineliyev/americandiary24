@@ -74,5 +74,26 @@ Disallow: /
 User-agent: Claude-SearchBot
 Disallow: /
 
+# More SEO/AI crawlers, confirmed via VPS nginx logs (2026-11-10) — same
+# reasoning as the entries above. KimiBot is a second, differently-named
+# crawler from the same company as Kimi-SearchBot (already listed above).
+User-agent: Amzn-SearchBot
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: ElevenlabsCrawler
+Disallow: /
+
+User-agent: SeltzSitemapFetcher
+Disallow: /
+
+User-agent: diderot-bot
+Disallow: /
+
+User-agent: KimiBot
+Disallow: /
+
 Sitemap: {{ sitemap_url }}
 Sitemap: {{ news_sitemap_url }}
