@@ -215,6 +215,20 @@ class Article(models.Model):
         # point (admin panel, Django admin, a script) saves the row.
         if self.status == self.Status.PUBLISHED and self.published_at is None:
             self.published_at = timezone.now()
+
+        # Freeze url_category_slug the moment this row is *first* published —
+        # checked against the DB's current status, not published_at (the
+        # admin panel always fills published_at in itself before this save()
+        # ever runs, so a published_at-is-None check here would never fire).
+        # A row already published before stays exactly as it was, even if
+        # url_category_slug happens to still be blank (a legacy article),
+        # so editing an old article later can't suddenly switch it onto the
+        # new URL scheme.
+        was_published_before = (
+            self.pk is not None
+            and Article.objects.filter(pk=self.pk, status=self.Status.PUBLISHED).exists()
+        )
+        if self.status == self.Status.PUBLISHED and not was_published_before:
             self.url_category_slug = self.category.slug
         super().save(*args, **kwargs)
 
